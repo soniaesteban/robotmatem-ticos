@@ -676,8 +676,9 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
     <option value="PEP 9">PEP 9</option>
   </select>
   <button onclick="enviarProgresoFrac()" class="bok">📤 Enviar mi progreso</button>
+  <button type="button" onclick="verMiProgreso(this)" style="background:#1976d2;color:white;border:none;padding:9px 16px;border-radius:8px;font-weight:700;cursor:pointer;">📊 Ver mi progreso</button>
   <span id="envio-estado-frac" style="color:#ffd54f;font-weight:700;font-size:.85em;"></span>
-  <a href="https://docs.google.com/spreadsheets/d/19n9LsaMWeYbvrW3ToPh6I6UxFJotDI8naKJZgTCEeqA/edit?gid=0#gid=0" target="_blank" rel="noopener" style="margin-left:auto;background:#1976d2;color:white;padding:8px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.85em;">📊 Ver resultados de mis alumnas</a>
+  
 </div>
 
 <div class="tabs">
@@ -1483,8 +1484,9 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
             <option value="PEP 9">PEP 9</option>
           </select>
           <button onclick="enviarProgresoMedi()" style="background:#28a745;color:white;border:none;padding:9px 16px;border-radius:8px;font-weight:700;cursor:pointer;">📤 Enviar mi progreso</button>
+  <button type="button" onclick="verMiProgreso(this)" style="background:#1976d2;color:white;border:none;padding:9px 16px;border-radius:8px;font-weight:700;cursor:pointer;">📊 Ver mi progreso</button>
           <span id="envio-estado-medi" style="color:#ffd54f;font-weight:700;font-size:.85em;"></span>
-          <a href="https://docs.google.com/spreadsheets/d/19n9LsaMWeYbvrW3ToPh6I6UxFJotDI8naKJZgTCEeqA/edit?gid=0#gid=0" target="_blank" rel="noopener" style="margin-left:auto;background:#1976d2;color:white;padding:8px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.85em;">📊 Ver resultados de mis alumnas</a>
+          
         </div>
 
         <div class="tabs">
@@ -2391,8 +2393,9 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
     <option value="PEP 9">PEP 9</option>
   </select>
   <button onclick="enviarProgresoNum()" class="bok">📤 Enviar mi progreso</button>
+  <button type="button" onclick="verMiProgreso(this)" style="background:#1976d2;color:white;border:none;padding:9px 16px;border-radius:8px;font-weight:700;cursor:pointer;">📊 Ver mi progreso</button>
   <span id="envio-estado-num" style="color:#ffd54f;font-weight:700;font-size:.85em;"></span>
-  <a href="https://docs.google.com/spreadsheets/d/19n9LsaMWeYbvrW3ToPh6I6UxFJotDI8naKJZgTCEeqA/edit?gid=0#gid=0" target="_blank" rel="noopener" style="margin-left:auto;background:#1976d2;color:white;padding:8px 14px;border-radius:8px;text-decoration:none;font-weight:700;font-size:.85em;">📊 Ver resultados de mis alumnas</a>
+  
 </div>
 
 <div class="tabs">
@@ -12151,6 +12154,65 @@ function cambPOT(e,id){
   if(id==='pot-comb')peNew('cb');
   if(id==='pot-problemas')genPotPb();
 }
+
+</script>
+<script>
+/* ===== Mi progreso (Fracciones, Medidas, Números) ===== */
+(function(){
+  var snap={};
+  function norm(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();}
+  function lsG(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function lsS(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  function txt(el){return (el&&el.textContent||'').replace(/\s+/g,' ').trim();}
+  var LBL={'sc-area':'Áreas','sc-areapb':'Problemas de áreas','sc-vol':'Volúmenes','sc-volpb':'Problemas de volúmenes'};
+  function labelOf(sec,el){
+    if(sec.id==='seccion-medidas'&&LBL[el.id])return '📏 '+LBL[el.id];
+    var main='',sub='';
+    var p=el.closest('.op-p');
+    if(p){var b=sec.querySelector('.op-tab[onclick*="\''+p.id+'\'"]');if(b)sub=txt(b);}
+    var t=el.closest('.tp');
+    if(t){var b2=sec.querySelector('.tab[onclick*="\''+t.id+'\'"]');if(b2)main=txt(b2);}
+    var s=(main&&sub?main+' › '+sub:(main||sub));
+    return s||el.id.replace(/^sc-/,'');
+  }
+  window.verMiProgreso=function(btn){
+    var sec=btn.closest('.hub-seccion')||document;
+    var inp=sec.querySelector('input[id^="alumna-nombre"]');
+    var nombre=(inp&&inp.value||'').trim();
+    var bar=btn.parentElement,pan=bar.nextElementSibling;
+    if(!pan||!pan.classList.contains('pg-panel')){pan=document.createElement('div');pan.className='pg-panel';bar.parentNode.insertBefore(pan,bar.nextSibling);}
+    if(pan.style.display==='block'&&pan.getAttribute('data-n')===nombre){pan.style.display='none';return;}
+    if(!nombre){pan.innerHTML='<p style="color:#c62828;font-weight:800;">⚠️ Escribe tu nombre primero para ver tu progreso.</p>';pan.style.display='block';pan.setAttribute('data-n','');return;}
+    var key='pgTot:'+(sec.id||'hub')+':'+norm(nombre),tot={};
+    try{tot=JSON.parse(lsG(key)||'{}')||{};}catch(e){tot={};}
+    var rows=[],suma=0,esta=0;
+    var els=[].slice.call(sec.querySelectorAll('[id^="sc-"]')),ks=els.map(function(el,i){return el.id+'#'+i;});
+    els.forEach(function(el,i){
+      var m=txt(el).match(/(\d+)/);if(!m)return;
+      var cur=parseInt(m[1]),sk=(sec.id||'')+ks[i],prev=snap[sk]||0;
+      if(cur>prev){tot[ks[i]]=(tot[ks[i]]||0)+cur-prev;}
+      snap[sk]=cur;esta+=cur;
+    });
+    lsS(key,JSON.stringify(tot));
+    els.forEach(function(el,i){
+      var t=tot[ks[i]]||0,cur=(txt(el).match(/(\d+)/)||[0,0])[1];
+      suma+=t;if(t>0)rows.push({l:labelOf(sec,el),t:t,c:+cur});
+    });
+    rows.sort(function(a,b){return b.t-a.t;});
+    var h='<div class="geo-info" style="background:#f8f9fa;border:2px solid #ddd;border-radius:12px;padding:12px 16px;margin:10px 0;"><p style="margin:4px 0;font-size:1.1em;"><b>👤 '+nombre+'</b></p>'
+      +'<p style="margin:4px 0;">Puntos de esta sesión: <b>'+esta+'</b> · Puntos acumulados en este ordenador: <b>'+suma+'</b></p>';
+    if(!rows.length)h+='<p>Todavía no tienes puntos. ¡Haz ejercicios y vuelve a mirar!</p>';
+    else{
+      var max=rows[0].t;
+      h+='<table style="border-collapse:collapse;width:100%;margin-top:8px;"><tr><th style="text-align:left;padding:4px 8px;background:#e8f0ff;">Apartado</th><th style="padding:4px 8px;background:#e8f0ff;">Puntos</th><th style="background:#e8f0ff;"></th></tr>';
+      rows.forEach(function(r){h+='<tr><td style="padding:4px 8px;border-bottom:1px solid #ddd;">'+r.l+'</td><td style="text-align:center;border-bottom:1px solid #ddd;"><b>'+r.t+'</b></td><td style="border-bottom:1px solid #ddd;width:120px;"><div style="height:12px;background:#e0e0e0;border-radius:6px;overflow:hidden;"><div style="height:100%;width:'+Math.round(100*r.t/max)+'%;background:#43a047;"></div></div></td></tr>';});
+      h+='</table>';
+      h+='<p style="margin-top:8px;">💪 Lo que más practicas: <b>'+rows[0].l+'</b>.'+(rows.length>=3?' 📚 Has practicado menos: <b>'+rows[rows.length-1].l+'</b>.':'')+'</p>';
+    }
+    h+='<p style="font-size:.85em;color:#666;margin:8px 0 0;">Tu progreso se guarda en este ordenador con tu nombre. Solo lo ves tú; tu profe recibe tus puntos cuando pulsas «Enviar mi progreso».</p></div>';
+    pan.innerHTML=h;pan.style.display='block';pan.setAttribute('data-n',nombre);
+  };
+})();
 
 </script>
 </body></html>
