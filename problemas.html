@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Detectives de problemas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@800&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --paper:#FBFCFE; --grid:#DCE6F2; --ink:#1F3A93; --ink-soft:#E7ECFA;
+  --text:#23303F; --muted:#5B6878; --line:#C9D3E0;
+  --marker:#FFE45C; --ok:#1E7F52; --ok-bg:#E3F4EB; --bad:#B8322A; --bad-bg:#FBE7E5;
+  --panel:#FFFFFF; --bg:#EEF2F8;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1B2433; --grid:#26324A; --ink:#9DB4FF; --ink-soft:#24314F;
+    --text:#E6ECF5; --muted:#A3B0C2; --line:#34415A;
+    --marker:#8A7414; --ok:#5CD39A; --ok-bg:#16352A; --bad:#FF8A80; --bad-bg:#3D1F1F;
+    --panel:#141B27; --bg:#0F1520;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1B2433; --grid:#26324A; --ink:#9DB4FF; --ink-soft:#24314F;
+  --text:#E6ECF5; --muted:#A3B0C2; --line:#34415A;
+  --marker:#8A7414; --ok:#5CD39A; --ok-bg:#16352A; --bad:#FF8A80; --bad-bg:#3D1F1F;
+  --panel:#141B27; --bg:#0F1520;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Atkinson Hyperlegible",Verdana,Arial,sans-serif;font-size:17px;line-height:1.5}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+header.top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
+header.top h1{font-size:1.45rem;margin:0;color:var(--ink)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tools input{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:6px 10px;width:170px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:7px 14px}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{border:0;background:var(--panel);padding:7px 14px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.intro{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 20px;margin-bottom:16px}
+.intro p{margin:.3em 0;max-width:72ch}
+ol.ctxlist{list-style:none;margin:0;padding:0;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+ol.ctxlist li{display:flex;gap:14px;align-items:center;padding:12px 18px;border-top:1px solid var(--line)}
+ol.ctxlist li:first-child{border-top:0}
+.num{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:var(--ink-soft);color:var(--ink);display:grid;place-items:center;font-weight:700}
+.ctxinfo{flex:1}
+.ctxinfo b{display:block}
+.ctxinfo span{color:var(--muted);font-size:.92rem}
+.state{font-size:.9rem;color:var(--muted);min-width:110px;text-align:right}
+.state.done{color:var(--ok);font-weight:700}
+.simbox{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 20px;margin-top:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.simbox select{border:1px solid var(--line);border-radius:6px;padding:6px;background:var(--panel)}
+/* Pantalla de problema */
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.bar .where{font-weight:700;color:var(--ink)}
+.timer{font-weight:700;font-size:1.1rem;padding:4px 12px;border:2px solid var(--ink);border-radius:6px;color:var(--ink)}
+.timer.low{border-color:var(--bad);color:var(--bad)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+@media (max-width:860px){.stage{grid-template-columns:1fr}}
+.context{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;border:1px solid var(--line);border-radius:8px;padding:18px 20px}
+.context h2{margin:0 0 8px;font-size:1.25rem;color:var(--ink)}
+.context p{margin:.5em 0;max-width:62ch}
+.w{border-radius:3px;padding:0 1px}
+.marking .w{cursor:pointer}
+.marking .w:hover{background:var(--ink-soft)}
+.w.hl{background:var(--marker)}
+.markbtn{margin-top:8px;font-size:.9rem}
+.tablewrap{overflow-x:auto;margin:10px 0}
+table.data{border-collapse:collapse;background:var(--panel);min-width:260px}
+table.data th,table.data td{border:1px solid var(--line);padding:6px 12px;text-align:left}
+table.data th{background:var(--ink);color:var(--panel)}
+.fig{max-width:100%;height:auto;display:block;margin:10px 0}
+.question{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px 20px}
+.qhead{color:var(--muted);font-size:.92rem;margin-bottom:4px}
+.prompt{font-weight:700;margin:0 0 12px;max-width:60ch}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:9px 12px}
+.opt:hover{border-color:var(--ink)}
+.opt .dot{width:18px;height:18px;border:2px solid var(--muted);border-radius:50%;flex:0 0 auto}
+.opt.sel{border-color:var(--ink);background:var(--ink-soft)}
+.opt.sel .dot{border-color:var(--ink);background:var(--ink)}
+.opt.okk{border-color:var(--ok);background:var(--ok-bg)}
+.opt.nok{border-color:var(--bad);background:var(--bad-bg)}
+.numin{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.numin input,.numin select{border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:var(--panel);min-width:140px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.fb{margin-top:14px;border-radius:6px;padding:10px 14px;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--ok-bg);border-left:5px solid var(--ok)}
+.fb.bad{background:var(--bad-bg);border-left:5px solid var(--bad)}
+.fb.info{background:var(--ink-soft);border-left:5px solid var(--ink)}
+.phases{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.phases p.lbl{margin:0 0 6px;color:var(--muted);font-size:.92rem}
+.phbtns{display:flex;flex-wrap:wrap;gap:6px}
+.phbtns button{border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:5px 12px;font-size:.92rem}
+.phbtns button.seen{background:var(--ink-soft);border-color:var(--ink)}
+.hint{margin-top:8px;background:var(--ink-soft);border-radius:6px;padding:8px 12px;display:none}
+.hint.show{display:block}
+.qnav{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.qnav button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--panel)}
+.qnav button.cur{border:2px solid var(--ink);font-weight:700}
+.qnav button.ans{background:var(--ink-soft)}
+.qnav button.good{background:var(--ok-bg);border-color:var(--ok)}
+.qnav button.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.results{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px 20px}
+.results h2{margin-top:0;color:var(--ink)}
+.score{font-size:2rem;font-weight:700;color:var(--ink)}
+.rlist{list-style:none;padding:0;margin:12px 0 0}
+.rlist li{border-top:1px solid var(--line);padding:10px 0}
+.rlist .tag{font-weight:700}
+.rlist .tag.ok{color:var(--ok)} .rlist .tag.bad{color:var(--bad)}
+dialog{border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);max-width:560px;width:calc(100% - 32px)}
+dialog::backdrop{background:rgba(15,21,32,.45)}
+dialog textarea{width:100%;min-height:220px;border:1px solid var(--line);border-radius:6px;padding:8px;background:var(--paper);color:var(--text);font:inherit;font-size:.92rem}
+.hidden{display:none!important}
+@media (prefers-reduced-motion:no-preference){.fb.show{animation:pop .25s ease-out}@keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}}
+
+.tabs{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content;max-width:100%;margin-bottom:16px}
+.tabs button{border:0;border-right:1px solid var(--line);background:var(--panel);padding:8px 16px}
+.tabs button:last-child{border-right:0}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--panel)}
+h2.bloque{font-size:1.05rem;color:var(--ink);margin:18px 0 8px}
+.checks{display:flex;flex-wrap:wrap;gap:8px 18px;width:100%}
+.checks label{display:flex;gap:6px;align-items:center}
+
+.aviso{color:var(--bad);font-weight:700}
+.nota{max-width:80ch;margin:0 0 12px}
+.nivelbar{display:flex;gap:10px;align-items:center;margin-bottom:4px}
+.sesrow{flex-wrap:wrap}
+.sesbtns{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%;padding-left:48px}
+.simlbl{color:var(--muted);margin-left:8px}
+.btn.small{padding:4px 10px;font-size:.9rem}
+.kpis{display:flex;flex-wrap:wrap;gap:24px;margin:8px 0 4px}
+.results h3{font-size:1.05rem;color:var(--ink);margin:20px 0 8px}
+.pbar{display:grid;grid-template-columns:minmax(150px,240px) 1fr auto;gap:10px;align-items:center;margin:6px 0}
+.ptrack{height:14px;background:var(--ink-soft);border-radius:7px;overflow:hidden}
+.pfill{display:block;height:100%;background:var(--ink)}
+.pfill.hi{background:var(--ok)} .pfill.lo{background:var(--bad)}
+.pnum{font-size:.9rem;color:var(--muted);white-space:nowrap}
+.tlist{list-style:none;padding:0;margin:0}
+.tlist li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}
+.muted{color:var(--muted)}
+@media (max-width:600px){.pbar{grid-template-columns:1fr}.sesbtns{padding-left:0}}
+
+.cab{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:0 0 10px;padding:14px 20px;border-radius:20px;background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4FF 100%);border:3px solid #1F4E9C}
+.cab .tit{min-width:0;flex:1 1 340px}
+.cab h1{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:clamp(40px,7vw,78px);line-height:1;margin:0;color:#12337A;letter-spacing:-.5px}
+.cab h1 span{background:linear-gradient(90deg,#12337A,#2F6FE0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cab .sub{margin:6px 0 0;color:#2B4A85;font-weight:600}
+.cab .logo{background:#fff;border-radius:14px;padding:6px 12px;box-shadow:0 2px 0 rgba(18,51,122,.25);flex:0 0 auto}
+.cab .logo img{display:block;height:clamp(56px,9vw,96px);width:auto}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .cab{background:linear-gradient(120deg,#142447 0%,#1A3365 55%,#21427F 100%);border-color:#6FA0F0}:root:not([data-theme="light"]) .cab h1{color:#CFE0FF}:root:not([data-theme="light"]) .cab h1 span{background:linear-gradient(90deg,#CFE0FF,#7FB0FF);-webkit-background-clip:text;background-clip:text;color:transparent}:root:not([data-theme="light"]) .cab .sub{color:#B9CEF5}}
+:root[data-theme="dark"] .cab{background:linear-gradient(120deg,#142447 0%,#1A3365 55%,#21427F 100%);border-color:#6FA0F0}:root[data-theme="dark"] .cab h1{color:#CFE0FF}:root[data-theme="dark"] .cab h1 span{background:linear-gradient(90deg,#CFE0FF,#7FB0FF);-webkit-background-clip:text;background-clip:text;color:transparent}:root[data-theme="dark"] .cab .sub{color:#B9CEF5}
+.cab h1{font-size:clamp(34px,5.2vw,60px)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="cab"><div class="tit"><h1><span>Detectives de problemas</span></h1>
+    <p class="sub">5º y 6º de Primaria · Lee, piensa, resuelve y comprueba</p></div>
+    <div class="logo"><img src="data:image/png;base64,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" alt="Logo Las Chapas Ecos"></div></div>
+  <header class="top">
+    <div class="tools">
+      <label for="nombre" class="hidden">Tu nombre</label>
+      <input id="nombre" placeholder="Escribe tu nombre" autocomplete="off">
+      <select id="grupoPTP6" style="border:1px solid var(--line);border-radius:6px;padding:7px 10px;background:var(--panel);">
+        <option value="">Grupo...</option>
+        <option value="PEP 8">PEP 8</option>
+        <option value="PEP 9">PEP 9</option>
+      </select>
+      <button class="btn" id="btnResumen">📋 Mi resumen</button>
+      <button class="btn primary" id="btnEnviarPTP6">📤 Enviar progreso</button>
+      <span id="envioEstadoPTP6" style="font-size:.85rem;color:var(--muted);"></span>
+    </div>
+  </header>
+  <main id="app"></main>
+</div>
+
+<dialog id="dlgResumen">
+  <h2 style="margin-top:0">Mi resumen</h2>
+  <p>Cópialo y pégalo en la tarea de Classroom.</p>
+  <textarea id="txtResumen" readonly></textarea>
+  <div class="actions">
+    <button class="btn primary" id="btnCopiar">Copiar</button>
+    <button class="btn" id="btnCerrar">Cerrar</button>
+    <span id="copiado" style="align-self:center;color:var(--ok)"></span>
+  </div>
+</dialog>
+
+<script>
+(function(){function mk(){var d={};return{getItem:function(k){return Object.prototype.hasOwnProperty.call(d,k)?d[k]:null;},setItem:function(k,v){d[k]=String(v);},removeItem:function(k){delete d[k];},clear:function(){d={};},key:function(i){return Object.keys(d)[i]||null;},get length(){return Object.keys(d).length;}};}
+['localStorage','sessionStorage'].forEach(function(n){var ok=false;try{var s=window[n];s.setItem('__t','1');s.removeItem('__t');ok=true;}catch(e){}if(!ok){try{Object.defineProperty(window,n,{value:mk(),configurable:true});}catch(e){}}});})();
+</script>
+<script>
+// ===== Utilidades =====
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function gcd(a,b){while(b){[a,b]=[b,a%b];}return a;}
+function lcm(a,b){return a/gcd(a,b)*b;}
+function fr(n,d){const g=gcd(n,d);return (n/g)+"/"+(d/g);}
+function fmt(n){return (Math.round(n*1000)/1000).toLocaleString("es-ES",{maximumFractionDigits:3});}
+function eur(n){return (Math.round(n*100)/100).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";}
+function hora(min){min=((min%1440)+1440)%1440;return Math.floor(min/60)+":"+String(min%60).padStart(2,"0");}
+function kg(g){return fmt(g/1000)+" kg";}
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+function masaTxt(g,L){
+  if(g%1000===0) return (g/1000)+" kg";
+  if(L===1) return Math.random()<0.5?g+" g":fmt(g/1000)+" kg";
+  const r=Math.random();
+  if(L===3 && g>1000 && r<0.5) return Math.floor(g/1000)+" kg y "+((g%1000)/10)+" dag";
+  if(r<0.35) return g+" g"; if(r<0.65) return (g/10)+" dag"; return fmt(g/1000)+" kg";
+}
+const ERR={op:"Elegir una operación equivocada",mcmmcd:"Confundir MCM y MCD",minimo:"Dar un múltiplo o divisor común que no es el que se pide",dato:"Olvidar un dato o un paso",sobra:"No reconocer los datos que sobran",
+  frac:"Sumar numeradores y denominadores",parte:"Calcular la fracción a medias (dividir sin multiplicar o al revés)",resto:"Confundir la parte usada con la que queda",total:"Dividir entre el total equivocado",
+  unid:"Errores con las unidades",geo:"Confundir perímetro y área, o radio y diámetro",orden:"Errores con el orden de las operaciones",supuesto:"Suponer algo que el problema no dice",
+  dec:"Comparar decimales por el número de cifras",conc:"No reconocer el concepto o la propiedad",calc:"Errores de cálculo",cont:"Contar de más o de menos",preg:"No responder exactamente a lo que se pregunta",
+  cond:"No comprobar todas las condiciones del problema",redondeo:"No decidir bien qué hacer con el resto de una división"};
+function MC(p,o,sol,h){ if(new Set(o.map(x=>x.t)).size!==o.length||o.filter(x=>x.ok).length!==1) throw "rep"; return {tipo:"mc",p,o:shuffle(o.slice()),sol,h}; }
+function NUM(p,unidad,ans,wrong,sol,h){ const w={}; for(const k in wrong){ if(Math.abs(Number(k)-ans)>1e-9) w[k]=wrong[k]; } return {tipo:"num",p,unidad,ans,wrong:w,sol,h}; }
+function SEL(p,sel,ans,why,sol,h){ return {tipo:"sel",p,sel,ans,why,sol,h}; }
+const o=(t,why,e)=>({t,why,e});
+function barChart(labels,values,ylab){
+  const mx=Math.max(...values); const top=Math.ceil((mx+1)/2)*2; const H=150, base=180, sc=H/top; let s=''; const paso=top>12?4:2;
+  for(let v=0; v<=top; v+=paso){ const y=base-v*sc; s+=`<line x1="40" y1="${y}" x2="320" y2="${y}" stroke="#9AA7B8" stroke-width="0.6"/><text x="30" y="${y+4}" font-size="12" text-anchor="end" fill="currentColor">${v}</text>`; }
+  labels.forEach((l,i)=>{ const x=70+i*85, h=values[i]*sc; s+=`<rect x="${x}" y="${base-h}" width="50" height="${h}" fill="#3F6BD8"/><text x="${x+25}" y="${base-h-6}" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">${values[i]}</text><text x="${x+25}" y="${base+18}" font-size="13" text-anchor="middle" fill="currentColor">${l}</text>`; });
+  return `<svg class="fig" viewBox="0 0 330 210" width="330" role="img" aria-label="Gráfico de barras: ${labels.map((l,i)=>l+" "+values[i]).join(", ")}">${s}<text x="12" y="14" font-size="12" fill="currentColor">${ylab}</text></svg>`;
+}
+function tabla(cab,filas){return `<div class="tablewrap"><table class="data"><tr>${cab.map(c=>`<th>${c}</th>`).join("")}</tr>${filas.map(f=>`<tr>${f.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</table></div>`;}
+function pictoRow(y,halves){ let s='',x=120; for(let i=0;i<Math.floor(halves/2);i++){ s+=`<rect x="${x}" y="${y}" width="30" height="30" rx="4" fill="#2E8B57"/><path d="M${x+8} ${y+9} h14 M${x+8} ${y+15} h14 M${x+8} ${y+21} h10" stroke="#fff" stroke-width="2"/>`; x+=40; } if(halves%2) s+=`<rect x="${x}" y="${y}" width="15" height="30" rx="2" fill="#2E8B57"/>`; return s; }
+function pictograma(nombres,halves,v,u){
+  const rows=nombres.map((n,i)=>`<text x="10" y="${35+i*45}" font-size="15" fill="currentColor">${n}</text>${pictoRow(14+i*45,halves[i])}`).join("");
+  const yl=14+nombres.length*45+6, w=120+Math.max(...halves.map(h=>Math.ceil(h/2)))*40+20;
+  return `<svg class="fig" viewBox="0 0 ${Math.max(w,330)} ${yl+26}" width="${Math.max(w,330)}" role="img" aria-label="Pictograma: ${nombres.map((n,i)=>n+" "+(halves[i]/2).toString().replace(".",",")+" símbolos").join(", ")}">${rows}
+<g font-size="13" fill="currentColor"><rect x="10" y="${yl}" width="16" height="16" rx="3" fill="#2E8B57"/><text x="32" y="${yl+13}">= ${v} ${u}</text><rect x="120" y="${yl}" width="8" height="16" rx="2" fill="#2E8B57"/><text x="134" y="${yl+13}">= ${fmt(v/2)} ${u}</text></g></svg>`;
+}
+const BLOQUES={num:"Números y operaciones",frac:"Fracciones, decimales y porcentajes",med:"Medida",geo:"Geometría",est:"Estadística y probabilidad"};
+const NIVELES={1:"Básico",2:"Medio",3:"Ampliación"};
+
+// ===== Generadores (L = nivel 1, 2 o 3) =====
+const TIPOS=[
+{id:"mcm",b:"num",t:"Cuándo vuelven a coincidir (MCM)",gen(L){
+  const [a,b]=pick(L===1?[[4,6],[6,8],[6,9],[4,10]]:L===2?[[8,12],[10,15],[6,10],[9,12],[10,12],[8,10]]:[[12,18],[15,20],[12,16],[18,24],[20,30],[14,21]]);
+  const m=lcm(a,b),g=gcd(a,b),k=ri(3,5);
+  const sob=shuffle(["En el colegio hay 450 alumnos.","En la clase hay 24 alumnas.","El aula mide 8 metros de largo."]).slice(0,L===3?2:1);
+  const v=pick(["bus","faro","tareas"]); let texto,p1,f,u,t;
+  if(v==="bus"){t="Los autobuses de la parada";u="minutos";f=x=>hora(540+x);p1="¿A qué hora vuelven a coincidir los dos autobuses?";texto=[...sob,`En la parada, el autobús A pasa cada ${a} minutos y el autobús B cada ${b} minutos.`,"A las 9:00 han pasado los dos a la vez."];}
+  else if(v==="faro"){t="Los dos faros";u="segundos";f=x=>x+" segundos";p1="¿Cuántos segundos pasarán hasta que vuelvan a encenderse a la vez?";texto=[`Un faro se enciende cada ${a} segundos y otro faro cada ${b} segundos.`,"Ahora mismo se han encendido los dos a la vez.",...sob];}
+  else {t="Las tareas de clase";u="días";f=x=>x+" días";p1="¿Dentro de cuántos días volverán a coincidir las dos tareas?";texto=[`Lucía riega las plantas de clase cada ${a} días y Pablo limpia la pecera cada ${b} días.`,"Hoy han hecho las dos tareas el mismo día.",...sob];}
+  const sobT=sob.map(s=>s.replace(".","")).join(" y ");
+  return {t,texto,extra:"",qs:[
+   MC(p1,[{t:f(m),ok:true},o(f(g),`${g} es el MCD de ${a} y ${b}, el mayor número que divide a los dos. Para que vuelvan a coincidir buscas un múltiplo común.`,"mcmmcd"),o(f(a+b),`Has sumado ${a} + ${b}. Vuelven a coincidir en un múltiplo común, no en la suma.`,"op"),o(f(a*b),`${a} × ${b} = ${a*b} es un múltiplo común, pero no el primero: busca el más pequeño.`,"minimo")],
+     `Los múltiplos de ${a} y de ${b} coinciden por primera vez en ${m}, el MCM. Por eso la respuesta es ${f(m)}.`,
+     {c:"Buscas el primer momento en que coinciden los dos.",p:`Escribe los múltiplos de ${a} y los de ${b}.`,e:`Busca el primer número que esté en las dos listas: el MCM de ${a} y ${b}.`,k:`Comprueba que tu número está en la tabla del ${a} y en la del ${b}.`}),
+   MC(L===3?"¿Qué datos no necesitas para responder?":"¿Qué dato no necesitas para responder?",[{t:sobT,ok:true},o(`Cada cuánto se repite cada uno (${a} y ${b} ${u})`,"Sin esos datos no puedes calcular cuándo coinciden.","sobra"),o("El momento en que coincidieron al principio","Es el punto de partida: sin él no sabes desde cuándo contar.","sobra"),o("Ninguno: se usan todos","Hay datos que no aparecen en ningún cálculo.","sobra")],
+     `Sobra${L===3?"n":""}: ${sobT}. No cambia${L===3?"n":""} cuándo coinciden.`,
+     {c:"Subraya todos los datos del texto.",p:"Para cada dato, pregúntate si lo has usado en el cálculo.",e:"Tacha los datos que has usado.",k:"Si cambias un dato que sobra, la respuesta no cambia."}),
+   NUM(`Sin contar la primera vez, ¿cuántas veces coinciden en los próximos ${m*k} ${u}?`,"veces",k,{[k+1]:["Has contado también la primera vez.","cont"],[m*k/a]:[`Eso es cuántas veces se repite solo el primero (cada ${a}).`,"preg"]},
+     `Coinciden cada ${m} ${u}: ${m*k} ÷ ${m} = ${k} veces.`,
+     {c:`¿Cada cuántos ${u} coinciden?`,p:`Divide ${m*k} entre el tiempo que pasa entre dos coincidencias.`,e:`${m*k} ÷ ${m} = ?`,k:`Escribe la lista: ${m}, ${2*m}, ${3*m}…`})
+  ]};}},
+{id:"mcd",b:"num",t:"Repartir en grupos iguales (MCD)",gen(L){
+  const [a,b]=pick(L===1?[[12,18],[16,24],[15,25],[10,15]]:L===2?[[20,30],[18,24],[18,27],[20,32]]:[[24,36],[30,45],[28,42],[36,48]]);
+  const g=gcd(a,b),m=lcm(a,b); const [x,y]=pick([["caramelos de fresa","caramelos de limón"],["lápices","gomas"],["cromos de animales","cromos de planetas"],["galletas","bombones"]]);
+  let d=1; for(let i=2;i<g;i++){ if(g%i===0){d=i;break;} }
+  return {t:"Bolsas iguales",texto:[`Marta tiene ${a} ${x} y ${b} ${y}.`,"Quiere hacer el mayor número posible de bolsas iguales, con lo mismo en cada bolsa y sin que sobre nada."],extra:"",qs:[
+   MC("¿Cuántas bolsas puede hacer como máximo?",[{t:g+" bolsas",ok:true},o(m+" bolsas",`${m} es el MCM, un múltiplo de los dos. Para repartir sin que sobre nada buscas un divisor común.`,"mcmmcd"),o((a+b)+" bolsas","Has sumado las cantidades. Para repartir en grupos iguales hay que buscar divisores comunes.","op"),o(d+(d===1?" bolsa":" bolsas"),`Con ${d} no sobra nada, pero se pueden hacer más bolsas: busca el mayor divisor común.`,"minimo")],
+     `El mayor número que divide a ${a} y a ${b} es ${g} (el MCD). Se pueden hacer ${g} bolsas.`,
+     {c:"Cada bolsa debe ser igual y no puede sobrar nada.",p:`Busca los divisores de ${a} y de ${b}.`,e:`El mayor divisor común es el MCD de ${a} y ${b}.`,k:`Comprueba: ${a} y ${b} se dividen exactamente entre tu número.`}),
+   NUM(`¿Cuántos ${x} lleva cada bolsa?`,"",a/g,{[g]:["Ese es el número de bolsas, no lo que lleva cada una.","preg"]},
+     `${a} ÷ ${g} = ${a/g} ${x} en cada bolsa.`,
+     {c:`Reparte los ${a} ${x} entre las bolsas.`,p:"Divide entre el número de bolsas.",e:`${a} ÷ ${g} = ?`,k:`${g} × tu respuesta debe dar ${a}.`})
+  ]};}},
+{id:"expr",b:"num",t:"Elegir la expresión",gen(L){
+  const B=L===1?pick([5,10]):L===2?pick([10,15,20,25,30]):ri(4,10)*5;
+  const n1=L===1?ri(3,9):L===2?ri(8,25):ri(12,30), n2=L===1?ri(3,9):L===2?ri(10,30):ri(15,35);
+  let p1=L===1?ri(2,3):L===2?ri(2,5):ri(3,6), p2=L===1?ri(1,2):L===2?ri(1,4):ri(2,5); if(p1===p2) throw "rep";
+  const [i1,i2]=pick([["pulseras","llaveros"],["entradas de adulto","entradas infantiles"],["vasos grandes de limonada","vasos pequeños de limonada"],["cuadernos","bolígrafos"]]);
+  const tot=B+n1*p1+n2*p2, eB=(B+n1)*p1+n2*p2, eC=B+(n1+n2)*(p1+p2), eD=n1*p1+n2*p2;
+  const qs=[
+   MC("¿Qué expresión calcula el dinero que hay ahora en la caja?",[{t:`${B} + ${n1} × ${p1} + ${n2} × ${p2}`,ok:true},o(`(${B} + ${n1}) × ${p1} + ${n2} × ${p2}`,`El paréntesis multiplica también los ${B} € que ya había.`,"orden"),o(`${B} + (${n1} + ${n2}) × (${p1} + ${p2})`,"Así cada producto costaría lo mismo. Cada uno tiene su precio.","op"),o(`${n1} × ${p1} + ${n2} × ${p2}`,`Esta expresión olvida los ${B} € que ya había.`,"dato")],
+     "Se suma lo que había y lo que se gana con cada producto. La multiplicación se hace antes que la suma, así que no hacen falta paréntesis.",
+     {c:"¿Qué cantidades de dinero se juntan en la caja?",p:"Escribe cada parte: lo que había y lo de cada producto.",e:"Une las partes con +. Recuerda: × va antes que +.",k:"Calcula cada opción: ¿cuál tiene sentido?"}),
+   NUM("¿Cuánto dinero hay ahora en la caja?","€",tot,{[eB]:["Has puesto un paréntesis que multiplica lo que ya había.","orden"],[eC]:["Has sumado los precios: cada producto tiene el suyo.","op"],[eD]:[`Te faltan los ${B} € que ya había.`,"dato"]},
+     `${B} + ${n1*p1} + ${n2*p2} = ${tot} €.`,
+     {c:"Usa la expresión correcta.",p:"Primero las multiplicaciones, después las sumas.",e:`${n1} × ${p1} = ${n1*p1} y ${n2} × ${p2} = ${n2*p2}.`,k:"Estima redondeando antes de calcular."})];
+  if(L===3){ const gm=ri(3,8),gp=ri(2,6); qs.push(NUM(`Después gastan ${gp} € en cada uno de ${gm} rollos de cordón. ¿Cuánto dinero queda?`,"€",tot-gm*gp,{[tot-gp]:[`Has restado ${gp} € una sola vez. Son ${gm} rollos.`,"dato"],[tot+gm*gp]:["Has sumado lo gastado. El dinero gastado sale de la caja.","op"]},
+     `${tot} − ${gm} × ${gp} = ${tot} − ${gm*gp} = ${tot-gm*gp} €.`,{c:"¿El dinero gastado entra o sale de la caja?",p:"Añade a la expresión lo que gastan.",e:`${gm} × ${gp} = ${gm*gp}.`,k:`Lo que queda tiene que ser menos de ${tot} €.`})); }
+  return {t:"La venta de la clase",texto:[`En la caja de la clase ya había ${B} €.`,`Venden ${n1} ${i1} a ${p1} € la unidad y ${n2} ${i2} a ${p2} € la unidad.`],extra:"",qs};}},
+{id:"div",b:"num",t:"Repartos iguales y datos que sobran",gen(L){
+  const d=L===1?ri(2,4):L===2?ri(3,8):ri(6,12), x=L===1?ri(5,12):L===2?ri(9,25):ri(15,40), tot=d*x;
+  const sob=shuffle(["Su bicicleta pesa 12 kg.","Sara tiene 11 años.","Sale siempre a las 10:00."]).slice(0,L===3?2:1); const sobT=sob.map(s=>s.replace(".","")).join(" y ");
+  return {t:"Sara la ciclista",texto:[`Sara monta en bicicleta. Los últimos ${d} días recorrió la misma distancia cada día.`,sob[0],`En total hizo ${tot} km.`,...sob.slice(1)],extra:"",qs:[
+   MC("¿Cuántos kilómetros recorrió cada día?",[{t:x+" km",ok:true},o((x+1)+" km",`${x+1} × ${d} = ${(x+1)*d}, no ${tot}. Comprueba multiplicando.`,"calc"),o((x-1)+" km",`${x-1} × ${d} = ${(x-1)*d}, no ${tot}. Comprueba multiplicando.`,"calc"),o((tot-d)+" km","Has restado. Repartir a partes iguales es dividir.","op")],
+     `${tot} ÷ ${d} = ${x} km cada día.`,
+     {c:"La misma distancia cada día: es un reparto igual.",p:`Divide el total entre los ${d} días.`,e:`${tot} ÷ ${d} = ?`,k:`Tu respuesta × ${d} debe dar ${tot}.`}),
+   MC(L===3?"¿Qué datos no necesitas?":"¿Qué dato no necesitas?",[{t:sobT,ok:true},o(`El número de días (${d})`,"Sin los días no puedes repartir.","sobra"),o(`Los kilómetros totales (${tot})`,"Es lo que se reparte.","sobra"),o("Ninguno: se usan todos","Hay datos que no aparecen en el cálculo.","sobra")],
+     `Sobra${L===3?"n":""}: ${sobT}.`,
+     {c:"Subraya los datos.",p:"¿Cuáles usaste en la división?",e:"Tacha los que usaste.",k:"Si cambia un dato que sobra, la respuesta no cambia."})
+  ]};}},
+{id:"fcant",b:"frac",t:"Fracción de una cantidad",gen(L){
+  const den=pick(L===1?[3,4]:L===2?[3,4,5,6,8]:[6,8,10,12]); const num=ri(2,den-1); const N=den*(L===1?ri(2,6):L===2?ri(3,12):ri(5,15)), ans=N/den*num;
+  const v=pick([["De los "+N+" libros de la biblioteca de aula, "+num+"/"+den+" son de aventuras.","¿Cuántos libros son de aventuras?","¿Cuántos libros no son de aventuras?","libros"],
+    ["En el viaje van "+N+" alumnos y "+num+"/"+den+" llevan mochila azul.","¿Cuántos alumnos llevan mochila azul?","¿Cuántos no llevan mochila azul?","alumnos"],
+    ["Un depósito tiene "+N+" litros de agua y se gastan "+num+"/"+den+".","¿Cuántos litros se gastan?","¿Cuántos litros quedan?","litros"]]);
+  return {t:"Una parte del total",texto:[v[0]],extra:"",qs:[
+   MC(v[1],[{t:ans+" "+v[3],ok:true},o((N/den)+" "+v[3],`${N/den} es 1/${den}. Te falta multiplicar por ${num}.`,"parte"),o((N*num)+" "+v[3],`Has multiplicado ${N} × ${num} sin dividir entre ${den}.`,"parte"),(()=>{const used=[ans,N/den,N*num]; const c=[[N-ans,"Esa es la otra parte, la que queda.","resto"],[N/num,`Has dividido entre ${num}. Hay que dividir entre el denominador (${den}) y multiplicar por el numerador.`,"parte"],[ans+N/den,`Has calculado una parte de más: ${num}/${den} son ${num} partes de ${N/den}.`,"calc"]].find(x=>Number.isInteger(x[0])&&!used.includes(x[0])); return o(c[0]+" "+v[3],c[1],c[2]);})()],
+     `${N} ÷ ${den} = ${N/den}; ${N/den} × ${num} = ${ans}.`,
+     {c:`Necesitas ${num}/${den} de ${N}.`,p:"Divide entre el denominador y multiplica por el numerador.",e:`${N} ÷ ${den} × ${num} = ?`,k:num/den>0.5?"Es más de la mitad del total.":"Es menos de la mitad del total o justo la mitad."}),
+   NUM(v[2],"",N-ans,{[ans]:["Esa es la parte de la pregunta anterior.","resto"]},
+     `${N} − ${ans} = ${N-ans}.`,
+     {c:"Es la otra parte del total.",p:"Resta del total la parte anterior.",e:`${N} − ${ans} = ?`,k:`Las dos partes juntas deben sumar ${N}.`})
+  ]};}},
+{id:"pict",b:"frac",t:"Pictogramas con medios símbolos",gen(L){
+  const v=L===1?10:L===2?20:pick([12,30]); const nombres=["6ºA","6ºB","6ºC"];
+  const h=[0,0,0].map(()=>ri(2,9)); if(new Set(h).size<3||!h.some(x=>x%2)) throw "rep";
+  const val=h.map(x=>x*v/2), H=h.reduce((a,b)=>a+b,0); const iA=h.findIndex(x=>x%2); const iB=pick([0,1,2].filter(i=>i!==iA));
+  const qs=[
+   MC(`¿Cuántos kilos de papel recogió ${nombres[iA]}?`,[{t:val[iA]+" kg",ok:true},o((Math.floor(h[iA]/2)*v)+" kg","Te has olvidado del medio símbolo.","dato"),o((Math.ceil(h[iA]/2)*v)+" kg","Has contado el medio símbolo como uno entero.","conc"),o((h[iA]/2*v/2)+" kg",`Has contado cada símbolo como ${fmt(v/2)} kg. Un símbolo completo son ${v} kg.`,"conc")],
+     `${Math.floor(h[iA]/2)} símbolos completos son ${Math.floor(h[iA]/2)*v} kg y medio símbolo son ${fmt(v/2)} kg: ${val[iA]} kg.`,
+     {c:"Mira la leyenda: ¿cuánto vale un símbolo y cuánto medio?",p:"Cuenta los símbolos completos y los medios por separado.",e:`Símbolos completos × ${v} + medio símbolo.`,k:"Cuenta otra vez los símbolos de esa fila."}),
+   MC(`¿Qué fracción del papel recogido en total recogió ${nombres[iB]}?`,[{t:fr(val[iB],val[0]+val[1]+val[2]),ok:true},o("1/3","Hay 3 clases, pero no recogieron lo mismo. La fracción depende de los kilos.","supuesto"),o(fr(val[iB],val[0]+val[1]+val[2]-val[iB]),"Has comparado con las otras clases. Hay que dividir entre el total.","total"),o(fr(Math.ceil(h[iB]/2),Math.ceil(h[0]/2)+Math.ceil(h[1]/2)+Math.ceil(h[2]/2)),"Has contado los medios símbolos como enteros.","conc")],
+     `Total: ${val.join(" + ")} = ${val[0]+val[1]+val[2]} kg. ${nombres[iB]}: ${val[iB]}/${val[0]+val[1]+val[2]} = ${fr(val[iB],val[0]+val[1]+val[2])}.`,
+     {c:"La fracción es «parte / total».",p:"Calcula los kilos de cada clase y súmalos.",e:"Escribe la fracción y simplifícala.",k:"También puedes contar medios símbolos: es la misma fracción."})];
+  if(L>=2){ const dd=[2,4,5,3].find(x=>val[iA]%x===0&&val[iA]/x>1); if(dd){ const nn=dd===2?1:dd-1; const r=val[iA]/dd*nn;
+    qs.push(NUM(`Si ${nn}/${dd} del papel de ${nombres[iA]} era cartón, ¿cuántos kilos de cartón había?`,"kg",r,{[val[iA]/dd]:[`Eso es 1/${dd}. Te falta multiplicar por ${nn}.`,"parte"],[val[iA]-r]:["Esa es la parte que no es cartón.","resto"]},
+      `${val[iA]} ÷ ${dd} × ${nn} = ${r} kg.`,{c:`Necesitas ${nn}/${dd} de ${val[iA]}.`,p:"Divide entre el denominador y multiplica por el numerador.",e:`${val[iA]} ÷ ${dd} × ${nn} = ?`,k:"Compara con la mitad."})); } }
+  return {t:"El reciclaje del colegio",texto:["El pictograma muestra el papel que recogió cada clase.",`Cada símbolo completo son ${v} kg y medio símbolo son ${fmt(v/2)} kg.`],extra:pictograma(nombres,h,v,"kg"),qs};}},
+{id:"fsuma",b:"frac",t:"Sumar fracciones y calcular el resto",gen(L){
+  const [a,b,c,d]=pick(L===1?[[1,4,1,2],[1,3,1,6],[1,4,3,8],[1,5,3,10],[1,6,1,3]]:L===2?[[1,4,2,5],[1,3,1,4],[1,2,1,3],[1,5,1,3],[2,5,1,3],[1,4,1,3]]:[[1,6,1,4],[3,10,1,4],[2,9,1,6],[1,8,5,12],[3,8,1,6]]);
+  const Lm=lcm(b,d), sN=a*Lm/b+c*Lm/d, rN=Lm-sN, T=Lm*ri(2,5); if(rN<=0) throw "rep";
+  const wN=a+c, wD=b+d; if(Math.abs((wD-wN)/wD-rN/Lm)<1e-9||Math.abs(wN/wD-rN/Lm)<1e-9) throw "rep";
+  const v=pick([{t:"El huerto escolar",x:[`El huerto mide ${T} m².`,`Se planta ${a}/${b} de tomates y ${c}/${d} de lechugas. El resto son flores.`],q1:"¿Qué fracción del huerto son flores?",q2:"¿Cuántos m² son de flores?",u:"m²"},
+    {t:"La paga de Ana",x:[`Ana recibe ${T} € de paga.`,`Gasta ${a}/${b} en un libro y ${c}/${d} en el cine. El resto lo ahorra.`],q1:"¿Qué fracción de la paga ahorra?",q2:"¿Cuántos euros ahorra?",u:"€"},
+    {t:"El libro de Leo",x:[`Un libro tiene ${T} páginas.`,`El lunes Leo lee ${a}/${b} del libro y el martes ${c}/${d}.`],q1:"¿Qué fracción del libro le queda por leer?",q2:"¿Cuántas páginas le quedan?",u:"páginas"}]);
+  return {t:v.t,texto:v.x,extra:"",qs:[
+   MC(v.q1,[{t:fr(rN,Lm),ok:true},o(fr(sN,Lm),"Esa es la parte usada. Te falta restarla del total.","resto"),o(`${wN}/${wD}`,"Has sumado numeradores y denominadores. Para sumar fracciones hace falta un denominador común.","frac"),o(`${wD-wN}/${wD}`,"Has partido de sumar numeradores y denominadores. Busca primero un denominador común.","frac")],
+     `${a}/${b} + ${c}/${d} = ${a*Lm/b}/${Lm} + ${c*Lm/d}/${Lm} = ${sN}/${Lm}. Queda ${Lm}/${Lm} − ${sN}/${Lm} = ${fr(rN,Lm)}.`,
+     {c:"Lo que piden es el resto: el total menos lo usado.",p:"Suma las dos fracciones y resta del entero.",e:`El MCM de ${b} y ${d} es ${Lm}: pasa las fracciones a /${Lm}.`,k:"La parte usada más la que queda debe dar el entero."}),
+   NUM(v.q2,v.u,T*rN/Lm,{[T*sN/Lm]:["Esa es la parte usada, no la que queda.","resto"],[rN]:["Ese es el numerador. Calcula la fracción del total.","parte"]},
+     `${T} ÷ ${Lm} × ${rN} = ${T*rN/Lm} ${v.u}.`,
+     {c:`Necesitas ${fr(rN,Lm)} de ${T}.`,p:"Divide entre el denominador y multiplica por el numerador.",e:`${T} ÷ ${Lm} × ${rN} = ?`,k:`Lo usado más lo que queda debe sumar ${T}.`})
+  ]};}},
+{id:"pct",b:"frac",t:"Gráficos y porcentajes",gen(L){
+  const T=pick(L===1?[20,50]:L===2?[20,25,50]:[25,40]); const R=ri(T-8,T-2); if((R*100)%T) throw "rep";
+  const ql=shuffle(L===1?[[1,2],[1,4]]:L===2?[[1,2],[1,4],[3,4],[1,5]]:[[2,5],[3,5],[3,10],[3,4]]); let q=null; for(const x of ql){ if((R*x[0])%x[1]===0){q=x;break;} } if(!q) throw "rep";
+  const c1=R*q[0]/q[1], rest=R-c1; if(rest<2) throw "rep"; const c2=ri(1,rest-1), c3=rest-c2;
+  const [labs,preg]=pick([[["Coche","Autobús","Andando"],"¿cómo vienes al colegio?"],[["Fútbol","Baloncesto","Natación"],"¿qué deporte prefieres?"],[["Leer","Dibujar","Música"],"¿qué actividad prefieres?"]]);
+  const pr=R/T*100, p1=c1/R*100; const w={[c1]:["Ese es el número de alumnas, no el porcentaje.","conc"]}; if((c1*100)%T===0) w[c1*100/T]=["Has dividido entre toda la clase. La pregunta habla de las que respondieron.","total"];
+  return {t:"La encuesta de la clase",texto:[`En una clase de ${T} alumnas se hace una encuesta: ${preg}`,"No todas han respondido. El gráfico muestra las respuestas."],extra:barChart(labs,[c1,c2,c3],"Nº de alumnas"),qs:[
+   MC("¿Qué porcentaje de la clase respondió a la encuesta?",[{t:pr+" %",ok:true},o(R+" %",`${R} es el número de alumnas que respondieron, no el porcentaje. Compáralo con ${T}.`,"conc"),o(((T-R)/T*100)+" %","Ese es el porcentaje de las que no respondieron.","preg"),o(T+" %",`${T} es el número total de alumnas.`,"conc")],
+     `Respondieron ${c1} + ${c2} + ${c3} = ${R} de ${T}. ${R} ÷ ${T} × 100 = ${pr} %.`,
+     {c:"Necesitas cuántas respondieron y cuántas hay en total.",p:"Suma las barras y compáralo con el total.",e:`${R} ÷ ${T} × 100 = ?`,k:"Respondieron casi todas: el porcentaje debe ser alto."}),
+   NUM(`De las alumnas que respondieron, ¿qué porcentaje eligió «${labs[0]}»?`,"%",p1,w,
+     `${c1} ÷ ${R} × 100 = ${p1} %.`,
+     {c:"Ojo: el total aquí son las que respondieron.",p:`Divide ${c1} entre ${R}.`,e:`${c1} ÷ ${R} × 100 = ?`,k:"Compara la barra con el total de respuestas."})
+  ]};}},
+{id:"desc",b:"frac",t:"Descuentos",gen(L){
+  const P=pick(L===1?[20,40,60,80,100]:L===2?[20,24,30,40,48,60,80,120]:[36,45,64,75,90,150]), d=pick(L===1?[10,50]:L===2?[10,20,25,50]:[15,20,25,30,35]); const desc=P*d/100, fin=P-desc;
+  const item=pick(["unas zapatillas","una mochila","un juego de mesa","una chaqueta"]); const Bi=[20,50,100,200].find(x=>x>=fin+1)||200;
+  return {t:"Las rebajas",texto:[`En una tienda, ${item} cuestan ${P} €.`,`Hoy tienen un descuento del ${d} %.`],extra:"",qs:[
+   MC("¿Cuánto hay que pagar?",[{t:eur(fin),ok:true},o(eur(desc),"Eso es lo que te descuentan, no lo que pagas.","preg"),o(eur(P-d),`Has restado ${d} €. El ${d} % de ${P} € es ${eur(desc)}.`,"conc"),o(eur(P+desc),"Has sumado el descuento. Un descuento se resta.","op")],
+     `El ${d} % de ${P} es ${fmt(desc)} €. Se paga ${P} − ${fmt(desc)} = ${eur(fin)}.`,
+     {c:"Un descuento hace que pagues menos.",p:`Calcula el ${d} % de ${P} y réstalo.`,e:`${P} × ${d} ÷ 100 = ?`,k:`Debes pagar menos de ${P} €.`}),
+   NUM(`Si pagas con un billete de ${Bi} €, ¿cuánto te devuelven?`,"€",Bi-fin,{[Bi-P]:["Has restado el precio sin descuento.","dato"]},
+     `${Bi} − ${fmt(fin)} = ${eur(Bi-fin)}.`,
+     {c:"La vuelta es lo que sobra del billete.",p:"Resta el precio final del billete.",e:`${Bi} − ${fmt(fin)} = ?`,k:"Suma la vuelta y el precio: debe dar el billete."})
+  ]};}},
+{id:"vuelta",b:"frac",t:"Compras y vuelta (depurar errores)",gen(L){
+  const [i1,i2]=pick([["paquetes de vasos","botellas de zumo"],["bolsas de patatas","refrescos"],["cuadernos","rotuladores"]]);
+  const pr=L===1?[100,150,200,250]:L===2?[75,90,120,125,150,180,240]:[85,135,245,175,95,215]; const c1=pick(pr), c2=pick(pr); if(c2===c1) throw "rep";
+  const n1=L===1?ri(2,4):L===2?ri(2,7):ri(3,8), n2=L===1?ri(2,4):L===2?ri(2,5):ri(2,6); const tot=n1*c1+n2*c2; const Bi=tot<2000?2000:5000; if(tot>=Bi) throw "rep";
+  const v=(Bi-tot)/100,T=tot/100,wA=(Bi-c1-c2)/100,wB=(Bi-n1*c1)/100;
+  return {t:"Compras para la fiesta",texto:[`Compran ${n1} ${i1} y ${n2} ${i2}.`,`Pagan con un billete de ${Bi/100} €.`],extra:tabla(["Producto","Precio"],[[cap(i1),eur(c1/100)],[cap(i2),eur(c2/100)]]),qs:[
+   MC("¿Cuánto dinero les devuelven?",[{t:eur(v),ok:true},o(eur(T),"Ese es el precio de la compra. Te falta restarlo del billete.","dato"),o(eur(wA),"Has restado una unidad de cada producto. Hay que multiplicar por la cantidad.","op"),o(eur(wB),`Te has olvidado de los ${i2}.`,"dato")],
+     `${n1} × ${fmt(c1/100)} + ${n2} × ${fmt(c2/100)} = ${eur(T)}. Vuelta: ${Bi/100} − ${fmt(T)} = ${eur(v)}.`,
+     {c:"La vuelta es lo que sobra del billete.",p:"Calcula el precio de la compra y réstalo del billete.",e:`${n1} × ${fmt(c1/100)} y ${n2} × ${fmt(c2/100)}.`,k:"Estima redondeando los precios."}),
+   SEL(`Depura: la opción ${eur(T)} sale de un error. ¿Cuál?`,["no restar la compra del billete","no multiplicar por la cantidad",`olvidar los ${i2}`],0,{1:[`Sin multiplicar, la vuelta sería ${eur(wA)}.`,"conc"],2:[`Olvidando los ${i2}, la vuelta sería ${eur(wB)}.`,"conc"]},
+     `${eur(T)} es el precio de la compra: falta restarlo del billete.`,
+     {c:`¿Qué representa ${eur(T)} en tu cálculo?`,p:"Repasa los pasos del cálculo correcto.",e:`Busca en qué paso aparece ${eur(T)}.`,k:"Si le das ese dinero a la cajera, ¿qué te devuelve?"})
+  ]};}},
+{id:"orden",b:"frac",t:"Comparar y ordenar decimales",gen(L){
+  const I=ri(1,9); const fr3=new Set(); const vals=[];
+  while(vals.length<5){ let d; if(L===1) d=ri(1,9)*100; else if(L===2) d=Math.random()<0.5?ri(1,9)*100:ri(1,99)*10; else { const r=Math.random(); d=r<0.33?ri(1,9)*100:r<0.66?ri(1,99)*10:ri(1,999); }
+    if(d%1000===0||fr3.has(d)) continue; fr3.add(d); vals.push(I*1000+d); }
+  const txt=x=>fmt(x/1000); const digs=x=>txt(x).split(",")[1].length;
+  const asc=[...vals].sort((a,b)=>a-b); const byLen=[...vals].sort((a,b)=>digs(a)-digs(b)||a-b);
+  const ctx=pick([{t:"El salto de longitud",x:"saltos",u:"m",q:"¿Cuál fue el salto más largo?",max:true},{t:"La carrera de 100 metros",x:"tiempos",u:"s",q:"La que menos tarda gana. ¿Qué tiempo gana la carrera?",max:false},{t:"Los paquetes de correos",x:"pesos",u:"kg",q:"¿Cuál es el paquete más pesado?",max:true}]);
+  const best=ctx.max?asc[4]:asc[0]; const others=vals.filter(x=>x!==best); const trap=[...others].sort((a,b)=>digs(b)-digs(a))[0]; const opp=ctx.max?asc[0]:asc[4];
+  const pool=[...new Set([trap,opp,...shuffle(others)])].filter(x=>x!==best).slice(0,3);
+  const why1=x=>x===opp?(ctx.max?"Ese es el menor. Se pide el mayor.":"Ese es el mayor tiempo: tardó más. Gana el menor."):(digs(x)>digs(best)?"Tener más cifras decimales no hace que un número sea mayor. Compara cifra a cifra.":"Compara las décimas primero, después las centésimas y las milésimas.");
+  const L2=s=>s.map(txt).join(" < "); const swap=[...asc]; [swap[1],swap[2]]=[swap[2],swap[1]];
+  const qs=[
+   MC(ctx.q,[{t:txt(best)+" "+ctx.u,ok:true},...pool.map(x=>o(txt(x)+" "+ctx.u,why1(x),x===opp?"cond":"dec"))],
+     `Ordenados: ${L2(asc)}. ${ctx.max?"El mayor":"El menor"} es ${txt(best)}.`,
+     {c:ctx.max?"Buscas el número mayor.":"En una carrera gana quien tarda menos.",p:"Compara primero la parte entera y después cifra a cifra.",e:"Escribe todos con el mismo número de decimales añadiendo ceros.",k:"0,5 = 0,50 = 0,500."}),
+   MC("¿Qué lista está ordenada de menor a mayor?",[{t:L2(asc),ok:true},(L2(byLen)!==L2(asc)?o(L2(byLen),"Esta lista ordena por número de cifras. Hay que comparar el valor.","dec"):o(L2([asc[0],asc[1],asc[2],asc[4],asc[3]]),"Los dos últimos están cambiados de sitio. Comprueba cada pareja.","dec")),o(L2(swap),"Hay dos números cambiados de sitio. Comprueba cada pareja.","dec"),o(asc.slice().reverse().map(txt).join(" < "),"Está al revés: va de mayor a menor.","preg")],
+     `${L2(asc)}.`,
+     {c:"De menor a mayor: el primero es el más pequeño.",p:"Añade ceros para que todos tengan las mismas cifras decimales.",e:"Compara como si fueran números enteros: 3,200 y 3,025.",k:"Comprueba cada pareja de números seguidos."})];
+  if(L>=2) qs.push(NUM(`¿Cuál es la diferencia entre el mayor y el menor de los ${ctx.x}?`,ctx.u,(asc[4]-asc[0])/1000,{},`${txt(asc[4])} − ${txt(asc[0])} = ${txt(asc[4]-asc[0])}.`,{c:"Busca el mayor y el menor.",p:"Réstalos.",e:"Alinea las comas al restar.",k:"Suma tu resultado al menor: debe dar el mayor."}));
+  return {t:ctx.t,texto:[`Estos son los ${ctx.x} (en ${ctx.u==="m"?"metros":ctx.u==="s"?"segundos":"kilos"}):`],extra:tabla(["Participante","Marca"],shuffle(vals.slice()).map((x,i)=>[String.fromCharCode(65+i),txt(x)+" "+ctx.u])),qs};}},
+{id:"masa",b:"med",t:"Unidades de masa y mejor combinación",gen(L){
+  const nombres=shuffle(["libro","chaqueta","linterna","botella de agua","estuche","toalla"]).slice(0,3);
+  const ms=[0,0,0].map(()=>L===1?ri(3,25)*100:ri(6,50)*50); if(new Set(ms).size<3) throw "rep";
+  const pares=[[0,1],[0,2],[1,2]].map(p=>({p,s:ms[p[0]]+ms[p[1]]})).sort((x,y)=>x.s-y.s);
+  if(pares[0].s===pares[1].s||pares[1].s===pares[2].s) throw "rep"; const s2=pares[1].s,s3=pares[2].s; if(s3-s2<100) throw "rep";
+  const M=s2+Math.floor(ri(0,s3-s2-1)/50)*50; if(M>=s3) throw "rep";
+  const txt=ms.map(g=>masaTxt(g,L)); const nm=p=>`${nombres[p[0]]} y ${nombres[p[1]]}`; const li=ms.indexOf(Math.min(...ms));
+  const art=n=>(/^(botella|chaqueta|linterna|toalla)/.test(n)?"la ":"el ")+n;
+  return {t:"La mochila",texto:[`La mochila de Lucas puede llevar como máximo ${kg(M)}.`,"Puede elegir entre estos objetos:"],extra:tabla(["Objeto","Peso"],nombres.map((n,i)=>[cap(n),txt[i]])),qs:[
+   SEL("¿Cuál es el objeto más ligero?",nombres.map(art),li,Object.fromEntries(nombres.map((n,i)=>[i,[`${cap(n)}: ${txt[i]} = ${kg(ms[i])}. Pasa todos los pesos a kilos para compararlos.`,"unid"]])),
+     `En kilos: ${nombres.map((n,i)=>n+" "+kg(ms[i])).join("; ")}.`,
+     {c:"Los pesos están en unidades distintas.",p:"Pasa todos a la misma unidad.",e:"1 kg = 100 dag = 1000 g.",k:"Ordénalos de menor a mayor."}),
+   MC("¿Qué dos objetos debe llevar para aprovechar mejor el peso sin pasarse?",[{t:cap(nm(pares[1].p)),ok:true},o(cap(nm(pares[2].p)),`Pesan ${kg(s3)}: se pasan de ${kg(M)}.`,"cond"),o(cap(nm(pares[0].p)),`Pesan ${kg(pares[0].s)}. Caben, pero se aprovecha menos el peso.`,"cond"),o("Los tres objetos",`Pesan ${kg(ms[0]+ms[1]+ms[2])}: se pasan de ${kg(M)}.`,"cond")],
+     `${cap(nm(pares[1].p))} pesan ${kg(s2)}: es lo más cerca de ${kg(M)} sin pasarse.`,
+     {c:"Dos condiciones: no pasarse y acercarse lo más posible al máximo.",p:"Pasa todo a kilos y suma cada pareja.",e:"Compara cada suma con el máximo.",k:"Descarta las que se pasan y elige la mayor de las demás."})
+  ]};}},
+{id:"tiempo",b:"med",t:"Medida del tiempo",gen(L){
+  const S=ri(9,12)*60+pick(L===3?[10,20,40,50]:[0,15,30,45]), t=pick(L===1?[15,30,45]:L===2?[15,20,25,30,35,40,45]:[25,35,40,50,55]), k=pick(L===1?[10,15]:[5,10,15,20]), dur=L===1?ri(2,6)*30:ri(6,16)*15;
+  const E=S+dur; const naive=(Math.floor(E/60)*100+E%60)-(Math.floor(S/60)*100+S%60);
+  const lugar=pick(["la visita al museo","la excursión al parque","el partido","el taller de ciencias"]);
+  return {t:"¿A qué hora salgo?",texto:[`${cap(lugar)} empieza a las ${hora(S)} y termina a las ${hora(E)}.`,`Irene tarda ${t} minutos andando desde casa y quiere llegar ${k} minutos antes de que empiece.`],extra:"",qs:[
+   MC("¿A qué hora tiene que salir de casa?",[{t:hora(S-t-k),ok:true},o(hora(S-t),`Así llegaría justo a la hora; quiere llegar ${k} minutos antes.`,"dato"),o(hora(S-k),`Te faltan los ${t} minutos del camino.`,"dato"),o(hora(S-t+k),`Has sumado los ${k} minutos: llegaría tarde.`,"op")],
+     `${hora(S)} − ${t} min − ${k} min = ${hora(S-t-k)}.`,
+     {c:"Hay que ir hacia atrás desde la hora de inicio.",p:"Resta el camino y el tiempo que quiere llegar antes.",e:`${hora(S)} menos ${t+k} minutos.`,k:`Desde tu hora, suma ${t} minutos de camino: debe llegar a las ${hora(S-k)}.`}),
+   NUM(`¿Cuántos minutos dura ${lugar}?`,"min",dur,{[naive]:["Has restado las horas como números normales. Una hora tiene 60 minutos, no 100.","unid"],[dur/60]:["Eso está en horas. La pregunta pide minutos.","unid"]},
+     `De ${hora(S)} a ${hora(E)} hay ${Math.floor(dur/60)} h ${dur%60} min = ${dur} minutos.`,
+     {c:"Calcula el tiempo entre el inicio y el final.",p:"Cuenta horas completas y después los minutos que faltan.",e:"Pasa las horas a minutos: 1 h = 60 min.",k:`Suma tu resultado a ${hora(S)}: debe dar ${hora(E)}.`})
+  ]};}},
+{id:"balanza",b:"med",t:"Balanzas y equivalencias",gen(L){
+  const [A,As,B,Bs,art]=pick([["peras","pera","mandarinas","mandarina","una"],["cajas de zumo","caja de zumo","manzanas","manzana","una"],["melones","melón","naranjas","naranja","un"],["libros","libro","cuadernos","cuaderno","un"]]);
+  const n1=L===1?2:L===2?pick([2,3,4]):pick([3,4]), n2=L===1?ri(3,6):ri(n1+1,9), w=pick(L===1?[50,60,80,100]:L===2?[40,50,60,80,90,120,150,180,200]:[75,90,150,180,120,210]);
+  if(n2<=n1||(n2*w)%n1) throw "rep"; const ans=n2*w/n1;
+  return {t:"La balanza",texto:[`En una balanza equilibrada, ${n1} ${A} pesan lo mismo que ${n2} ${B}.`,`Cada ${Bs} pesa ${w} g.`],extra:"",qs:[
+   MC(`¿Cuánto pesa ${art} ${As}?`,[{t:ans+" g",ok:true},o((n2*w)+" g",`Es lo que pesan las ${n2} ${B} juntas. Falta repartirlo entre ${n1}.`,"dato"),o((n1*w)+" g",`Has multiplicado por ${n1}. El peso que se reparte es el de las ${n2} ${B}.`,"op"),o(((n2-n1)*w)+" g","Has restado las cantidades. Calcula primero el peso de un lado.","op")],
+     `${n2} × ${w} = ${n2*w} g. Repartido entre ${n1}: ${n2*w} ÷ ${n1} = ${ans} g.`,
+     {c:"Los dos lados pesan lo mismo.",p:`Calcula cuánto pesan las ${n2} ${B}.`,e:`Ese peso se reparte entre ${n1} ${A}.`,k:`${n1} × tu respuesta debe dar ${n2*w} g.`})
+  ]};}},
+{id:"perim",b:"geo",t:"Perímetro",gen(L){
+  const a=L===1?ri(2,8):ri(3,15), b=L===1?ri(2,8):ri(3,15); if(a===b) throw "rep"; const p=pick(L===1?[2,3,5]:[3,4,5,6,8,12]); const P=2*(a+b);
+  return {t:"La valla del jardín",texto:[`Un jardín rectangular mide ${a} metros de ancho y ${b} metros de largo.`,`Lo van a rodear con una valla que cuesta ${p} € el metro.`],extra:"",qs:[
+   MC("¿Cuántos metros de valla hacen falta?",[{t:P+" m",ok:true},o((a+b)+" m","Has sumado solo dos lados. El rectángulo tiene cuatro.","dato"),o((a*b)+" m","Eso es el área (lo de dentro). La valla rodea el borde.","geo"),o((2*a+b)+" m","Te falta un lado.","dato")],
+     `Perímetro: ${a} + ${b} + ${a} + ${b} = ${P} m.`,
+     {c:"La valla va por el borde: es el perímetro.",p:"Suma los cuatro lados.",e:`2 × (${a} + ${b}) = ?`,k:"Dibuja el rectángulo y marca los cuatro lados."}),
+   NUM("¿Cuánto cuesta la valla?","€",P*p,{[(a+b)*p]:["Has calculado solo dos lados.","dato"],[a*b*p]:["Has usado el área en vez del perímetro.","geo"]},
+     `${P} × ${p} = ${P*p} €.`,
+     {c:"Cada metro de valla cuesta lo mismo.",p:"Multiplica los metros por el precio.",e:`${P} × ${p} = ?`,k:"Estima redondeando."})
+  ]};}},
+{id:"area",b:"geo",t:"Área y qué hacer con el resto",gen(L){
+  const a=L===1?ri(2,6):ri(3,9),b=L===1?ri(2,6):ri(3,9),c=pick([2,3,4,5]); const A=a*b; if(A%c===0) throw "rep"; const ce=Math.ceil(A/c),fl=Math.floor(A/c);
+  return {t:"El suelo de la sala",texto:[`El suelo de una sala rectangular mide ${a} m por ${b} m.`,`Cada caja de baldosas cubre ${c} m².`],extra:"",qs:[
+   NUM("¿Cuál es el área del suelo?","m²",A,{[2*(a+b)]:["Eso es el perímetro. El área es lo de dentro.","geo"],[a+b]:["Has sumado. El área de un rectángulo es largo × ancho.","op"]},
+     `${a} × ${b} = ${A} m².`,
+     {c:"El área es la superficie que se cubre.",p:"Multiplica largo por ancho.",e:`${a} × ${b} = ?`,k:"Dibuja una cuadrícula y cuenta los cuadrados."}),
+   MC("¿Cuántas cajas hay que comprar como mínimo?",[{t:ce+" cajas",ok:true},o(fl+" cajas","Con esas cajas quedaría suelo sin cubrir. Hay que comprar una más.","redondeo"),o(A+" cajas","Eso son metros cuadrados, no cajas.","unid"),o((A*c)+" cajas","Has multiplicado. Hay que ver cuántas veces cabe la caja en el área.","op")],
+     `${A} ÷ ${c} = ${fl} y sobran ${A%c} m² sin cubrir. Hace falta una caja más: ${ce} cajas.`,
+     {c:"No se pueden comprar trozos de caja.",p:`Divide el área entre ${c}.`,e:"Mira el resto: ¿queda suelo sin cubrir?",k:`${ce} × ${c} debe ser igual o mayor que ${A}.`})
+  ]};}},
+{id:"circ",b:"geo",t:"El círculo",gen(L){
+  const rojaRadio=Math.random()<0.5, r=L===1?ri(2,6):ri(3,12)+(L===3?0.5:0), pideD=Math.random()<0.5;
+  const ang=ri(20,70)*Math.PI/180, x2=100+70*Math.cos(ang), y2=100-70*Math.sin(ang);
+  const radio=`x1="100" y1="100" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"`, diam=`x1="30" y1="100" x2="170" y2="100"`;
+  const svg=`<svg class="fig" viewBox="0 0 200 200" width="200" role="img" aria-label="Círculo con una línea roja y una línea negra"><circle cx="100" cy="100" r="70" fill="none" stroke="#E0B000" stroke-width="5"/><line ${rojaRadio?radio:diam} stroke="#D0352B" stroke-width="4"/><line ${rojaRadio?diam:radio} stroke="currentColor" stroke-width="4"/><circle cx="100" cy="100" r="3.5" fill="currentColor"/></svg>`;
+  const ans=rojaRadio?0:1;
+  return {t:"La zona de aterrizaje",texto:["El helicóptero de rescate tiene que aterrizar dentro del círculo dibujado en el suelo.","El punto marca el centro del círculo."],extra:svg,qs:[
+   SEL("La línea roja es…",["el radio","el diámetro","una cuerda","una tangente"],ans,{[1-ans]:[rojaRadio?"La línea roja va del centro al borde: eso es el radio.":"La línea roja cruza el círculo pasando por el centro: eso es el diámetro.","geo"],2:["Una cuerda une dos puntos del borde sin pasar necesariamente por el centro.","conc"],3:["Una tangente toca el círculo en un solo punto, por fuera.","conc"]},
+     rojaRadio?"Va del centro al borde: es el radio.":"Cruza el círculo de lado a lado pasando por el centro: es el diámetro.",
+     {c:"Fíjate en dónde empieza y dónde acaba la línea roja.",p:"¿Pasa por el centro? ¿Llega a los dos lados?",e:"Radio: del centro al borde. Diámetro: de borde a borde por el centro.",k:"El diámetro mide el doble que el radio."}),
+   NUM(pideD?`Si el radio mide ${fmt(r)} m, ¿cuánto mide el diámetro?`:`Si el diámetro mide ${fmt(2*r)} m, ¿cuánto mide el radio?`,"m",pideD?2*r:r,pideD?{[r/2]:["Has dividido. El diámetro es el doble del radio.","geo"]}:{[4*r]:["Has multiplicado. El radio es la mitad del diámetro.","geo"]},
+     pideD?`Diámetro = 2 × ${fmt(r)} = ${fmt(2*r)} m.`:`Radio = ${fmt(2*r)} ÷ 2 = ${fmt(r)} m.`,
+     {c:"Relaciona el radio y el diámetro.",p:"El diámetro son dos radios seguidos.",e:pideD?`2 × ${fmt(r)} = ?`:`${fmt(2*r)} ÷ 2 = ?`,k:"El diámetro siempre es mayor que el radio."})
+  ]};}},
+{id:"cuerpos",b:"geo",t:"Cuerpos geométricos",gen(L){
+  const C=[{n:"Cubo",d:"Tiene 6 caras cuadradas iguales.",f:{caras:6,vértices:8,aristas:12}},{n:"Pirámide cuadrangular",d:"Tiene una base cuadrada y 4 caras triangulares que se juntan en un vértice.",f:{caras:5,vértices:5,aristas:8}},
+    {n:"Prisma triangular",d:"Tiene dos bases triangulares iguales y 3 caras rectangulares.",f:{caras:5,vértices:6,aristas:9}},{n:"Tetraedro",d:"Tiene 4 caras, todas triángulos iguales.",f:{caras:4,vértices:4,aristas:6}},
+    {n:"Cilindro",d:"Tiene dos bases circulares y una superficie curva."},{n:"Cono",d:"Tiene una base circular, una superficie curva y un vértice."},{n:"Esfera",d:"Solo tiene una superficie curva, sin caras planas ni vértices."},{n:"Dodecaedro regular",d:"Tiene 12 caras pentagonales iguales."}];
+  const s=pick(C); const otros=shuffle(C.filter(x=>x!==s)).slice(0,3); const pol=pick(C.filter(x=>x.f&&(L>1||x.n==="Cubo"||x.n==="Pirámide cuadrangular"))); const prop=pick(L===1?["caras","vértices"]:["caras","vértices","aristas"]);
+  const ow={}; for(const k in pol.f){ if(k!==prop) ow[pol.f[k]]=[`Ese es el número de ${k}, no de ${prop}.`,"conc"]; }
+  const dmin=x=>x.d[0].toLowerCase()+x.d.slice(1);
+  return {t:"El mundo en tres dimensiones",texto:["Los arquitectos usan cuerpos geométricos para diseñar edificios.",`Un cuerpo geométrico cumple esto: ${s.d}`],extra:"",qs:[
+   MC("¿Qué cuerpo geométrico es?",[{t:s.n,ok:true},...otros.map(x=>o(x.n,`${x.n}: ${dmin(x)}`,"conc"))],`${s.n}: ${dmin(s)}`,
+     {c:"Fíjate en la forma y el número de las caras.",p:"¿Tiene caras planas o superficie curva?",e:"Descarta los cuerpos que no cumplen la descripción.",k:"Imagina el cuerpo y cuenta sus caras."}),
+   NUM(`¿Cuántas ${prop} tiene ${pol.n==="Pirámide cuadrangular"?"una":"un"} ${pol.n.toLowerCase()}?`,"",pol.f[prop],ow,
+     `${pol.n}: ${pol.f.caras} caras, ${pol.f.vértices} vértices y ${pol.f.aristas} aristas.`,
+     {c:"Caras: superficies planas. Aristas: donde se juntan dos caras. Vértices: las esquinas.",p:"Imagina o dibuja el cuerpo.",e:`Cuenta las ${prop} una a una sin repetir.`,k:"Comprueba: caras + vértices = aristas + 2."})
+  ]};}},
+{id:"media",b:"est",t:"La media",gen(L){
+  const hi=L===1?10:L===2?12:25; const v=[0,0,0,0].map(()=>ri(2,hi)); const s4=v.reduce((a,b)=>a+b,0); let f=null;
+  for(const x of shuffle(Array.from({length:hi-1},(_,i)=>i+2))){ if((s4+x)%5===0){f=x;break;} } if(f===null) throw "rep"; v.push(f);
+  const sum=s4+f, m=sum/5, mx=Math.max(...v); if(mx===m) throw "rep"; const med=[...v].sort((a,b)=>a-b)[2];
+  const cnt=v.filter(x=>x>m).length; const w4=Number.isInteger(sum/4)?sum/4:m+1;
+  const op=[{t:String(m),ok:true},o(String(sum),"Esa es la suma. La media es la suma dividida entre el número de partidos.","dato"),o(String(mx),"Ese es el dato mayor, no la media.","conc"),o(String(w4),Number.isInteger(sum/4)?"Has dividido entre 4. Hay 5 partidos.":`Revisa: ${sum} ÷ 5 no da ${w4}.`,Number.isInteger(sum/4)?"cont":"calc")];
+  if(med!==m&&!op.some(x=>x.t===String(med))) op[3]=o(String(med),"Ese es el dato del medio al ordenarlos (la mediana), no la media.","conc");
+  return {t:"Los puntos del equipo",texto:["El equipo de baloncesto del colegio ha jugado 5 partidos.","La tabla muestra los puntos que marcó Carla en cada partido."],extra:tabla(["Partido","1","2","3","4","5"],[["Puntos",...v]]),qs:[
+   MC("¿Cuál es la media de puntos de Carla por partido?",op,`Suma: ${v.join(" + ")} = ${sum}. Media: ${sum} ÷ 5 = ${m}.`,
+     {c:"La media reparte el total a partes iguales entre los partidos.",p:"Suma los puntos y divide entre el número de partidos.",e:`${sum} ÷ 5 = ?`,k:"La media está entre el dato menor y el mayor."}),
+   NUM("¿En cuántos partidos marcó más puntos que la media?","",cnt,{},`La media es ${m}. Marcó más de ${m} en ${cnt} partidos.`,
+     {c:"Compara cada partido con la media.",p:"Marca los partidos con más puntos que la media.",e:"Cuenta los que has marcado.",k:"Un partido con exactamente la media no cuenta."})
+  ]};}},
+{id:"prob",b:"est",t:"Probabilidad",gen(L){
+  const hi=L===1?6:L===2?9:15; const r=ri(2,hi),a=ri(2,hi),v=ri(2,hi); if(new Set([r,a,v]).size<3) throw "rep"; const T=r+a+v; if(a*3===T) throw "rep";
+  const cols=["roja","azul","verde"], n=[r,a,v]; const mx=n.indexOf(Math.max(...n));
+  return {t:"La bolsa de bolas",texto:[`En una bolsa hay ${r} bolas rojas, ${a} bolas azules y ${v} bolas verdes.`,"Sin mirar, se saca una bola."],extra:"",qs:[
+   SEL("¿De qué color es más probable que salga la bola?",["roja","azul","verde","las tres igual"],mx,{...Object.fromEntries([0,1,2].filter(i=>i!==mx).map(i=>[i,[`Hay ${n[i]} bolas ${cols[i]}s y ${n[mx]} bolas ${cols[mx]}s.`,"conc"]])),3:["No hay el mismo número de bolas de cada color.","supuesto"]},
+     `Es más probable el color con más bolas: ${cols[mx]} (${n[mx]} bolas).`,
+     {c:"¿De qué color hay más bolas?",p:"Compara las tres cantidades.",e:"Más bolas de un color, más probable.",k:"Si hubiera las mismas, serían igual de probables."}),
+   MC("¿Cuál es la probabilidad de sacar una bola azul?",[{t:`${a}/${T}`,ok:true},o(`${a}/${T-a}`,"Has comparado las azules con las demás. Hay que dividir entre el total de bolas.","total"),o("1/3","Hay 3 colores, pero no el mismo número de bolas de cada uno.","supuesto"),o(`1/${a}`,"La probabilidad es: casos favorables entre casos posibles.","conc")],
+     `Casos favorables: ${a}. Casos posibles: ${T}. Probabilidad: ${a}/${T}.`,
+     {c:"¿Cuántas bolas azules hay y cuántas en total?",p:"Probabilidad = casos favorables ÷ casos posibles.",e:`Total: ${r} + ${a} + ${v} = ${T}.`,k:"La probabilidad está entre 0 y 1."})
+  ]};}}
+];
+function generar(id,L){ L=L||2; const T=TIPOS.find(x=>x.id===id); for(let i=0;i<120;i++){ try{ const c=T.gen(L); c.tipoId=id; c.nivel=L; c.tema=BLOQUES[T.b]; return c; }catch(e){ if(e!=="rep") throw e; } } throw new Error("No se pudo generar "+id); }
+
+// ===== Problemas de las sesiones (fijos, del dossier) =====
+const SVG_BALANZA = `<svg class="fig" viewBox="0 0 320 150" width="320" role="img" aria-label="Balanza equilibrada: 2 cajas de zumo a la izquierda y 5 manzanas a la derecha">
+<line x1="160" y1="40" x2="160" y2="135" stroke="currentColor" stroke-width="4"/><polygon points="130,140 190,140 160,120" fill="currentColor"/>
+<line x1="40" y1="45" x2="280" y2="45" stroke="currentColor" stroke-width="4"/>
+<line x1="70" y1="45" x2="70" y2="70" stroke="currentColor" stroke-width="2"/><line x1="250" y1="45" x2="250" y2="70" stroke="currentColor" stroke-width="2"/>
+<path d="M25 70 h90 l-10 12 h-70z" fill="#9AA7B8"/><path d="M205 70 h90 l-10 12 h-70z" fill="#9AA7B8"/>
+<rect x="40" y="38" width="24" height="32" fill="#F5A623" rx="2"/><rect x="74" y="38" width="24" height="32" fill="#F5A623" rx="2"/>
+<g fill="#D94A3D"><circle cx="218" cy="62" r="8"/><circle cx="236" cy="62" r="8"/><circle cx="254" cy="62" r="8"/><circle cx="272" cy="62" r="8"/><circle cx="245" cy="48" r="8"/></g></svg>`;
+const CONTEXTOS = [
+{ id:"bus", tipo:"mcm", sim:["mcm","mcd"], t:"Los autobuses de la excursión", tema:"MCM y datos que sobran",
+  texto:["El colegio tiene 450 alumnos y la excursión es el 17 de enero.","En la parada, el autobús A pasa cada 12 minutos y el autobús B pasa cada 18 minutos.","A las 9:00 han pasado los dos autobuses a la vez."], extra:"",
+  qs:[
+  {tipo:"mc", p:"¿A qué hora vuelven a coincidir los dos autobuses en la parada?",
+   o:[o("9:06","6 es el MCD de 12 y 18, el número más grande que divide a los dos. Aquí buscas cuándo vuelven a coincidir: un múltiplo común.","mcmmcd"),o("9:30","Has sumado 12 + 18. Pero los autobuses coinciden en un múltiplo común de 12 y 18, no en su suma.","op"),{t:"9:36",ok:true},o("12:36","Has multiplicado 12 × 18 = 216 minutos. Es un múltiplo común, pero no el primero: busca el más pequeño.","minimo")],
+   sol:"El MCM de 12 y 18 es 36. Los autobuses vuelven a coincidir 36 minutos después: a las 9:36.",
+   h:{c:"Busca un momento en el que pasen los dos a la vez.",p:"Escribe las horas de paso de cada autobús: A a las 9:12, 9:24…; B a las 9:18, 9:36…",e:"Busca el primer número que esté en las dos listas. Es el MCM de 12 y 18.",k:"Comprueba que 36 está en la tabla del 12 y en la del 18."}},
+  {tipo:"mc", p:"¿Qué datos no necesitas para responder a la pregunta anterior?",
+   o:[{t:"El número de alumnos y la fecha de la excursión",ok:true},o("Los minutos que tarda en pasar cada autobús","Sin los 12 y los 18 minutos no puedes calcular cuándo coinciden.","sobra"),o("La hora a la que pasan juntos (9:00)","La hora 9:00 es el punto de partida.","sobra"),o("Ninguno: se usan todos los datos","Fíjate en el número de alumnos y en la fecha: ¿cambian la hora?","sobra")],
+   sol:"Sobran el número de alumnos (450) y la fecha (17 de enero).",
+   h:{c:"Subraya los datos del texto.",p:"Tacha los datos que no aparecen en tu cálculo.",e:"Repasa tu cálculo de la pregunta 1: ¿qué números usaste?",k:"Si cambias un dato que sobra, la respuesta no cambia."}},
+  {tipo:"num", p:"¿Cuántas veces coinciden después de las 9:00 y hasta las 12:00 incluidas?", unidad:"veces", ans:5,
+   wrong:{"6":["Has contado también las 9:00. La pregunta dice «después de las 9:00».","cont"],"4":["Te falta una: las 12:00 están incluidas.","cont"]},
+   sol:"De 9:00 a 12:00 hay 180 minutos y 180 ÷ 36 = 5: a las 9:36, 10:12, 10:48, 11:24 y 12:00.",
+   h:{c:"¿Cada cuánto coinciden? ¿Cuántos minutos hay de 9:00 a 12:00?",p:"Divide los minutos totales entre los minutos que pasan entre una coincidencia y otra.",e:"180 ÷ 36 = ?",k:"Escribe la lista de horas y cuéntalas."}}]},
+{ id:"feria", tipo:"expr", sim:["expr"], t:"La feria solidaria", tema:"Elegir la expresión",
+  texto:["En la caja de la clase ya había 20 €.","Para la feria solidaria venden 18 pulseras y 25 llaveros."],
+  extra:tabla(["Producto","Precio"],[["Pulsera","3 €"],["Llavero","2 €"]]),
+  qs:[
+  {tipo:"mc", p:"¿Qué expresión calcula el dinero que hay ahora en la caja?",
+   o:[{t:"20 + 18 × 3 + 25 × 2",ok:true},o("(20 + 18) × 3 + 25 × 2","El paréntesis hace que los 20 € también se multipliquen por 3.","orden"),o("20 + (18 + 25) × (3 + 2)","Así cada producto costaría 5 €.","op"),o("18 × 3 + 25 × 2","Esta expresión olvida los 20 € que ya había.","dato")],
+   sol:"20 + 18 × 3 + 25 × 2. La multiplicación se hace antes que la suma.",
+   h:{c:"¿Qué tres cantidades de dinero se juntan en la caja?",p:"Escribe cada parte: lo que había, lo de las pulseras y lo de los llaveros.",e:"Une las partes con +. Recuerda: × se hace antes que +.",k:"Calcula cada opción."}},
+  {tipo:"num", p:"¿Cuánto dinero hay ahora en la caja?", unidad:"€", ans:124,
+   wrong:{"164":["Has hecho (20 + 18) × 3 + 25 × 2. Los 20 € no se multiplican.","orden"],"235":["Has multiplicado 43 productos por 5 €.","op"],"104":["Te faltan los 20 € que ya había en la caja.","dato"]},
+   sol:"20 + 54 + 50 = 124 €.",
+   h:{c:"Usa la expresión de la pregunta anterior.",p:"Primero las multiplicaciones, después las sumas.",e:"18 × 3 = 54 y 25 × 2 = 50.",k:"Estima: unos 50 € + 50 € + 20 €."}},
+  {tipo:"num", p:"Gastan 4 € en cada uno de 6 rollos de cordón. ¿Cuánto dinero queda en la caja?", unidad:"€", ans:100,
+   wrong:{"120":["Has restado 4 € una sola vez. Son 6 rollos.","dato"],"148":["Has sumado los 24 € en lugar de restarlos.","op"]},
+   sol:"124 − 6 × 4 = 124 − 24 = 100 €.",
+   h:{c:"¿El dinero gastado entra o sale de la caja?",p:"Añade a la expresión anterior lo que gastan.",e:"6 × 4 = 24; 124 − 24 = ?",k:"Lo que queda tiene que ser menos de 124 €."}}]},
+{ id:"reparto", tipo:"div", sim:["div","balanza"], t:"El reparto y la balanza", tema:"Fracción como división",
+  texto:["Tres amigas reparten 7 pizzas a partes iguales. Cada pizza cuesta 9 €.","Después pesan la compra: 2 cajas de zumo pesan lo mismo que 5 manzanas. Cada manzana pesa 150 g."], extra:SVG_BALANZA,
+  qs:[
+  {tipo:"mc", p:"¿Cuánta pizza come cada amiga?",
+   o:[o("3/7 de pizza","Has dividido al revés: 3 ÷ 7.","op"),{t:"2 pizzas y 1/3",ok:true},o("2 pizzas y 1/7","Sobra 1 pizza, que se reparte entre 3: a cada una le toca 1/3.","conc"),o("4 pizzas","Has restado 7 − 3. Repartir es dividir.","op")],
+   sol:"7 ÷ 3 = 7/3 = 2 y 1/3.",
+   h:{c:"¿Qué se reparte y entre cuántas?",p:"Repartir a partes iguales es dividir: 7 ÷ 3.",e:"7 entre 3 da 2 y sobra 1. Esa pizza se parte en 3.",k:"3 × (2 y 1/3) debe dar 7."}},
+  {tipo:"mc", p:"¿Cuánto pesa una caja de zumo?",
+   o:[o("300 g","Has calculado 2 × 150.","op"),{t:"375 g",ok:true},o("750 g","750 g pesan las 2 cajas juntas. Falta dividir entre 2.","dato"),o("60 g","Las 5 manzanas pesan 5 × 150 g; ese peso se reparte entre 2 cajas.","op")],
+   sol:"5 × 150 = 750 g; 750 ÷ 2 = 375 g.",
+   h:{c:"¿Qué dos cosas pesan lo mismo?",p:"Calcula primero cuánto pesan las 5 manzanas.",e:"5 × 150 = 750.",k:"2 × 375 = 750."}},
+  {tipo:"sel", p:"Completa: el dato que no se necesita en este problema es…", sel:["el precio de cada pizza","el peso de cada manzana","el número de amigas"], ans:0,
+   why:{1:["Sin el peso de la manzana no puedes calcular el peso de la caja.","sobra"],2:["Sin el número de amigas no puedes hacer el reparto.","sobra"]},
+   sol:"El precio de cada pizza (9 €) no se usa.",
+   h:{c:"Repasa qué números usaste.",p:"Tacha los datos que has usado.",e:"El que queda sin tachar es el que sobra.",k:"Si el precio cambiara, ¿cambiaría alguna respuesta?"}}]},
+{ id:"reciclaje", tipo:"pict", sim:["pict","fcant"], t:"El reciclaje del colegio", tema:"Pictogramas y fracciones",
+  texto:["El pictograma muestra el papel que recogió cada clase.","Cada símbolo completo son 20 kg y medio símbolo son 10 kg."], extra:pictograma(["6ºA","6ºB","5ºA"],[7,4,3],20,"kg"),
+  qs:[
+  {tipo:"mc", p:"¿Cuántos kilos de papel recogió 6ºA?",
+   o:[o("35 kg","Has contado cada símbolo como 10 kg.","conc"),o("60 kg","Te has olvidado del medio símbolo.","dato"),{t:"70 kg",ok:true},o("80 kg","Has contado el medio símbolo como uno entero.","conc")],
+   sol:"3 × 20 + 10 = 70 kg.",
+   h:{c:"Mira la leyenda.",p:"Cuenta los símbolos completos y los medios por separado.",e:"3 × 20 + 10 = ?",k:"3 símbolos y medio: entre 60 y 80 kg."}},
+  {tipo:"mc", p:"¿Qué fracción del papel recogido en total recogió 6ºB?",
+   o:[{t:"2/7",ok:true},o("2/5","Revisa el total: 70 + 40 + 30.","calc"),o("1/3","Hay 3 clases, pero no recogieron lo mismo.","supuesto"),o("1/4","Calcula los kilos de cada clase.","calc")],
+   sol:"40/140 = 2/7.",
+   h:{c:"La fracción es «parte / total».",p:"Calcula los kilos de cada clase y súmalos.",e:"40/140 se simplifica entre 20.",k:"Con símbolos: 2 de 7."}},
+  {tipo:"num", p:"Si 3/4 del papel de 6ºA era cartón, ¿cuántos kilos de cartón había?", unidad:"kg", ans:52.5,
+   wrong:{"17.5":["Esto es 1/4 de 70. Te falta multiplicar por 3.","parte"],"210":["Has multiplicado 70 × 3 sin dividir entre 4.","parte"]},
+   sol:"70 ÷ 4 × 3 = 52,5 kg.",
+   h:{c:"Necesitas 3/4 de 70.",p:"Divide entre el denominador y multiplica por el numerador.",e:"70 ÷ 4 × 3.",k:"Más de la mitad: más de 35 kg."}}]},
+{ id:"huerto", tipo:"fsuma", sim:["fsuma"], t:"El huerto escolar", tema:"Suma y resta de fracciones",
+  texto:["El huerto del colegio mide 40 m².","Se planta 1/4 del huerto de tomates y 2/5 de lechugas. El resto son flores."], extra:"",
+  qs:[
+  {tipo:"sel", p:"Antes de calcular, estima: la parte de flores es…", sel:["menos de la mitad del huerto","más de la mitad del huerto","justo la mitad del huerto"], ans:0,
+   why:{1:["1/4 + 2/5 ya es más de la mitad. Queda menos de la mitad para flores.","calc"],2:["1/4 + 2/5 no es exactamente la mitad.","calc"]},
+   sol:"Tomates y lechugas ocupan más de la mitad: las flores, menos.",
+   h:{c:"Compara 1/4 y 2/5 con 1/2.",p:"Si tomates y lechugas pasan de la mitad, ¿qué queda?",e:"1/4 + 2/5 es casi 1/4 + 1/2.",k:"Lo comprobarás después."}},
+  {tipo:"mc", p:"¿Qué fracción del huerto son flores?",
+   o:[{t:"7/20",ok:true},o("13/20","13/20 es la parte de tomates y lechugas. Falta restarla.","resto"),o("6/9","Has sumado numeradores y denominadores (3/9).","frac"),o("3/9","Para sumar 1/4 y 2/5 hay que buscar un denominador común.","frac")],
+   sol:"5/20 + 8/20 = 13/20. Flores: 7/20.",
+   h:{c:"Las flores son «el resto».",p:"Suma 1/4 y 2/5 con denominador común y resta del entero.",e:"MCM(4, 5) = 20.",k:"7/20 es menos de la mitad."}},
+  {tipo:"num", p:"¿Cuántos metros cuadrados son de flores?", unidad:"m²", ans:14,
+   wrong:{"26":["26 m² son de tomates y lechugas.","resto"],"7":["7 es el numerador. Calcula 7/20 de 40 m².","parte"]},
+   sol:"40 ÷ 20 × 7 = 14 m².",
+   h:{c:"Necesitas 7/20 de 40 m².",p:"Divide entre el denominador y multiplica por el numerador.",e:"40 ÷ 20 × 7 = ?",k:"10 + 16 + flores = 40."}}]},
+{ id:"mochila", tipo:"masa", sim:["orden","masa"], t:"La mochila de la excursión", tema:"Decimales y unidades de masa",
+  texto:["La mochila de Lucas puede pesar como máximo 4,5 kg.","Lleva seguro la botella y el bocadillo. Puede añadir más objetos de la tabla."],
+  extra:tabla(["Objeto","Peso"],[["Botella","0,75 kg"],["Bocadillo","350 g"],["Libro","1 kg y 20 dag"],["Chaqueta","2,1 kg"],["Linterna","45 dag"]]),
+  qs:[
+  {tipo:"sel", p:"¿Cuál es el objeto más ligero?", sel:["la linterna","el bocadillo","la botella","el libro"], ans:1,
+   why:{0:["45 dag = 0,45 kg. El bocadillo pesa 0,35 kg.","unid"],2:["La botella pesa 0,75 kg.","unid"],3:["El libro pesa 1,2 kg.","unid"]},
+   sol:"Bocadillo 0,35; linterna 0,45; botella 0,75; libro 1,2; chaqueta 2,1 kg.",
+   h:{c:"Los pesos están en unidades distintas.",p:"Pasa todos a kilos.",e:"1 kg = 100 dag = 1000 g.",k:"Ordénalos."}},
+  {tipo:"mc", p:"¿Qué objetos debe añadir para aprovechar mejor el peso sin pasarse?",
+   o:[{t:"Libro y chaqueta",ok:true},o("Chaqueta y linterna","Pesaría 3,65 kg: se aprovecha menos.","cond"),o("Libro y linterna","Pesaría 2,75 kg: queda mucho sin aprovechar.","cond"),o("Libro, chaqueta y linterna","Pesaría 4,85 kg: se pasa.","cond")],
+   sol:"1,1 + 1,2 + 2,1 = 4,4 kg.",
+   h:{c:"No pasar de 4,5 kg y acercarse lo más posible.",p:"Calcula lo que ya pesa y lo que queda libre.",e:"4,5 − 1,1 = 3,4 kg libres.",k:"Suma cada opción."}},
+  {tipo:"num", p:"¿Cuánto pesará la mochila con esos objetos?", unidad:"kg", ans:4.4,
+   wrong:{"4.85":["Esa es la mochila con los tres objetos.","cond"],"3.3":["Te falta sumar la botella y el bocadillo.","dato"]},
+   sol:"0,75 + 0,35 + 1,2 + 2,1 = 4,4 kg.",
+   h:{c:"Suma los cuatro objetos.",p:"Todo en kilos.",e:"Puedes usar la calculadora.",k:"Menos de 4,5 kg."}}]},
+{ id:"compras", tipo:"vuelta", sim:["vuelta","desc"], t:"Compras para la fiesta", tema:"Depurar errores",
+  texto:["Para la fiesta de la clase compran 6 paquetes de vasos y 4 botellas de zumo.","Pagan con un billete de 20 €."],
+  extra:tabla(["Producto","Precio"],[["Paquete de vasos","1,25 €"],["Botella de zumo","1,80 €"]]),
+  qs:[
+  {tipo:"mc", p:"¿Cuánto dinero les devuelven?",
+   o:[{t:"5,30 €",ok:true},o("14,70 €","Es lo que cuesta la compra. Falta restarlo del billete.","dato"),o("16,95 €","Has restado un paquete y una botella. Hay que multiplicar.","op"),o("12,50 €","Has olvidado las botellas.","dato")],
+   sol:"7,50 + 7,20 = 14,70 €. 20 − 14,70 = 5,30 €.",
+   h:{c:"«Devolver» es lo que sobra del billete.",p:"Calcula la compra y réstala de 20 €.",e:"6 × 1,25 y 4 × 1,80.",k:"La vuelta ronda los 5 €."}},
+  {tipo:"sel", p:"Depura: la opción 14,70 € sale de un error. ¿Cuál?", sel:["no restar la compra del billete","no multiplicar por la cantidad","olvidar las botellas"], ans:0,
+   why:{1:["Sin multiplicar, la compra sería 3,05 €.","conc"],2:["Olvidando las botellas, la compra sería 7,50 €.","conc"]},
+   sol:"14,70 € es el precio de la compra.",
+   h:{c:"¿Qué representa 14,70?",p:"Repasa los pasos.",e:"Busca en qué paso aparece.",k:"¿Qué te devuelve la cajera?"}},
+  {tipo:"sel", p:"Depura: la opción 12,50 € sale de un error. ¿Cuál?", sel:["no restar la compra del billete","no multiplicar por la cantidad","olvidar las botellas"], ans:2,
+   why:{0:["Sin restar, el resultado sería 14,70 €.","conc"],1:["Sin multiplicar, la vuelta sería 16,95 €.","conc"]},
+   sol:"20 − 7,50 = 12,50 €: solo se han restado los vasos.",
+   h:{c:"Busca un cálculo que dé 12,50.",p:"Resta de 20 solo una parte de la compra.",e:"20 − 7,50 = ?",k:"¿Qué producto falta?"}}]},
+{ id:"encuesta", tipo:"pct", sim:["pct"], t:"La encuesta del transporte", tema:"Gráficos y porcentajes",
+  texto:["En una clase de 25 alumnas se hace una encuesta: ¿cómo vienes al colegio?","No todas han respondido. El gráfico muestra las respuestas."],
+  extra:barChart(["Coche","Autobús","Andando"],[11,6,5],"Nº de alumnas"),
+  qs:[
+  {tipo:"mc", p:"¿Qué porcentaje de la clase respondió a la encuesta?",
+   o:[{t:"88 %",ok:true},o("22 %","22 es el número de alumnas que respondieron, no el porcentaje.","conc"),o("12 %","Es el porcentaje de las que no respondieron.","preg"),o("25 %","25 es el total de alumnas.","conc")],
+   sol:"22 ÷ 25 = 0,88 = 88 %.",
+   h:{c:"¿Cuántas respondieron y cuántas hay?",p:"Suma las barras y compara con 25.",e:"22 ÷ 25 × 100 = ?",k:"Debe ser alto."}},
+  {tipo:"num", p:"De las alumnas que respondieron, ¿qué porcentaje viene en coche?", unidad:"%", ans:50,
+   wrong:{"44":["Has dividido entre 25. Son 22 las que respondieron.","total"],"11":["11 es el número, no el porcentaje.","conc"]},
+   sol:"11 ÷ 22 = 0,5 = 50 %.",
+   h:{c:"El total aquí son las que respondieron.",p:"Divide las de coche entre las que respondieron.",e:"11 ÷ 22 × 100 = ?",k:"11 es la mitad de 22."}},
+  {tipo:"mc", p:"¿Se puede saber cómo vienen al colegio las alumnas que no respondieron?",
+   o:[o("Sí, en coche, porque es lo más frecuente","Eso es suponer algo que el problema no dice.","supuesto"),o("Sí, se reparten igual que las demás","Es una suposición.","supuesto"),{t:"No, no hay datos de ellas",ok:true},o("Sí, son 3 y vienen andando","Son 3, pero no sabemos cómo vienen.","supuesto")],
+   sol:"No se puede saber: el gráfico solo recoge a las 22 que respondieron.",
+   h:{c:"¿Qué sabes de las que no respondieron?",p:"Separa lo que dice el problema de lo que supones.",e:"Busca algún dato de esas 3 alumnas.",k:"Sin datos no se puede afirmar nada."}}]}
+];
+
+// ===== Datos guardados (por alumna) =====
+const KEY="ptp6-v3";
+let DB=(()=>{ try{ const v=JSON.parse(localStorage.getItem(KEY)); if(v&&v.perfiles) return v; }catch(e){} return {perfiles:{},ultimo:""}; })();
+function guardar(){ try{ localStorage.setItem(KEY,JSON.stringify(DB)); }catch(e){} }
+const clave=n=>(n||"").trim().toLowerCase().replace(/\s+/g," ")||"(sin nombre)";
+function perfil(){ const k=clave(DB.ultimo); return DB.perfiles[k]||(DB.perfiles[k]={nombre:(DB.ultimo||"").trim(),res:{},log:[],sims:[]}); }
+function hoy(){ const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+const fechaES=s=>{const [y,m,d]=s.split("-");return `${+d}/${+m}/${y}`;};
+function registrar(t,r,pistas,errs,src){ perfil().log.push({d:hoy(),t,r,p:pistas,e:errs,s:src}); guardar(); }
+const tipoDe=id=>TIPOS.find(t=>t.id===id);
+
+let tab="tipos", nivelTipos=2, sim=null, timerId=null;
+const app=document.getElementById("app"), inNombre=document.getElementById("nombre");
+inNombre.value=DB.ultimo||"";
+inNombre.addEventListener("change",()=>{ DB.ultimo=inNombre.value.trim(); const P=perfil(); if(!P.nombre) P.nombre=DB.ultimo; guardar(); inicio(); });
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function words(t){ return t.split(/(\s+)/).map(w=>/^\s+$/.test(w)?w:`<span class="w">${esc(w)}</span>`).join(""); }
+function parseNum(v){ v=String(v).replace(/€|%|\s|kg|m²|m2|min|veces/gi,"").replace(",","."); if(v===""||isNaN(Number(v))) return null; return Number(v); }
+
+// ===== Estadísticas =====
+function estadisticas(filtro){
+  const log=perfil().log.filter(filtro||(()=>true)); const porTipo={}, porBloque={}, errs={}; let tot={n:0,primera:0,repetir:0,sin:0,p:0};
+  for(const x of log){ const T=tipoDe(x.t); if(!T) continue;
+    const a=porTipo[x.t]||(porTipo[x.t]={n:0,primera:0,repetir:0,sin:0,p:0}); const b=porBloque[T.b]||(porBloque[T.b]={n:0,primera:0,repetir:0,sin:0,p:0});
+    for(const e of (x.e||[])) errs[e]=(errs[e]||0)+1;
+    if(x.r==="x") continue;
+    for(const z of [a,b,tot]){ z.n++; z[x.r]++; z.p+=x.p||0; } }
+  const pct=z=>z.n?Math.round(z.primera/z.n*100):0;
+  const repasar=[], domina=[], marcha=[];
+  for(const k in porTipo) if(!porTipo[k].n) delete porTipo[k];
+  for(const k in porBloque) if(!porBloque[k].n) delete porBloque[k];
+  for(const id in porTipo){ const z=porTipo[id]; const pc=z.primera/z.n;
+    if(pc<0.6||z.sin>=2) repasar.push(id); else if(pc>=0.8&&z.n>=5) domina.push(id); else marcha.push(id); }
+  const topErr=Object.entries(errs).sort((a,b)=>b[1]-a[1]);
+  return {log,porTipo,porBloque,tot,pct,repasar,domina,marcha,topErr};
+}
+
+// ===== Inicio y pestañas =====
+function inicio(){
+  stopTimer();
+  const nom=(DB.ultimo||"").trim();
+  app.innerHTML=`
+  <section class="intro">
+    <p><b>Cómo se trabaja:</b> el texto está a la izquierda y la pregunta a la derecha. Lee con calma, subraya los datos y piensa antes de elegir. Puedes usar tu calculadora.</p>
+    ${nom?"":`<p class="aviso">Escribe tu nombre arriba para que tus resultados se guarden a tu nombre.</p>`}
+  </section>
+  <div class="tabs" role="tablist">
+    ${[["tipos","Practicar por tipos"],["sesiones","Problemas de las sesiones"],["sim","Simulacro"],["prog","Mis progresos"]].map(([k,l])=>`<button role="tab" data-t="${k}" aria-selected="${tab===k}">${l}</button>`).join("")}
+  </div>
+  <div id="cuerpo"></div>`;
+  app.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;inicio();});
+  const cuerpo=document.getElementById("cuerpo");
+  if(tab==="tipos") pestTipos(cuerpo); else if(tab==="sesiones") pestSesiones(cuerpo); else if(tab==="sim") pestSim(cuerpo); else pestProgresos(cuerpo);
+}
+function selNivel(actual,id){ return `<div class="seg" role="group" aria-label="Nivel" id="${id}">${[1,2,3].map(n=>`<button data-n="${n}" aria-pressed="${actual===n}">${NIVELES[n]}</button>`).join("")}</div>`; }
+function pestTipos(cuerpo){
+  const st=estadisticas().porTipo;
+  cuerpo.innerHTML=`<div class="nivelbar"><span>Nivel:</span>${selNivel(nivelTipos,"niv")}</div>`+Object.keys(BLOQUES).map(bk=>`<h2 class="bloque">${BLOQUES[bk]}</h2><ol class="ctxlist">${TIPOS.filter(t=>t.b===bk).map(t=>{const z=st[t.id];
+    return `<li><div class="ctxinfo"><b>${esc(t.t)}</b></div><span class="state">${z?`${z.n} hechas · ${Math.round(z.primera/z.n*100)} % a la primera`:"Sin empezar"}</span><button class="btn" data-id="${t.id}">Practicar</button></li>`;}).join("")}</ol>`).join("");
+  cuerpo.querySelectorAll("#niv button").forEach(b=>b.onclick=()=>{nivelTipos=+b.dataset.n;inicio();});
+  cuerpo.querySelectorAll("button[data-id]").forEach(b=>b.onclick=()=>nuevoTipo(b.dataset.id,nivelTipos));
+}
+function pestSesiones(cuerpo){
+  const P=perfil();
+  const estado=ci=>{const c=CONTEXTOS[ci];let h=0;c.qs.forEach((q,qi)=>{const r=P.res[c.id+"-"+qi];if(r&&r.fin)h++;});return h===c.qs.length?`<span class="state done">Hecho ✓</span>`:`<span class="state">${h} de ${c.qs.length}</span>`;};
+  cuerpo.innerHTML=`<p class="nota">Primero el problema de la sesión. Después, problemas similares que trabajan lo mismo: <b>Básico</b> si te ha costado, <b>Medio</b> para practicar y <b>Ampliación</b> si quieres un reto.</p>
+  <ol class="ctxlist">${CONTEXTOS.map((c,ci)=>`<li class="sesrow"><span class="num">${ci+1}</span><div class="ctxinfo"><b>${esc(c.t)}</b><span>${esc(c.tema)}</span></div>${estado(ci)}
+    <div class="sesbtns"><button class="btn" data-ci="${ci}">Problema de la sesión</button><span class="simlbl">Similares:</span>${[1,2,3].map(n=>`<button class="btn small" data-sci="${ci}" data-n="${n}">${NIVELES[n]}</button>`).join("")}</div></li>`).join("")}</ol>`;
+  cuerpo.querySelectorAll("button[data-ci]").forEach(b=>b.onclick=()=>{const ci=+b.dataset.ci;practica({ctx:CONTEXTOS[ci],kind:"sesion",ci},0);});
+  cuerpo.querySelectorAll("button[data-sci]").forEach(b=>b.onclick=()=>similar(+b.dataset.sci,+b.dataset.n));
+}
+function similar(ci,n){ const id=pick(CONTEXTOS[ci].sim); practica({ctx:generar(id,n),kind:"tipo",tipoId:id,nivel:n,sesion:ci,recs:[]},0); }
+function nuevoTipo(id,n){ practica({ctx:generar(id,n),kind:"tipo",tipoId:id,nivel:n,recs:[]},0); }
+function pestSim(cuerpo){
+  cuerpo.innerHTML=`<div class="simbox">
+    <div style="width:100%"><b>Simulacro:</b> problemas nuevos elegidos al azar, sin pistas y con tiempo. Verás los resultados al terminar.</div>
+    <div class="checks">${Object.keys(BLOQUES).map(bk=>`<label><input type="checkbox" value="${bk}" checked> ${BLOQUES[bk]}</label>`).join("")}</div>
+    <label>Problemas <select id="nprob"><option value="6">6</option><option value="10" selected>10</option><option value="20">20 (uno de cada tipo)</option></select></label>
+    <label>Nivel <select id="nsim"><option value="1">Básico</option><option value="2" selected>Medio</option><option value="3">Ampliación</option></select></label>
+    <label>Tiempo <select id="minutos"><option>20</option><option selected>30</option><option>40</option><option>45</option><option>60</option></select> min</label>
+    <button class="btn primary" id="go">Empezar simulacro</button><span id="aviso" style="color:var(--bad)"></span></div>`;
+  document.getElementById("go").onclick=()=>{
+    const bl=[...cuerpo.querySelectorAll(".checks input:checked")].map(i=>i.value);
+    if(!bl.length){document.getElementById("aviso").textContent="Elige al menos un bloque.";return;}
+    empezarSim(bl,+document.getElementById("nprob").value,+document.getElementById("nsim").value,+document.getElementById("minutos").value);
+  };
+}
+function pestProgresos(cuerpo){
+  const A=estadisticas(), H=estadisticas(x=>x.d===hoy()), P=perfil();
+  if(!A.tot.n&&!P.sims.length){ cuerpo.innerHTML=`<section class="results"><h2>Mis progresos</h2><p>Todavía no hay preguntas hechas${(DB.ultimo||"").trim()?"":" (recuerda escribir tu nombre)"}. Empieza en «Practicar por tipos» o en «Problemas de las sesiones».</p></section>`; return; }
+  const barra=(l,z)=>`<div class="pbar"><span class="plbl">${esc(l)}</span><span class="ptrack"><span class="pfill ${A.pct(z)>=80?"hi":A.pct(z)<60?"lo":""}" style="width:${A.pct(z)}%"></span></span><span class="pnum">${A.pct(z)} % · ${z.n} preg.</span></div>`;
+  const lista=(ids,vacio)=>ids.length?`<ul class="tlist">${ids.map(id=>{const z=A.porTipo[id];return `<li><span>${esc(tipoDe(id).t)} <span class="muted">(${A.pct(z)} % a la primera, ${z.n} preguntas)</span></span><button class="btn small" data-rep="${id}">Practicar</button></li>`;}).join("")}</ul>`:`<p class="muted">${vacio}</p>`;
+  cuerpo.innerHTML=`<section class="results"><h2>Mis progresos</h2>
+    <div class="kpis"><div><span class="score">${H.tot.n}</span><br>preguntas hoy · ${H.pct(H.tot)} % a la primera</div><div><span class="score">${A.tot.n}</span><br>preguntas en total · ${A.pct(A.tot)} % a la primera</div></div>
+    <h3>Aciertos a la primera por bloque</h3>${Object.keys(BLOQUES).filter(b=>A.porBloque[b]).map(b=>barra(BLOQUES[b],A.porBloque[b])).join("")||'<p class="muted">Sin datos.</p>'}
+    <h3>Tienes que repasar</h3>${lista(A.repasar,"Nada por ahora.")}
+    <h3>Lo dominas</h3>${lista(A.domina,"Aún no. Para dominar un tipo hacen falta al menos 5 preguntas con el 80 % a la primera.")}
+    <h3>Tus errores más repetidos</h3>${A.topErr.length?`<ol>${A.topErr.slice(0,5).map(([e,n])=>`<li>${esc(ERR[e]||e)}: ${n} ${n===1?"vez":"veces"}</li>`).join("")}</ol>`:'<p class="muted">Sin errores registrados.</p>'}
+    <h3>Simulacros</h3>${P.sims.length?`<ul>${P.sims.map(s=>`<li>${fechaES(s.d)}: ${s.ok} de ${s.total} correctas en ${s.min} min</li>`).join("")}</ul>`:'<p class="muted">Todavía ninguno.</p>'}
+    <p class="muted">Repasar: menos del 60 % a la primera o 2 preguntas sin conseguir en ese tipo. Lo dominas: 80 % o más a la primera con al menos 5 preguntas.</p>
+    <div class="actions"><button class="btn" id="borrar">Borrar mis datos</button></div></section>`;
+  cuerpo.querySelectorAll("button[data-rep]").forEach(b=>b.onclick=()=>nuevoTipo(b.dataset.rep,nivelTipos));
+  document.getElementById("borrar").onclick=()=>{ if(confirm("Se borrarán todos tus resultados de esta pizarra en este ordenador. ¿Seguro?")){ const k=clave(DB.ultimo); delete DB.perfiles[k]; guardar(); inicio(); } };
+}
+
+// ===== Paneles =====
+function panelContexto(c){ return `<section class="context" id="ctx"><h2>${esc(c.t)}</h2>${c.texto.map(p=>`<p>${words(p)}</p>`).join("")}${c.extra||""}<button class="btn markbtn" id="mark" aria-pressed="false">🖍️ Subrayar datos</button></section>`; }
+function activarSubrayado(){
+  const ctx=document.getElementById("ctx"), b=document.getElementById("mark");
+  b.onclick=()=>{const on=ctx.classList.toggle("marking"); b.setAttribute("aria-pressed",on); b.textContent=on?"✔ Terminar de subrayar":"🖍️ Subrayar datos";};
+  ctx.querySelectorAll(".w").forEach(w=>w.onclick=()=>{ if(ctx.classList.contains("marking")) w.classList.toggle("hl"); });
+}
+function zonaRespuesta(q,el){
+  if(q.tipo==="mc") return `<div class="opts" role="radiogroup">${q.o.map((x,i)=>`<button class="opt ${el===i?"sel":""}" role="radio" aria-checked="${el===i}" data-i="${i}"><span class="dot"></span><span>${esc(x.t)}</span></button>`).join("")}</div>`;
+  if(q.tipo==="num") return `<div class="numin"><input id="numv" inputmode="decimal" placeholder="Tu respuesta" value="${el!=null?esc(el):""}" aria-label="Tu respuesta"><span>${esc(q.unidad||"")}</span></div>`;
+  return `<div class="numin"><select id="selv" aria-label="Elige una opción"><option value="">Elige…</option>${q.sel.map((s,i)=>`<option value="${i}" ${el===i?"selected":""}>${esc(s)}</option>`).join("")}</select></div>`;
+}
+function leerRespuesta(q){
+  if(q.tipo==="mc"){const s=document.querySelector(".opt.sel");return s?+s.dataset.i:null;}
+  if(q.tipo==="num"){const v=document.getElementById("numv").value.trim();return v===""?null:v;}
+  const v=document.getElementById("selv").value;return v===""?null:+v;
+}
+function esCorrecta(q,r){ if(r==null) return false; if(q.tipo==="mc") return !!q.o[r].ok; if(q.tipo==="num"){const n=parseNum(r);return n!=null&&Math.abs(n-q.ans)<1e-6;} return r===q.ans; }
+function fallo(q,r){
+  if(q.tipo==="mc") return {t:q.o[r].why||"Revisa los datos y vuelve a intentarlo.",e:q.o[r].e||"calc"};
+  if(q.tipo==="num"){ const n=parseNum(r); if(n==null) return {t:"Escribe solo un número (puedes usar coma decimal).",e:null};
+    for(const k in (q.wrong||{})){ if(Math.abs(Number(k)-n)<1e-6) return {t:q.wrong[k][0],e:q.wrong[k][1]}; }
+    return {t:"No es correcto. Usa las pistas de las fases si las necesitas.",e:"calc"}; }
+  const w=q.why&&q.why[r]; return w?{t:w[0],e:w[1]}:{t:"Revisa los datos y vuelve a intentarlo.",e:"calc"};
+}
+function enlazarOpciones(){ document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{ document.querySelectorAll(".opt").forEach(x=>{x.classList.remove("sel");x.setAttribute("aria-checked","false");}); b.classList.add("sel");b.setAttribute("aria-checked","true");}); }
+
+// ===== Práctica =====
+function getRec(P,qi){ if(P.kind==="sesion"){ const R=perfil().res, k=P.ctx.id+"-"+qi; return R[k]||(R[k]={intentos:0,pistas:[],fin:false,res:null,errs:[]}); } return P.recs[qi]||(P.recs[qi]={intentos:0,pistas:[],fin:false,res:null,errs:[]}); }
+function practica(P,qi){
+  stopTimer();
+  const c=P.ctx,q=c.qs[qi],r=getRec(P,qi); r.errs=r.errs||[];
+  const fases=[["c","Comprender"],["p","Plan"],["e","Ejecutar"],["k","Comprobar"]];
+  const titulo=P.kind==="sesion"?`Problema de la sesión ${P.ci+1}`:(P.sesion!=null?`Similar a la sesión ${P.sesion+1} · ${NIVELES[P.nivel]}`:`${esc(tipoDe(P.tipoId).t)} · ${NIVELES[P.nivel]}`);
+  app.innerHTML=`
+  <div class="bar"><span class="where">${titulo}</span><span class="tools">${P.kind==="tipo"?`<button class="btn" id="otro">🔄 Otro problema</button>`:""}<button class="btn" id="volver">Volver a la lista</button></span></div>
+  <div class="stage">${panelContexto(c)}
+    <section class="question">
+      <div class="qhead">Pregunta ${qi+1} de ${c.qs.length}</div>
+      <p class="prompt">${esc(q.p)}</p>${zonaRespuesta(q,null)}
+      <div class="actions"><button class="btn primary" id="comprobar">Comprobar</button><button class="btn hidden" id="versol">Ver solución</button>
+        <button class="btn hidden" id="sig">${qi<c.qs.length-1?"Siguiente pregunta":(P.kind==="tipo"?"Otro problema":"Terminar")}</button></div>
+      <div class="fb" id="fb" role="status" aria-live="polite"></div>
+      <div class="phases"><p class="lbl">¿Te atascas? Abre la pista de la fase en la que estás:</p>
+        <div class="phbtns">${fases.map(f=>`<button data-f="${f[0]}" class="${r.pistas.includes(f[0])?"seen":""}">${f[1]}</button>`).join("")}</div><div class="hint" id="hint"></div></div>
+      <nav class="qnav" aria-label="Preguntas">${c.qs.map((_,i)=>{const x=getRec(P,i);let cl=i===qi?"cur":"";if(x.fin)cl+=(x.res==="sin"?" wrong":" good");return `<button class="${cl}" data-q="${i}" aria-label="Pregunta ${i+1}">${i+1}</button>`;}).join("")}</nav>
+    </section></div>`;
+  activarSubrayado(); enlazarOpciones();
+  document.getElementById("volver").onclick=inicio;
+  const otro=()=>{ if(P.sesion!=null) similar(P.sesion,P.nivel); else nuevoTipo(P.tipoId,P.nivel); };
+  if(P.kind==="tipo") document.getElementById("otro").onclick=otro;
+  document.querySelectorAll(".qnav button").forEach(b=>b.onclick=()=>practica(P,+b.dataset.q));
+  const hint=document.getElementById("hint");
+  document.querySelectorAll(".phbtns button").forEach(b=>b.onclick=()=>{ const f=b.dataset.f; hint.textContent=q.h[f]; hint.classList.add("show"); b.classList.add("seen"); if(!r.fin&&!r.pistas.includes(f)){ r.pistas.push(f); guardar(); } });
+  const fb=document.getElementById("fb"),sig=document.getElementById("sig"),vs=document.getElementById("versol"),comp=document.getElementById("comprobar");
+  const cerrar=()=>{comp.classList.add("hidden");vs.classList.add("hidden");sig.classList.remove("hidden");sig.focus();};
+  const terminar=res=>{ r.fin=true; r.res=res; registrar(P.kind==="sesion"?c.tipo:P.tipoId,res,r.pistas.length,[],P.kind==="sesion"?"ses":"pra"); };
+  sig.onclick=()=>{ if(qi<c.qs.length-1) practica(P,qi+1); else if(P.kind==="tipo") otro(); else inicio(); };
+  if(r.fin){ fb.className="fb show info"; fb.innerHTML=`<b>Ya la has hecho.</b> ${esc(q.sol)}`; cerrar(); return; }
+  comp.onclick=()=>{
+    const resp=leerRespuesta(q);
+    if(resp==null){fb.className="fb show info";fb.textContent="Elige o escribe una respuesta antes de comprobar.";return;}
+    if(esCorrecta(q,resp)){
+      r.intentos++; terminar(r.intentos===1?"primera":"repetir");
+      if(q.tipo==="mc") document.querySelector(`.opt[data-i="${resp}"]`).classList.add("okk");
+      fb.className="fb show ok"; fb.innerHTML=`<b>¡Correcto!</b> ${esc(q.sol)}`; cerrar();
+    }else{
+      const f=fallo(q,resp); if(f.e===null){fb.className="fb show info";fb.textContent=f.t;return;}
+      r.intentos++; r.errs.push(f.e); perfil().log.push({d:hoy(),t:P.kind==="sesion"?c.tipo:P.tipoId,r:"x",e:[f.e],s:P.kind==="sesion"?"ses":"pra"}); guardar();
+      if(q.tipo==="mc") document.querySelector(`.opt[data-i="${resp}"]`).classList.add("nok");
+      fb.className="fb show bad"; fb.innerHTML=`<b>Todavía no.</b> ${esc(f.t)}`;
+      if(r.intentos>=2) vs.classList.remove("hidden");
+    }
+  };
+  vs.onclick=()=>{ terminar("sin"); fb.className="fb show info"; fb.innerHTML=`<b>Solución.</b> ${esc(q.sol)}`;
+    if(q.tipo==="mc"){const i=q.o.findIndex(x=>x.ok);document.querySelector(`.opt[data-i="${i}"]`).classList.add("okk");} cerrar(); };
+}
+
+// ===== Simulacro =====
+function empezarSim(bloques,n,L,min){
+  const base=()=>shuffle(TIPOS.filter(t=>bloques.includes(t.b)).map(t=>t.id)); let ids=base(); const el=[];
+  while(el.length<n){ if(!ids.length) ids=base(); el.push(ids.pop()); }
+  const lista=[]; el.forEach(id=>{const c=generar(id,L); c.qs.forEach((q,qi)=>lista.push({c,qi}));});
+  sim={lista,i:0,resp:{},fin:Date.now()+min*60000,min,inicio:Date.now()}; verSim(); timerId=setInterval(tick,1000); tick();
+}
+function tick(){ if(!sim) return; const q=Math.max(0,sim.fin-Date.now()), el=document.getElementById("timer");
+  if(el){el.textContent=`${Math.floor(q/60000)}:${String(Math.floor(q%60000/1000)).padStart(2,"0")}`;el.classList.toggle("low",q<180000);} if(q<=0) terminarSim(true); }
+function stopTimer(){ if(timerId){clearInterval(timerId);timerId=null;} }
+function guardarRespSim(){ const it=sim.lista[sim.i], v=leerRespuesta(it.c.qs[it.qi]); if(v!=null) sim.resp[sim.i]=v; else delete sim.resp[sim.i]; }
+function verSim(){
+  const it=sim.lista[sim.i], c=it.c, q=c.qs[it.qi];
+  app.innerHTML=`<div class="bar"><span class="where">Simulacro · pregunta ${sim.i+1} de ${sim.lista.length}</span><span class="timer" id="timer"></span></div>
+  <div class="stage">${panelContexto(c)}<section class="question">
+    <div class="qhead">${esc(c.t)} · pregunta ${it.qi+1} de ${c.qs.length}</div><p class="prompt">${esc(q.p)}</p>
+    ${zonaRespuesta(q,sim.resp[sim.i]!==undefined?sim.resp[sim.i]:null)}
+    <div class="actions"><button class="btn" id="ant" ${sim.i===0?"disabled":""}>Anterior</button><button class="btn primary" id="sigs">${sim.i<sim.lista.length-1?"Siguiente":"Revisar y terminar"}</button><button class="btn" id="fin">Terminar simulacro</button></div>
+    <nav class="qnav" aria-label="Preguntas">${sim.lista.map((_,i)=>`<button class="${i===sim.i?"cur":""} ${sim.resp[i]!==undefined?"ans":""}" data-s="${i}" aria-label="Pregunta ${i+1}">${i+1}</button>`).join("")}</nav>
+  </section></div>`;
+  activarSubrayado(); enlazarOpciones(); tick();
+  const ir=k=>{guardarRespSim();sim.i=k;verSim();};
+  document.getElementById("ant").onclick=()=>ir(sim.i-1);
+  document.getElementById("sigs").onclick=()=>{ if(sim.i<sim.lista.length-1) ir(sim.i+1); else {guardarRespSim();confirmarFin();} };
+  document.getElementById("fin").onclick=()=>{guardarRespSim();confirmarFin();};
+  document.querySelectorAll(".qnav button").forEach(b=>b.onclick=()=>ir(+b.dataset.s));
+}
+function confirmarFin(){ const s=sim.lista.length-Object.keys(sim.resp).length; if(s>0&&!confirm(`Te quedan ${s} preguntas sin responder. ¿Terminar de todos modos?`)){verSim();return;} terminarSim(false); }
+function terminarSim(porTiempo){
+  if(!sim) return; stopTimer(); if(porTiempo){try{guardarRespSim();}catch(e){}}
+  let ok=0; const P=perfil();
+  const items=sim.lista.map((x,i)=>{ const q=x.c.qs[x.qi], r=sim.resp[i], bien=esCorrecta(q,r); if(bien) ok++;
+    const f=(!bien&&r!=null)?fallo(q,r):null; P.log.push({d:hoy(),t:x.c.tipoId,r:bien?"primera":"sin",p:0,e:f&&f.e?[f.e]:[],s:"sim"}); return {x,q,r,bien,f}; });
+  const usados=Math.min(sim.min,Math.max(1,Math.round((Date.now()-sim.inicio)/60000)));
+  P.sims.push({d:hoy(),ok,total:items.length,min:usados,porTiempo}); guardar(); sim=null;
+  app.innerHTML=`<section class="results"><h2>${porTiempo?"Se ha acabado el tiempo":"Simulacro terminado"}</h2><div class="score">${ok} de ${items.length}</div>
+    <p>Tiempo usado: ${usados} min. Revisa las preguntas falladas: cada una explica qué error lleva a esa respuesta. Tus resultados ya están en «Mis progresos».</p>
+    <ol class="rlist">${items.map((it,i)=>{let tu="Sin responder"; if(it.r!=null) tu=it.q.tipo==="mc"?it.q.o[it.r].t:it.q.tipo==="sel"?it.q.sel[it.r]:it.r+" "+(it.q.unidad||"");
+      return `<li><span class="tag ${it.bien?"ok":"bad"}">${i+1}. ${it.bien?"Correcta":"Incorrecta"}</span> · ${esc(it.x.c.t)}<br>${esc(it.q.p)}<br><span class="muted">Tu respuesta: ${esc(tu)}</span>${it.bien?"":`<br>${it.f?esc(it.f.t)+" ":""}<b>Solución:</b> ${esc(it.q.sol)}`}</li>`;}).join("")}</ol>
+    <div class="actions"><button class="btn primary" id="vi">Volver al inicio</button></div></section>`;
+  document.getElementById("vi").onclick=inicio;
+}
+
+// ===== Mi resumen =====
+function resumen(){
+  const d=new Date(), P=perfil(), A=estadisticas(), H=estadisticas(x=>x.d===hoy());
+  const linea=z=>`${z.n} ${z.n===1?"pregunta":"preguntas"}. A la primera: ${z.primera} (${A.pct(z)} %). Al repetirlo: ${z.repetir}. Sin conseguirlo: ${z.sin}. Pistas: ${z.p}.`;
+  let t=`${P.nombre||"(sin nombre)"} · ${d.toLocaleDateString("es-ES")} ${d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})}\nDetectives de problemas\n\n`;
+  t+=`Hoy: ${H.tot.n?linea(H.tot):"sin preguntas hechas."}\n`;
+  for(const id in H.porTipo) t+=`- ${tipoDe(id).t}: ${linea(H.porTipo[id])}\n`;
+  if(A.tot.n){ t+=`\nDesde el principio (desde el ${fechaES(A.log[0].d)}): ${linea(A.tot)}\n`;
+    for(const b of Object.keys(BLOQUES)) if(A.porBloque[b]) t+=`- ${BLOQUES[b]}: ${A.porBloque[b].n} ${A.porBloque[b].n===1?"pregunta":"preguntas"}, ${A.pct(A.porBloque[b])} % a la primera.\n`;
+    t+=`\nErrores más repetidos: ${A.topErr.length?A.topErr.slice(0,3).map(([e,n])=>`${ERR[e]} (${n})`).join("; "):"ninguno"}.\n`;
+    t+=`Tiene que repasar: ${A.repasar.length?A.repasar.map(id=>`${tipoDe(id).t} (${A.pct(A.porTipo[id])} %)`).join("; "):"nada por ahora"}.\n`;
+    t+=`Lo domina: ${A.domina.length?A.domina.map(id=>tipoDe(id).t).join("; "):"todavía ninguno"}.\n`; }
+  if(P.sims.length){ t+=`\nSimulacros:\n`; P.sims.forEach(s=>{ t+=`- ${fechaES(s.d)}: ${s.ok} de ${s.total} correctas en ${s.min} min${s.porTiempo?" (se acabó el tiempo)":""}.\n`; }); }
+  return t;
+}
+const dlg=document.getElementById("dlgResumen"),txt=document.getElementById("txtResumen"),cop=document.getElementById("copiado");
+document.getElementById("btnResumen").onclick=()=>{txt.value=resumen();cop.textContent="";if(dlg.showModal)dlg.showModal();else dlg.setAttribute("open","");};
+document.getElementById("btnCerrar").onclick=()=>{if(dlg.close)dlg.close();else dlg.removeAttribute("open");};
+document.getElementById("btnCopiar").onclick=async()=>{ try{await navigator.clipboard.writeText(txt.value);cop.textContent="Copiado";}catch(e){txt.select();try{document.execCommand("copy");cop.textContent="Copiado";}catch(e2){cop.textContent="Selecciona el texto y cópialo con Ctrl + C";}} };
+inicio();
+
+// ── ENVÍO DE PROGRESO A GOOGLE SHEETS ────────────────────────────────
+const URL_SHEET_SCRIPT_PTP6='https://script.google.com/macros/s/AKfycbzAZRtNV1K_3nQ6ooO3QPVhITur2NkufoKKbd76EWCtmL7rz3aO-1Bx_x6xiU0rVbXk/exec';
+(function(){
+  const selG=document.getElementById('grupoPTP6');
+  const grupoGuardado=sessionStorage.getItem('pizarraGrupoAlumna');
+  if(selG&&grupoGuardado)selG.value=grupoGuardado;
+  selG&&selG.addEventListener('change',()=>{if(selG.value)sessionStorage.setItem('pizarraGrupoAlumna',selG.value);});
+})();
+document.getElementById('btnEnviarPTP6').onclick=function(){
+  const nombre=(document.getElementById('nombre').value||'').trim();
+  const grupo=(document.getElementById('grupoPTP6').value||'').trim();
+  const estado=document.getElementById('envioEstadoPTP6');
+  if(!nombre){estado.textContent='⚠️ Escribe tu nombre primero.';estado.style.color='var(--bad)';return;}
+  sessionStorage.setItem('pizarraNombreAlumna',nombre);
+  if(grupo)sessionStorage.setItem('pizarraGrupoAlumna',grupo);
+  const A=estadisticas(),P=perfil();
+  const puntos={Grupo:grupo||'(sin grupo)'};
+  puntos['DETECTIVES_TotalPreguntas']=A.tot.n;
+  puntos['DETECTIVES_AciertoPrimera_pct']=A.pct(A.tot);
+  puntos['DETECTIVES_Simulacros']=P.sims.length;
+  if(P.sims.length){
+    const ultimo=P.sims[P.sims.length-1];
+    puntos['DETECTIVES_UltimoSimulacro']=ultimo.ok+'/'+ultimo.total;
+  }
+  Object.keys(BLOQUES).forEach(b=>{
+    if(A.porBloque[b])puntos['DETECTIVES_'+BLOQUES[b]]=A.pct(A.porBloque[b]);
+  });
+  estado.textContent='Enviando...';estado.style.color='var(--muted)';
+  fetch(URL_SHEET_SCRIPT_PTP6,{
+    method:'POST',mode:'no-cors',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({nombre:nombre,puntos:puntos})
+  }).then(()=>{
+    estado.textContent='✅ ¡Progreso enviado, '+nombre+'!';estado.style.color='var(--ok)';
+  }).catch(()=>{
+    estado.textContent='❌ No se pudo enviar. Revisa tu conexión.';estado.style.color='var(--bad)';
+  });
+};
+</script>
+</body>
+</html>
