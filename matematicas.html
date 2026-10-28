@@ -3299,16 +3299,93 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
 <div class="op-tabs">
   <button class="op-tab active" onclick="cambPRIM(event,'prim-criba')">🧹 Criba de Eratóstenes</button>
   <button class="op-tab" onclick="cambPRIM(event,'prim-fact')">🌳 Factorización</button>
+  <button class="op-tab" onclick="cambPRIM(event,'prim-clas')">🎯 Primo o compuesto</button>
+  <button class="op-tab" onclick="cambPRIM(event,'prim-rul')">🎡 Ruleta</button>
+  <button class="op-tab" onclick="cambPRIM(event,'prim-quiz')">❓ ¿Cuál es?</button>
 </div>
 
+<style>
+.pz-card{background:#fff;border:2px solid #667eea;border-radius:12px;padding:14px;margin-bottom:12px}
+.pz-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.pz-bar select{padding:6px;border-radius:7px;border:2px solid #ddd;font-weight:700}
+.pz-pool,.pz-zone{min-height:62px;border:2px dashed #b0b8d8;border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;background:#fafbff}
+.pz-zones{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.pz-zt{text-align:center;font-weight:900;font-size:1.15em;margin-bottom:4px;color:#333}
+.pz-t{min-width:62px;padding:12px 8px;border:none;border-bottom:4px solid rgba(0,0,0,.25);border-radius:6px;color:#fff;font-weight:800;font-size:1.15em;cursor:grab;touch-action:none;user-select:none}
+.pz-t.sel{outline:4px solid #ffc107;outline-offset:2px}
+.pz-t.bad{outline:4px solid #dc3545;outline-offset:2px}
+.pz-t.ok{outline:4px solid #28a745;outline-offset:2px}
+.pz-ghost{position:fixed;pointer-events:none;z-index:9999;opacity:.85}
+.pz-msg{margin-top:10px;font-weight:700;line-height:1.5}
+.pz-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:520px;margin:12px auto}
+.pz-opt{padding:22px 6px;font-size:1.6em;font-weight:900;border:3px solid #1565c0;background:#fff3c4;color:#0d2a63;border-radius:12px;cursor:pointer}
+.pz-opt:hover{background:#ffe082}
+.pz-opt.bad{background:#ffcdd2;border-color:#c62828}
+.pz-opt.ok{background:#c8e6c9;border-color:#2e7d32}
+.pz-q{background:#1a237e;color:#fff;border-radius:12px;padding:14px;text-align:center;font-size:1.3em;font-weight:800}
+.pz-wheelwrap{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.pz-wheelbox{position:relative;width:100%;max-width:400px;margin:0 auto}
+.pz-arrow{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-size:34px;color:#ff5722;line-height:1;z-index:2}
+@media(max-width:600px){.pz-zones{grid-template-columns:1fr}.pz-opts{grid-template-columns:repeat(2,1fr)}}
+</style>
 <div id="prim-criba" class="op-p active">
-  <div class="card" style="border-color:#1976d2;">
-    <div class="hint" style="margin-bottom:12px;">💡 Haz clic en 2 y luego en todos sus múltiplos para tacharlos. Repite con el siguiente número sin tachar (3, luego 5, 7...). Lo que quede sin tachar son los <b>números primos</b>.</div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
-      <button onclick="reiniciarCriba()" class="bdel">🔄 Reiniciar criba</button>
-      <button onclick="mostrarSolucionCriba()" class="bpurp">👀 Ver solución</button>
+  <div class="pz-card" style="border-color:#1976d2;">
+    <div class="pz-bar">
+      <button type="button" class="bdel" id="pz-g-reset">🔄 Empezar de nuevo</button>
+      <button type="button" class="bpurp" id="pz-g-sol">👀 Ver solución</button>
+      <div class="badge-sc" id="sc-crib">Puntos: 0</div>
     </div>
-    <div id="criba-grid" style="display:grid;grid-template-columns:repeat(10,1fr);gap:4px;max-width:600px;margin:0 auto;"></div>
+    <div class="pz-q" id="pz-g-order" style="text-align:left;"></div>
+    <div style="margin:10px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <button type="button" class="bok" id="pz-g-chk">✅ Comprobar paso</button>
+      <span id="pz-g-ask" style="display:none;">Han quedado <input type="text" id="pz-g-in" class="iF" style="width:70px;"> números sin tachar. <button type="button" class="bok" id="pz-g-ver">✅ Verificar</button></span>
+    </div>
+    <div class="pz-msg" id="pz-g-msg"></div>
+    <div id="pz-g-grid" style="display:grid;grid-template-columns:repeat(10,1fr);gap:4px;max-width:600px;margin:12px auto 0;"></div>
+  </div>
+</div>
+<div id="prim-clas" class="op-p">
+  <div class="pz-card">
+    <div class="pz-bar">
+      <select id="pz-c-nv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select>
+      <button type="button" class="bok" id="pz-c-new">🎲 Nuevo</button>
+      <div class="badge-sc" id="sc-prclas">Puntos: 0</div>
+    </div>
+    <div style="font-weight:800;margin-bottom:6px;">Clasifica cada número: arrástralo a su caja (o toca el número y luego toca la caja).</div>
+    <div class="pz-pool" id="pz-c-pool"></div>
+    <div class="pz-zones">
+      <div><div class="pz-zt">PRIMO</div><div class="pz-zone" id="pz-c-zP" data-z="P"></div></div>
+      <div><div class="pz-zt">COMPUESTO</div><div class="pz-zone" id="pz-c-zC" data-z="C"></div></div>
+    </div>
+    <div style="text-align:center;margin-top:12px;"><button type="button" class="bok" id="pz-c-send" disabled>📨 Enviar respuestas</button></div>
+    <div class="pz-msg" id="pz-c-msg"></div>
+  </div>
+</div>
+
+<div id="prim-rul" class="op-p">
+  <div class="pz-card">
+    <div class="pz-bar">
+      <select id="pz-r-nv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select>
+      <button type="button" class="bok" id="pz-r-spin">🎡 Girar la ruleta</button>
+      <div class="badge-sc" id="sc-prrul">Puntos: 0</div>
+    </div>
+    <div class="pz-wheelwrap">
+      <div style="flex:1 1 300px;"><div class="pz-wheelbox"><div class="pz-arrow">▼</div><canvas id="pz-r-cv" width="800" height="800" style="width:100%;height:auto;display:block;touch-action:none;"></canvas></div></div>
+      <div style="flex:1 1 300px;" id="pz-r-q"><div class="pz-q">Gira la ruleta y responde</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="prim-quiz" class="op-p">
+  <div class="pz-card">
+    <div class="pz-bar">
+      <select id="pz-q-nv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select>
+      <button type="button" class="bok" id="pz-q-new">🎲 Nueva pregunta</button>
+      <div class="badge-sc" id="sc-prquiz">Puntos: 0</div>
+    </div>
+    <div class="pz-q" id="pz-q-txt"></div>
+    <div class="pz-opts" id="pz-q-opts"></div>
+    <div class="pz-msg" id="pz-q-msg" style="text-align:center;"></div>
   </div>
 </div>
 
@@ -8997,7 +9074,7 @@ function verDivEj(){
 }
 
 // ── NÚMEROS PRIMOS ────────────────────────────────────────────────────
-function cambPRIM(e,id){cambSub(e,'tprim',id);if(id==='prim-fact')genFact();}
+function cambPRIM(e,id){cambSub(e,'tprim',id);if(id==='prim-fact')genFact();if(window.PZ)PZ.on(id);}
 function cambFactModo(e,id){cambSub(e,'prim-fact',id);if(id==='fact-dos')genFact2();}
 let cribaState=Array(101).fill(false);
 function initCriba(){
@@ -12214,5 +12291,377 @@ function cambPOT(e,id){
   };
 })();
 
+</script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  function rnd(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+  function pick(a){return a[Math.floor(Math.random()*a.length)];}
+  function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+  function isP(n){if(n<2)return false;for(var d=2;d*d<=n;d++)if(n%d===0)return false;return true;}
+  function divs(n){var r=[];for(var d=1;d<=n;d++)if(n%d===0)r.push(d);return r;}
+  function fpri(n){var r=[];for(var d=2;d<=n;d++)if(n%d===0&&isP(d))r.push(d);return r;}
+  function nums(s){return (String(s).match(/\d+/g)||[]).map(Number);}
+  function uniq(a){return a.filter(function(x,i){return a.indexOf(x)===i;});}
+  function sameSet(a,b){a=uniq(a).sort(function(x,y){return x-y;});b=uniq(b).sort(function(x,y){return x-y;});return a.length===b.length&&a.every(function(v,i){return v===b[i];});}
+  function lst(a){a=a.slice();if(a.length<2)return a.join('');return a.slice(0,-1).join(', ')+' y '+a[a.length-1];}
+  function primesIn(lo,hi){var r=[];for(var n=lo;n<=hi;n++)if(isP(n))r.push(n);return r;}
+  function compsIn(lo,hi,odd){var r=[];for(var n=Math.max(lo,4);n<=hi;n++)if(!isP(n)&&(!odd||n%2))r.push(n);return r;}
+  function expl(n){
+    if(n===1)return '1 no es primo ni compuesto: solo tiene un divisor (él mismo).';
+    if(isP(n))return n+' es primo: solo se puede dividir exactamente entre 1 y entre '+n+'.';
+    var d=divs(n)[1];
+    return n+' es compuesto: '+n+' = '+d+' × '+(n/d)+'. Sus divisores son '+lst(divs(n))+'.';
+  }
+  function addPts(id,k){var el=$(id);var m=(el.textContent.match(/\d+/)||[0])[0];el.textContent='Puntos: '+(parseInt(m)+k);}
+  var COL=['#4fc3e8','#d81b3a','#ff7a00','#1e7e45','#c44fd6','#2a3fd0','#3cb883','#e8420a','#7a35e0','#1e9fee','#d81b3a','#ff7a00','#1e7e45','#c44fd6'];
+
+  /* ============ 1. CLASIFICAR ============ */
+  var C={sel:null,fails:0,done:false,nums:[]};
+  function cNew(){
+    var nv=$('pz-c-nv').value,k=nv==='f'?5:nv==='m'?7:9,hi=nv==='f'?30:nv==='m'?60:100;
+    var P=shuf(primesIn(2,hi)).slice(0,k);
+    var cp=compsIn(4,hi,false);
+    if(nv==='d'){var od=compsIn(9,hi,true);cp=shuf(od).slice(0,6).concat(shuf(cp)).filter(function(x,i,a){return a.indexOf(x)===i;});}
+    var Cn=(nv==='d'?cp:shuf(cp)).slice(0,k);
+    C.nums=shuf(P.concat(Cn));C.sel=null;C.fails=0;C.done=false;
+    var pool=$('pz-c-pool');pool.innerHTML='';$('pz-c-zP').innerHTML='';$('pz-c-zC').innerHTML='';
+    C.nums.forEach(function(n,i){var b=document.createElement('button');b.type='button';b.className='pz-t';b.textContent=n;b.dataset.n=n;b.style.background=COL[i%COL.length];pool.appendChild(b);});
+    $('pz-c-msg').innerHTML='';cUpd();
+  }
+  function cUpd(){$('pz-c-send').disabled=C.done||$('pz-c-pool').children.length>0;}
+  function cMove(t,box){box.appendChild(t);t.classList.remove('sel','bad','ok');if(C.sel===t)C.sel=null;cUpd();}
+  function cDrop(t,box){
+    if(C.done)return;
+    cMove(t,box);
+  }
+  function cInit(){
+    var root=$('prim-clas'),drag=null;
+    root.addEventListener('pointerdown',function(e){
+      var t=e.target.closest&&e.target.closest('.pz-t');if(!t||C.done)return;
+      drag={t:t,x:e.clientX,y:e.clientY,on:false,g:null};
+    });
+    document.addEventListener('pointermove',function(e){
+      if(!drag)return;
+      if(!drag.on&&Math.abs(e.clientX-drag.x)+Math.abs(e.clientY-drag.y)>8){
+        drag.on=true;var g=drag.t.cloneNode(true);g.className='pz-t pz-ghost';g.style.background=drag.t.style.background;document.body.appendChild(g);drag.g=g;
+      }
+      if(drag.on){drag.g.style.left=(e.clientX-30)+'px';drag.g.style.top=(e.clientY-22)+'px';e.preventDefault();}
+    },{passive:false});
+    document.addEventListener('pointerup',function(e){
+      if(!drag)return;var d=drag;drag=null;
+      if(d.on){
+        d.g.remove();
+        var el=document.elementFromPoint(e.clientX,e.clientY);
+        var box=el&&el.closest&&el.closest('#pz-c-pool,.pz-zone');
+        if(box&&root.contains(box))cDrop(d.t,box);
+        C.swallow=true;setTimeout(function(){C.swallow=false;},50);
+      }
+    });
+    root.addEventListener('click',function(e){
+      if(C.swallow||C.done)return;
+      var t=e.target.closest('.pz-t');
+      if(t){
+        if(C.sel&&C.sel!==t){cDrop(C.sel,t.parentNode);return;}
+        t.classList.remove('bad','ok');
+        if(C.sel===t){t.classList.remove('sel');C.sel=null;}else{t.classList.add('sel');C.sel=t;}
+        return;
+      }
+      var box=e.target.closest('#pz-c-pool,.pz-zone');
+      if(box&&C.sel)cDrop(C.sel,box);
+    });
+    $('pz-c-new').onclick=cNew;$('pz-c-nv').onchange=cNew;
+    $('pz-c-send').onclick=cSend;
+  }
+  function cSend(){
+    var msg=$('pz-c-msg'),bad=[];
+    ['P','C'].forEach(function(z){
+      [].slice.call($('pz-c-z'+z).children).forEach(function(t){
+        var n=+t.dataset.n,right=isP(n)?'P':'C';
+        if(right!==z)bad.push(t);else t.classList.add('ok');
+      });
+    });
+    if(!bad.length){
+      var pts=C.fails===0?15:8;addPts('sc-prclas',pts);C.done=true;cUpd();
+      msg.innerHTML='<span style="color:#28a745;">✅ ¡Todo correcto! +'+pts+' puntos.</span> Pulsa «Nuevo» para otra tanda.';return;
+    }
+    C.fails++;
+    if(C.fails===1){
+      bad.forEach(function(t){t.classList.remove('ok');t.classList.add('bad');});
+      msg.innerHTML='<span style="color:#dc3545;">❌ Hay '+bad.length+' número'+(bad.length>1?'s':'')+' mal colocado'+(bad.length>1?'s':'')+' (en rojo).</span> Un número primo tiene exactamente dos divisores. ¿Cuántos tiene cada uno de los rojos? Corrígelos y vuelve a enviar.';
+    }else{
+      var h='<span style="color:#dc3545;">❌ Todavía hay errores. Mira cada uno:</span><ul style="margin:6px 0 0 18px;">';
+      bad.forEach(function(t){var n=+t.dataset.n;h+='<li>'+expl(n)+'</li>';cMove(t,$('pz-c-z'+(isP(n)?'P':'C')));t.classList.add('ok');});
+      h+='</ul>Los hemos colocado en su sitio. Pulsa «Nuevo» para practicar más.';
+      msg.innerHTML=h;C.done=true;cUpd();
+    }
+  }
+
+  /* ============ 2. RULETA ============ */
+  var LAB=['3 números primos','2 compuestos','Divisores de…','Múltiplos de…','¿Qué cifra falta?','Múltiplo común','Divisor de todos','¿Primo o compuesto?','Factores primos','Lista de primos','Divisores comunes','Primo entre…'];
+  var R={rot:0,spin:false,q:null,tries:0};
+  var WC=['#ffd166','#f4a261','#ffe29a','#f9c784'];
+  function rDraw(){
+    var cv=$('pz-r-cv'),c=cv.getContext('2d'),W=cv.width,cx=W/2,r=W/2-14,n=LAB.length,a=2*Math.PI/n;
+    c.clearRect(0,0,W,W);
+    c.beginPath();c.arc(cx,cx,r+10,0,7);c.fillStyle='#fb8c00';c.fill();
+    for(var i=0;i<n;i++){
+      var s=R.rot+i*a;
+      c.beginPath();c.moveTo(cx,cx);c.arc(cx,cx,r,s,s+a);c.closePath();c.fillStyle=WC[i%2?1:0];c.fill();c.strokeStyle='#fff';c.lineWidth=3;c.stroke();
+      c.save();c.translate(cx,cx);var m=s+a/2;c.rotate(m);
+      c.fillStyle='#5a1a00';c.font='bold 27px sans-serif';c.textBaseline='middle';
+      if(Math.cos(m)<0){c.rotate(Math.PI);c.textAlign='left';c.fillText(LAB[i],-(r-16),0);}
+      else{c.textAlign='right';c.fillText(LAB[i],r-16,0);}
+      c.restore();
+    }
+    c.beginPath();c.arc(cx,cx,95,0,7);c.fillStyle='#fff';c.fill();c.strokeStyle='#fb8c00';c.lineWidth=6;c.stroke();
+    c.fillStyle='#5a1a00';c.font='bold 30px sans-serif';c.textAlign='center';c.textBaseline='middle';
+    c.fillText('Gira la',cx,cx-20);c.fillText('ruleta',cx,cx+20);
+  }
+  function rSector(){var a=2*Math.PI/LAB.length,ang=((-Math.PI/2-R.rot)%(2*Math.PI)+2*Math.PI)%(2*Math.PI);return Math.floor(ang/a);}
+  function rSpin(){
+    if(R.spin)return;R.spin=true;$('pz-r-spin').disabled=true;
+    var start=R.rot,tot=(5+Math.random()*3)*2*Math.PI,t0=performance.now(),dur=3200;
+    function f(t){
+      var p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);
+      R.rot=start+tot*e;rDraw();
+      if(p<1)requestAnimationFrame(f);else{R.spin=false;$('pz-r-spin').disabled=false;rAsk(rSector());}
+    }
+    requestAnimationFrame(f);
+  }
+  function rangeBy(nv,f,m,d){return nv==='f'?f:nv==='m'?m:d;}
+  function mkQ(type,nv){
+    var q={type:type,txt:'',opts:null,check:null,sol:''};
+    var lo,hi,n,k,i;
+    if(type===0){
+      lo=rangeBy(nv,2,20,50);hi=rangeBy(nv,20,50,100);
+      q.txt='Escribe <b>tres números primos distintos</b> entre '+lo+' y '+hi+'.';
+      q.sol=lst(shuf(primesIn(lo,hi)).slice(0,3).sort(function(a,b){return a-b;}));
+      q.check=function(s){var a=uniq(nums(s));
+        if(a.length!==3)return{ok:false,msg:'Tienes que escribir tres números distintos.'};
+        for(var i=0;i<3;i++){if(a[i]<lo||a[i]>hi)return{ok:false,msg:'El '+a[i]+' no está entre '+lo+' y '+hi+'.'};if(!isP(a[i]))return{ok:false,msg:'El '+a[i]+' no es primo. '+expl(a[i])};}
+        return{ok:true};};
+    }else if(type===1){
+      var odd=nv==='d';lo=rangeBy(nv,4,30,30);hi=rangeBy(nv,30,100,100);
+      q.txt='Escribe <b>dos números compuestos distintos</b>'+(odd?', <b>impares</b>,':'')+' entre '+lo+' y '+hi+'.';
+      q.sol=lst(shuf(compsIn(lo,hi,odd)).slice(0,2).sort(function(a,b){return a-b;}));
+      q.check=function(s){var a=uniq(nums(s));
+        if(a.length!==2)return{ok:false,msg:'Tienes que escribir dos números distintos.'};
+        for(var i=0;i<2;i++){if(a[i]<lo||a[i]>hi)return{ok:false,msg:'El '+a[i]+' no está entre '+lo+' y '+hi+'.'};
+          if(odd&&a[i]%2===0)return{ok:false,msg:'El '+a[i]+' es par, y se piden impares.'};
+          if(isP(a[i])||a[i]===1)return{ok:false,msg:'El '+a[i]+' no es compuesto. '+expl(a[i])};}
+        return{ok:true};};
+    }else if(type===2||type===10){
+      var N,A,B,g;
+      if(type===2){N=pick(compsIn(rangeBy(nv,6,24,48),rangeBy(nv,30,60,100),false));
+        q.txt='Escribe <b>todos los divisores</b> de <b>'+N+'</b>.';q.sol=lst(divs(N));
+        q.check=function(s){var a=uniq(nums(s)),d=divs(N);
+          for(var i=0;i<a.length;i++)if(N%a[i]!==0||a[i]===0)return{ok:false,msg:'El '+a[i]+' no es divisor de '+N+': '+N+' ÷ '+a[i]+' no es exacta.'};
+          if(!sameSet(a,d))return{ok:false,msg:'Todo lo que has escrito es divisor, pero faltan '+(d.length-a.length)+'. Se encuentran por parejas: d × '+N+'/d.'};
+          return{ok:true};};
+      }else{
+        do{g=pick([2,3,4,5,6]);A=g*rnd(2,rangeBy(nv,5,9,15));B=g*rnd(2,rangeBy(nv,5,9,15));}while(A===B||divs(A).filter(function(x){return B%x===0;}).length<3);
+        var cd=divs(A).filter(function(x){return B%x===0;});
+        q.txt='Escribe <b>todos los divisores comunes</b> de <b>'+A+'</b> y <b>'+B+'</b>.';q.sol=lst(cd);
+        q.check=function(s){var a=uniq(nums(s));
+          for(var i=0;i<a.length;i++){if(a[i]===0||A%a[i]!==0)return{ok:false,msg:'El '+a[i]+' no divide a '+A+'.'};if(B%a[i]!==0)return{ok:false,msg:'El '+a[i]+' no divide a '+B+'.'};}
+          if(!sameSet(a,cd))return{ok:false,msg:'Lo escrito es correcto, pero faltan '+(cd.length-a.length)+' divisores comunes. Empieza por los divisores de '+A+' y mira cuáles dividen también a '+B+'.'};
+          return{ok:true};};
+      }
+    }else if(type===3){
+      k=rnd(rangeBy(nv,2,3,6),rangeBy(nv,5,9,12));var m=rnd(rangeBy(nv,10,20,40),rangeBy(nv,30,50,90));
+      q.txt='Escribe <b>tres múltiplos de '+k+'</b> mayores que <b>'+m+'</b>.';
+      var f0=Math.floor(m/k)+1;q.sol=lst([f0*k,(f0+1)*k,(f0+2)*k]);
+      q.check=function(s){var a=uniq(nums(s));
+        if(a.length!==3)return{ok:false,msg:'Tienes que escribir tres números distintos.'};
+        for(var i=0;i<3;i++){if(a[i]%k!==0)return{ok:false,msg:'El '+a[i]+' no es múltiplo de '+k+': '+a[i]+' ÷ '+k+' da resto '+(a[i]%k)+'.'};if(a[i]<=m)return{ok:false,msg:'El '+a[i]+' es múltiplo de '+k+', pero no es mayor que '+m+'.'};}
+        return{ok:true};};
+    }else if(type===4){
+      var dd=rangeBy(nv,pick([2,5,10]),pick([3,9]),pick([3,6,9])),pre=rnd(rangeBy(nv,10,10,100),rangeBy(nv,99,99,999));
+      q.txt='¿Qué cifra falta en <b>'+pre+'□</b> para que sea divisible por <b>'+dd+'</b>?';
+      var ok=[];for(i=0;i<10;i++)if((pre*10+i)%dd===0)ok.push(i);
+      q.sol=ok.join(' o ');
+      q.check=function(s){var a=nums(s);
+        if(a.length!==1||a[0]>9)return{ok:false,msg:'Escribe una sola cifra (de 0 a 9).'};
+        var v=pre*10+a[0];if(v%dd!==0)return{ok:false,msg:v+' no es divisible por '+dd+': al dividirlo queda resto '+(v%dd)+'.'};
+        return{ok:true};};
+    }else if(type===5){
+      var pr=pick([[2,3],[3,4],[2,5],[4,6],[3,5],[2,7],[6,8],[4,5]]);var a0=pr[0],b0=pr[1],l=0;
+      for(l=1;l%a0||l%b0;l++);
+      var lim=l*rnd(3,5);
+      q.txt='Escribe un número que sea <b>múltiplo de '+a0+' y de '+b0+' a la vez</b>, mayor que 0 y menor que '+lim+'.';
+      q.sol=l+' (también '+(2*l)+')';
+      q.check=function(s){var a=nums(s);
+        if(a.length!==1)return{ok:false,msg:'Escribe un solo número.'};
+        var x=a[0];if(x<=0||x>=lim)return{ok:false,msg:'Tiene que ser mayor que 0 y menor que '+lim+'.'};
+        if(x%a0!==0)return{ok:false,msg:x+' no es múltiplo de '+a0+' (resto '+(x%a0)+').'};
+        if(x%b0!==0)return{ok:false,msg:x+' es múltiplo de '+a0+', pero no de '+b0+' (resto '+(x%b0)+').'};
+        return{ok:true};};
+    }else if(type===6){
+      g=pick(rangeBy(nv,[2,3,5],[2,3,4,5,6],[3,4,6,7,9]));
+      var ms=[];while(ms.length<3){var t=rnd(2,rangeBy(nv,8,12,15));if(ms.indexOf(t)<0)ms.push(t);}
+      var A6=ms.map(function(x){return x*g;});
+      q.txt='Escribe un <b>divisor mayor que 1</b> que lo sea <b>de todos</b> estos números: <b>'+A6.join(', ')+'</b>.';
+      var cds=divs(A6[0]).filter(function(x){return x>1&&A6.every(function(y){return y%x===0;});});
+      q.sol=lst(cds);
+      q.check=function(s){var a=nums(s);
+        if(a.length!==1)return{ok:false,msg:'Escribe un solo número.'};
+        var x=a[0];if(x<=1)return{ok:false,msg:'Tiene que ser mayor que 1.'};
+        for(var i=0;i<3;i++)if(A6[i]%x!==0)return{ok:false,msg:x+' no divide a '+A6[i]+' (resto '+(A6[i]%x)+').'};
+        return{ok:true};};
+    }else if(type===7){
+      n=nv==='d'?pick(compsIn(30,100,true).concat(primesIn(30,100))):pick(rangeBy(nv,primesIn(2,30).concat(compsIn(4,30)),primesIn(20,60).concat(compsIn(20,60)),[]));
+      q.txt='¿El número <b>'+n+'</b> es primo o compuesto?';q.opts=['Primo','Compuesto'];
+      q.sol=isP(n)?'Primo':'Compuesto';q.n=n;
+      q.check=function(s){var ok=(s==='Primo')===isP(n);return ok?{ok:true}:{ok:false,msg:expl(n)};};
+    }else if(type===8){
+      n=pick(compsIn(rangeBy(nv,6,24,60),rangeBy(nv,30,60,150),false).filter(function(x){return fpri(x).length>=2;}));
+      q.txt='Escribe los <b>factores primos</b> de <b>'+n+'</b> (los números primos que lo dividen, sin repetir).';
+      q.sol=lst(fpri(n));
+      q.check=function(s){var a=uniq(nums(s)),f=fpri(n);
+        for(var i=0;i<a.length;i++){if(!isP(a[i]))return{ok:false,msg:'El '+a[i]+' no es primo. '+expl(a[i])};if(n%a[i]!==0)return{ok:false,msg:'El '+a[i]+' es primo, pero no divide a '+n+'.'};}
+        if(!sameSet(a,f))return{ok:false,msg:'Faltan factores primos. Divide '+n+' entre 2, 3, 5, 7… mientras la división sea exacta.'};
+        return{ok:true};};
+    }else if(type===9){
+      hi=rangeBy(nv,12,20,35);
+      q.txt='Escribe <b>todos los números primos menores que '+hi+'</b>.';q.sol=lst(primesIn(2,hi-1));
+      q.check=function(s){var a=uniq(nums(s)),p=primesIn(2,hi-1);
+        for(var i=0;i<a.length;i++){if(a[i]>=hi)return{ok:false,msg:'El '+a[i]+' no es menor que '+hi+'.'};if(!isP(a[i]))return{ok:false,msg:'El '+a[i]+' no es primo. '+expl(a[i])};}
+        if(!sameSet(a,p))return{ok:false,msg:'Todos los que has escrito son primos, pero faltan '+(p.length-a.length)+'.'};
+        return{ok:true};};
+    }else{
+      do{lo=rnd(rangeBy(nv,8,20,50),rangeBy(nv,15,45,90));hi=lo+rnd(6,12);}while(primesIn(lo+1,hi-1).length<1);
+      q.txt='Escribe un <b>número primo entre '+lo+' y '+hi+'</b>.';q.sol=lst(primesIn(lo+1,hi-1));
+      q.check=function(s){var a=nums(s);
+        if(a.length!==1)return{ok:false,msg:'Escribe un solo número.'};
+        var x=a[0];if(x<=lo||x>=hi)return{ok:false,msg:'El '+x+' no está entre '+lo+' y '+hi+'.'};
+        if(!isP(x))return{ok:false,msg:'El '+x+' no es primo. '+expl(x)};
+        return{ok:true};};
+    }
+    return q;
+  }
+  function rAsk(i){
+    var q=mkQ(i,$('pz-r-nv').value);R.q=q;R.tries=0;R.i=i;
+    var h='<div class="pz-q" style="text-align:left;"><div style="font-size:.7em;opacity:.8;margin-bottom:4px;">'+LAB[i]+'</div>'+q.txt+'</div>';
+    if(q.opts){h+='<div style="display:flex;gap:10px;margin-top:12px;">'+q.opts.map(function(o){return '<button type="button" class="pz-opt" style="flex:1;font-size:1.2em;padding:14px 6px;" data-o="'+o+'">'+o+'</button>';}).join('')+'</div>';}
+    else h+='<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;"><input type="text" id="pz-r-in" class="iF" style="flex:1;min-width:150px;" placeholder="Escribe tu respuesta" autocomplete="off"> <button type="button" class="bok" id="pz-r-ver">✅ Verificar</button></div>';
+    h+='<div class="pz-msg" id="pz-r-msg"></div>';
+    $('pz-r-q').innerHTML=h;
+    if(q.opts)[].forEach.call($('pz-r-q').querySelectorAll('.pz-opt'),function(b){b.onclick=function(){rCheck(b.dataset.o);};});
+    else{$('pz-r-ver').onclick=function(){rCheck($('pz-r-in').value);};$('pz-r-in').onkeydown=function(e){if(e.key==='Enter')rCheck(this.value);};}
+  }
+  function rCheck(v){
+    var q=R.q;if(!q||q.done)return;var msg=$('pz-r-msg');
+    var res=q.check(v);
+    if(res.ok){var p=R.tries===0?10:5;addPts('sc-prrul',p);q.done=true;msg.innerHTML='<span style="color:#28a745;">✅ ¡Correcto! +'+p+' puntos.</span> Gira otra vez.';rLock();return;}
+    R.tries++;
+    if(R.tries===1){msg.innerHTML='<span style="color:#dc3545;">❌ Todavía no.</span> '+res.msg+' <br>Inténtalo otra vez.';}
+    else{q.done=true;msg.innerHTML='<span style="color:#dc3545;">❌ '+res.msg+'</span><br>Una respuesta correcta: <b>'+q.sol+'</b>. Gira otra vez.';rLock();}
+  }
+  function rLock(){var i=$('pz-r-in'),b=$('pz-r-ver');if(i)i.disabled=true;if(b)b.disabled=true;[].forEach.call($('pz-r-q').querySelectorAll('.pz-opt'),function(x){x.disabled=true;});}
+
+  /* ============ 3. ¿CUÁL ES EL PRIMO? ============ */
+  var Q={tries:0,done:false,ans:null,primo:true};
+  function qNew(){
+    var nv=$('pz-q-nv').value,hi=nv==='f'?30:nv==='m'?60:100,primo=Math.random()<0.6;
+    var P=primesIn(2,hi),Cp=compsIn(4,hi,false),Co=compsIn(9,hi,true),opts,ans;
+    if(primo){
+      ans=pick(P);var pool=nv==='d'?shuf(Co).slice(0,3).concat(shuf(Cp)):shuf(Cp);
+      opts=[];for(var i=0;i<pool.length&&opts.length<5;i++)if(opts.indexOf(pool[i])<0)opts.push(pool[i]);
+      if(nv==='f'&&Math.random()<0.5){opts[0]=1;}
+    }else{
+      ans=nv==='d'?pick(Co):pick(Cp);opts=shuf(P.filter(function(x){return x!==ans;})).slice(0,5);
+    }
+    Q.ans=ans;Q.primo=primo;Q.tries=0;Q.done=false;Q.opts=shuf(opts.concat([ans]));
+    $('pz-q-txt').textContent=primo?'¿Cuál de todos es el número primo?':'¿Cuál de todos es un número compuesto?';
+    $('pz-q-opts').innerHTML=Q.opts.map(function(o){return '<button type="button" class="pz-opt" data-n="'+o+'">'+o+'</button>';}).join('');
+    [].forEach.call($('pz-q-opts').children,function(b){b.onclick=function(){qCheck(b);};});
+    $('pz-q-msg').innerHTML='';
+  }
+  function qCheck(b){
+    if(Q.done||b.disabled)return;var n=+b.dataset.n,msg=$('pz-q-msg');
+    if(n===Q.ans){
+      var p=Q.tries===0?10:5;addPts('sc-prquiz',p);Q.done=true;b.classList.add('ok');
+      msg.innerHTML='<span style="color:#28a745;">✅ ¡Correcto! +'+p+' puntos.</span> '+expl(n);return;
+    }
+    Q.tries++;b.classList.add('bad');b.disabled=true;
+    if(Q.tries===1){msg.innerHTML='<span style="color:#dc3545;">❌ No. '+expl(n)+'</span><br>Prueba con otro.';}
+    else{
+      Q.done=true;[].forEach.call($('pz-q-opts').children,function(x){if(+x.dataset.n===Q.ans)x.classList.add('ok');});
+      msg.innerHTML='<span style="color:#dc3545;">❌ '+expl(n)+'</span><br>La respuesta era <b>'+Q.ans+'</b>. '+expl(Q.ans);
+    }
+  }
+
+  var inited={};
+  window.PZ={on:function(id){
+    if(id==='prim-clas'&&!inited.c){inited.c=1;cInit();cNew();}
+    if(id==='prim-rul'&&!inited.r){inited.r=1;$('pz-r-spin').onclick=rSpin;rDraw();}
+    if(id==='prim-quiz'&&!inited.q){inited.q=1;$('pz-q-new').onclick=qNew;$('pz-q-nv').onchange=qNew;qNew();}
+  },isP:isP,mkQ:mkQ,LAB:LAB,rAsk:rAsk};
+})();
+
+</script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  var STEPS=[1,2,3,5,7],G={st:0,x:[],fails:0,end:false,ok:false};
+  function isP(n){if(n<2)return false;for(var d=2;d*d<=n;d++)if(n%d===0)return false;return true;}
+  function want(st){ // set of numbers that must be crossed after finishing step st
+    var w={};for(var s=0;s<=st;s++){var p=STEPS[s];if(p===1)w[1]=1;else for(var m=2*p;m<=100;m+=p)w[m]=1;}return w;}
+  function paint(){
+    [].forEach.call($('pz-g-grid').children,function(b){
+      var n=+b.dataset.n,c=G.x[n],cur=!G.end&&STEPS[G.st]===n&&n>1;
+      b.style.background=c?'#ffcdd2':(G.end&&isP(n)?'#c8e6c9':(cur||(n>1&&STEPS.indexOf(n)>=0&&STEPS.indexOf(n)<G.st)?'#fff3c4':'#fff'));
+      b.style.textDecoration=c?'line-through':'none';
+      b.style.borderColor=cur?'#ff9800':(G.end&&isP(n)&&!c?'#2e7d32':'#ccc');
+      b.style.color=c?'#888':'#222';
+    });
+  }
+  function order(){
+    var o=$('pz-g-order');
+    if(G.end){o.innerHTML='🎉 ¡Criba terminada! Los números que no están tachados (en verde) son los <b>números primos menores que 100</b>.<br><span style="font-size:.8em;font-weight:600;">No hace falta seguir con el 11: 11 × 11 = 121 ya es mayor que 100.</span>';return;}
+    var p=STEPS[G.st];
+    o.innerHTML=p===1?'<b>Paso 1.</b> El 1 no es primo ni compuesto. <b>Táchalo.</b>'
+      :'<b>Paso '+(G.st+1)+'.</b> El <b>'+p+'</b> es el primer número sin tachar: es primo. <b>Tacha todos sus múltiplos</b> (pero no el '+p+').';
+  }
+  function reset(){G.st=0;G.x=[];G.fails=0;G.end=false;G.ok=false;$('pz-g-msg').innerHTML='';$('pz-g-ask').style.display='none';$('pz-g-chk').style.display='';$('pz-g-in').value='';$('pz-g-in').disabled=false;order();paint();}
+  function init(){
+    var g=$('pz-g-grid');var h='';
+    for(var i=1;i<=100;i++)h+='<button type="button" data-n="'+i+'" style="padding:8px 0;background:#fff;border:2px solid #ccc;border-radius:6px;font-weight:700;font-size:.9em;cursor:pointer;">'+i+'</button>';
+    g.innerHTML=h;
+    g.addEventListener('click',function(e){var b=e.target.closest('button');if(!b||G.end)return;var n=+b.dataset.n;G.x[n]=!G.x[n];paint();});
+    $('pz-g-reset').onclick=reset;
+    $('pz-g-sol').onclick=function(){G.end=true;G.x=[];for(var n=1;n<=100;n++)G.x[n]=!isP(n);$('pz-g-chk').style.display='none';$('pz-g-ask').style.display='none';$('pz-g-msg').innerHTML='';order();paint();};
+    $('pz-g-chk').onclick=check;
+    $('pz-g-ver').onclick=function(){
+      if(G.ok)return;var v=parseInt($('pz-g-in').value),m=$('pz-g-msg');
+      var cnt=0;for(var n=1;n<=100;n++)if(isP(n))cnt++;
+      if(v===cnt){G.ok=true;$('sc-crib').textContent='Puntos: '+((parseInt($('sc-crib').textContent.match(/\d+/)[0]))+10);m.innerHTML='<span style="color:#28a745;">✅ ¡Correcto! Hay '+cnt+' números primos menores que 100. +10 puntos.</span>';$('pz-g-in').disabled=true;}
+      else m.innerHTML='<span style="color:#dc3545;">❌ Cuenta otra vez los números verdes. Pueden ayudarte las filas: cada fila de 10 tiene pocos primos.</span>';
+    };
+    reset();
+  }
+  function check(){
+    if(G.end)return;var w=want(G.st),extra=[],miss=[],m=$('pz-g-msg'),p=STEPS[G.st];
+    for(var n=1;n<=100;n++){
+      if(G.x[n]&&!w[n])extra.push(n);
+      if(!G.x[n]&&w[n])miss.push(n);
+    }
+    if(!extra.length&&!miss.length){
+      var pts=G.fails===0?5:2;$('sc-crib').textContent='Puntos: '+((parseInt($('sc-crib').textContent.match(/\d+/)[0]))+pts);
+      G.fails=0;G.st++;
+      if(G.st>=STEPS.length){G.end=true;$('pz-g-chk').style.display='none';$('pz-g-ask').style.display='';m.innerHTML='<span style="color:#28a745;">✅ ¡Bien! +'+pts+' puntos.</span>';}
+      else m.innerHTML='<span style="color:#28a745;">✅ ¡Paso correcto! +'+pts+' puntos.</span>';
+      order();paint();return;
+    }
+    G.fails++;var h='<span style="color:#dc3545;">❌ Este paso no está bien.</span>';
+    if(extra.length)h+='<br>Has tachado de más: <b>'+extra.join(", ")+'</b>. '+(p===1?'Solo hay que tachar el 1.':'Esos números no son múltiplos de '+p+' (ni de los primos anteriores). Pulsa otra vez sobre ellos para destacharlos.');
+    if(miss.length)h+='<br>Te falta'+(miss.length>1?'n':'')+' por tachar: <b>'+miss.join(', ')+'</b>.'+(p>1?' Cuenta de '+p+' en '+p+': '+[p*2,p*3,p*4].join(', ')+'…':'');
+    m.innerHTML=h;
+  }
+  window.PZG={init:init,reset:reset};
+})();
+
+document.addEventListener("DOMContentLoaded",function(){if(window.PZG)PZG.init();});if(document.readyState!=="loading"&&window.PZG)PZG.init();
 </script>
 </body></html>
