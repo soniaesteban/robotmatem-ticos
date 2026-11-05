@@ -602,6 +602,16 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
 .fr-svg{width:100%;max-width:540px;background:#fff;border:2px solid #d1c4e9;border-radius:10px;display:block;margin:8px auto}
 .fr-qbox{background:#f3f0ff;border:2px solid #b39ddb;border-radius:12px;padding:12px;margin-top:10px}
 .fr-qin{display:inline-flex;flex-direction:column;align-items:center;gap:4px;vertical-align:middle;margin:0 8px}
+.mv-svg{width:100%;max-width:560px;background:#fff;border:2px solid #d1c4e9;border-radius:10px;display:block;margin:8px auto;touch-action:manipulation}
+.mv-opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;max-width:700px;margin:8px auto}
+.mv-opt{border:3px solid #d1c4e9;border-radius:12px;background:#fff;padding:4px;color:#26214a;text-align:left}
+.mv-opt:hover{background:#f6f0ff;transform:none}.mv-opt.sel{border-color:#6a3fc4;background:#efe6ff}
+.mv-big{font-size:1.2em;padding:14px 20px;margin:4px}
+.mv-inst{font-size:1.15em;margin:8px 0}
+.mv-pad{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}
+.mv-pad button{font-size:1.5em;min-width:64px;padding:10px 14px}
+.mv-num{font-size:1.4em;min-width:58px;padding:12px 0;margin:4px}
+.mv-cell.mv-ed{cursor:pointer}
 .geo-opt{background:#fff;color:#12337A;border:3px solid #9db3de;font-size:1.05em;padding:9px 16px;border-radius:12px}
 #seccion-geometria .geo-opt:hover{border-color:#667eea}
 #seccion-geometria .geo-opt.good{background:#c8e6c9;border-color:#2e7d32}
@@ -3544,7 +3554,7 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
 
 <!-- POTENCIAS -->
 <div id="tpot" class="tp">
-<h3 style="color:#667eea;margin-bottom:10px;">⚡ Potencias</h3>
+<h3 style="color:#667eea;margin-bottom:10px;">⚡ Potencias <a href="#preguntas-t9" style="font-size:.6em;font-weight:700;margin-left:10px;background:#ede7f6;color:#4527a0;padding:4px 10px;border-radius:14px;text-decoration:none;">🧠 Preguntas para pensar sobre potencias</a></h3>
 <div class="ibox">💡 Una potencia es una multiplicación de factores iguales: 3⁴ = 3×3×3×3. La <b>base</b> es el número que se repite, el <b>exponente</b> indica cuántas veces.</div>
 
 <div class="op-tabs">
@@ -3554,6 +3564,8 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
   <button class="op-tab" onclick="cambPOT(event,'pot-divbase')">➗ División misma base</button>
   <button class="op-tab" onclick="cambPOT(event,'pot-potpot')">⚡⚡ Potencia de otra potencia</button>
   <button class="op-tab" onclick="cambPOT(event,'pot-comb')">🧩 Operaciones combinadas</button>
+  <button class="op-tab" onclick="cambPOT(event,'pot-p10')">🔟 Potencias de 10</button>
+  <button class="op-tab" onclick="cambPOT(event,'pot-crec')">📈 Crecimiento</button>
   <button class="op-tab" onclick="cambPOT(event,'pot-problemas')">📝 Problemas</button>
 </div>
 
@@ -3701,6 +3713,28 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
       <div style="font-weight:800;color:#e65100;margin-bottom:8px;">🔍 Aquí puedes ver dónde está el error:</div>
       <div id="pe-cb-pasos"></div>
     </div>
+  </div>
+</div>
+<div id="pot-p10" class="op-p">
+  <div class="ibox">💡 Las <b>potencias de 10</b> son las del sistema de numeración: 10¹ = 10, 10² = 100, 10³ = 1 000… El exponente es el <b>número de ceros</b>. Por eso podemos descomponer un número así: 3 482 = 3×10³ + 4×10² + 8×10¹ + 2×10⁰ (y 10⁰ = 1).<br><span style="font-size:.9em">Al multiplicar por 10ⁿ la cifra de cada orden sube n lugares: 36 × 10³ = 36 000.</span></div>
+  <div class="card" style="border-color:#2e7d32;">
+    <div class="badge-sc" id="sc-pot10">Puntos: 0</div>
+    <div id="p10-enun" style="font-size:1.35em;font-weight:800;margin:12px 0;"></div>
+    <div id="p10-hint" style="color:#555;margin-bottom:8px;"></div>
+    <input id="p10-resp" type="text" inputmode="numeric" autocomplete="off" style="padding:8px;font-size:1.2em;border:2px solid #ddd;border-radius:8px;width:170px;" onkeydown="if(event.key==='Enter')p10Ver()">
+    <button class="bok" onclick="p10Ver()">✅ Comprobar</button> <button class="bok" style="background:#78909c" onclick="p10Nuevo()">🎲 Otra</button>
+    <div id="p10-res" style="margin-top:10px;font-weight:700;"></div>
+  </div>
+</div>
+<div id="pot-crec" class="op-p">
+  <div class="ibox">💡 Un mensaje se reenvía a <b>3 personas</b> y cada una lo reenvía a otras 3, y así en cada ronda. En la ronda <i>n</i> lo reciben 3ⁿ personas. <b>Multiplicar por 3 en cada ronda</b> crece mucho más deprisa que <b>sumar 3 en cada ronda</b>.</div>
+  <div class="card" style="border-color:#c2185b;">
+    <div class="badge-sc" id="sc-potcre">Puntos: 0</div>
+    <div id="pc-enun" style="font-size:1.25em;font-weight:800;margin:12px 0;"></div>
+    <div id="pc-tabla" style="overflow-x:auto;margin-bottom:8px;"></div>
+    <input id="pc-resp" type="text" inputmode="numeric" autocomplete="off" style="padding:8px;font-size:1.2em;border:2px solid #ddd;border-radius:8px;width:170px;" onkeydown="if(event.key==='Enter')pcVer()">
+    <button class="bok" onclick="pcVer()">✅ Comprobar</button> <button class="bok" style="background:#78909c" onclick="pcNuevo()">🎲 Otra</button>
+    <div id="pc-res" style="margin-top:10px;font-weight:700;"></div>
   </div>
 </div>
 <div id="pot-problemas" class="op-p">
@@ -3908,7 +3942,7 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
 <div class="hub-seccion" id="seccion-geometria">
 <div class="contenedor">
 <h1 class="geo-h1">📐 Geometría</h1>
-<p class="geo-sub">Figuras, perímetro, área y problemas · después llegarán ángulos, circunferencia, simetrías y cuerpos</p>
+<p class="geo-sub">Figuras, perímetro, área y problemas · después llegarán ángulos, circunferencia y cuerpos</p>
 
 <div class="geo-envio">
   <span class="t">👤 Tu nombre:</span>
@@ -3926,6 +3960,7 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
   <button type="button" data-t="gp-pit">📐 Pitágoras <span class="badge-sc gsc-pit">Puntos: 0</span></button>
   <button type="button" data-t="gp-prob">🧩 Problemas <span class="badge-sc gsc-prob">Puntos: 0</span></button>
   <button type="button" data-t="gp-fra">🔺 Fracciones y figuras <span class="badge-sc gsc-fra">Puntos: 0</span></button>
+  <button type="button" data-t="gp-mov">🔁 Movimientos <span class="badge-sc gsc-mov">Puntos: 0</span></button>
   <button type="button" data-t="gp-prog">📊 Mi progreso</button>
 </div>
 
@@ -4271,6 +4306,70 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
   </div>
 </div>
 
+<!-- ============ MOVIMIENTOS ============ -->
+<div class="gpane" id="gp-mov">
+  <div class="geo-subt" id="geo-sub-mov">
+    <button type="button" data-t="mv-q">🔍 ¿Qué movimiento es?</button>
+    <button type="button" data-t="mv-t">➡️ Traslada</button>
+    <button type="button" data-t="mv-g">🔄 Gira</button>
+    <button type="button" data-t="mv-s">🪞 Simetría</button>
+    <button type="button" data-t="mv-e">📐 Ejes de simetría</button>
+  </div>
+
+  <div class="gpane" id="mv-q">
+    <div class="ibox">Mira la figura <b style="color:#1e88e5">azul</b> y su copia <b style="color:#fb8c00">naranja</b>. El punto rojo marca el mismo vértice en las dos. ¿Qué movimiento las une?</div>
+    <div class="geo-bar"><select id="mq-niv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select>
+      <button type="button" id="mq-nuevo" class="bok">🎲 Otra</button></div>
+    <div id="mq-box"></div>
+    <div class="mv-pad" id="mq-opts">
+      <button type="button" class="mv-big" data-k="t">➡️ Traslación</button>
+      <button type="button" class="mv-big" data-k="g">🔄 Giro</button>
+      <button type="button" class="mv-big" data-k="s">🪞 Simetría</button>
+    </div>
+    <div class="geo-res" id="mq-res"></div><div class="geo-exp" id="mq-exp"></div>
+  </div>
+
+  <div class="gpane" id="mv-t">
+    <div class="ibox">Mueve la figura <b style="color:#fb8c00">naranja</b> con las flechas (o arrástrala con el dedo o el ratón). La figura <b style="color:#1e88e5">azul</b> es la de partida.</div>
+    <div class="geo-bar"><select id="mt-niv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option></select>
+      <button type="button" id="mt-nuevo" class="bok">🎲 Otra</button></div>
+    <p class="mv-inst" id="mt-inst"></p>
+    <div id="mt-box"></div>
+    <div class="mv-pad"><button type="button" id="mt-izq" aria-label="Izquierda">⬅️</button><button type="button" id="mt-arr" aria-label="Arriba">⬆️</button><button type="button" id="mt-aba" aria-label="Abajo">⬇️</button><button type="button" id="mt-der" aria-label="Derecha">➡️</button></div>
+    <div class="geo-bar"><button type="button" id="mt-ver" class="bok">✅ Comprobar</button></div>
+    <div class="geo-res" id="mt-res"></div><div class="geo-exp" id="mt-exp"></div>
+  </div>
+
+  <div class="gpane" id="mv-g">
+    <div class="ibox">Un <b>giro</b> mueve la figura alrededor de un punto fijo, sin cambiar su forma. La figura <b style="color:#90a4ae">gris</b> es la de partida; la <b style="color:#fb8c00">naranja</b> es la que se ha girado.</div>
+    <div class="geo-bar"><select id="mg-niv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option></select>
+      <button type="button" id="mg-nuevo" class="bok">🎲 Otra</button></div>
+    <p class="mv-inst" id="mg-inst"></p>
+    <div class="mv-opts" id="mg-opts"></div>
+    <div class="geo-bar"><button type="button" id="mg-ver" class="bok">✅ Comprobar</button></div>
+    <div class="geo-res" id="mg-res"></div><div class="geo-exp" id="mg-exp"></div>
+  </div>
+
+  <div class="gpane" id="mv-s">
+    <div class="ibox">La línea roja es un <b>eje de simetría</b>, como un espejo. Pulsa los cuadros del otro lado para completar el dibujo: cada cuadro azul tiene que tener su <b style="color:#fb8c00">gemelo naranja</b> al otro lado del eje.</div>
+    <div class="geo-bar"><select id="ms-niv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select>
+      <button type="button" id="ms-nuevo" class="bok">🎲 Otro dibujo</button></div>
+    <div id="ms-box"></div>
+    <div class="geo-bar"><button type="button" id="ms-ver" class="bok">✅ Comprobar</button></div>
+    <div class="geo-res" id="ms-res"></div><div class="geo-exp" id="ms-exp"></div>
+  </div>
+
+  <div class="gpane" id="mv-e">
+    <div class="ibox">Un <b>eje de simetría</b> es una línea que divide la figura en dos mitades iguales: si doblas por ella, las dos mitades coinciden.</div>
+    <div class="geo-bar"><select id="me-niv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select>
+      <button type="button" id="me-nuevo" class="bok">🎲 Otra figura</button></div>
+    <p class="mv-inst" id="me-q"></p>
+    <div id="me-box"></div>
+    <div class="mv-pad" id="me-nums"></div>
+    <div class="geo-res" id="me-res"></div><div class="geo-exp" id="me-exp"></div>
+  </div>
+</div>
+
 <div class="gpane" id="gp-prog">
   <div class="ibox">Aquí ves cómo vas. Tu progreso se guarda <b>en este ordenador con tu nombre</b>: escribe siempre tu nombre arriba para seguir sumando.</div>
   <div id="prog-box"></div>
@@ -4349,7 +4448,7 @@ function irASeccion(id){
 function indagacionCargar(){
   const f = document.getElementById('indagacion-frame');
   if (f && !f.getAttribute('src')) {
-    f.setAttribute('src', 'indagacion.html' + (/[?&]docente\b/.test(location.search) ? '?docente' : ''));
+    f.setAttribute('src', 'indagacion.html' + (/[?&]docente\b/.test(location.search) ? '?docente' : '') + (window._indTarjeta ? '#' + window._indTarjeta : ''));
   }
 }
 
@@ -4371,6 +4470,15 @@ function pantallaCompleta(){
 
 hubConstruirInicio();
 hubConstruirTabs();
+/* Enlaces directos: matematicas.html#preguntas  o  matematicas.html#preguntas-t2 */
+(function(){
+  const m = location.hash.match(/^#preguntas(?:-(t[1-9]\d*))?$/);
+  if (m) { window._indTarjeta = m[1] || ''; irASeccion('indagacion'); }
+  window.addEventListener('hashchange', function(){
+    const k = location.hash.match(/^#preguntas(?:-(t[1-9]\d*))?$/);
+    if (k) { window._indTarjeta = k[1] || ''; irASeccion('indagacion'); }
+  });
+})();
 </script>
 <script>
 // === NITIDEZ DE CANVAS EN PANTALLAS DE ALTA RESOLUCIÓN ===
@@ -10150,9 +10258,9 @@ function parseNum(s){s=String(s==null?'':s).trim().replace(/\s/g,'').replace(','
 function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%b;a=t;}return a;}
 
 /* ---------- puntuación y progreso (se guarda por nombre) ---------- */
-var SC={poli:{ok:0,n:0},peri:{ok:0,n:0},area:{ok:0,n:0},pit:{ok:0,n:0},prob:{ok:0,n:0},fra:{ok:0,n:0}};
-var SUBN={poli:{Clasifica:'Clasifica',Tablas:'Tablas',Elementos:'Elementos',Angulos:'Suma de ángulos',Construye:'Construye',Real:'En la vida real'},peri:{Recorre:'Recorre el contorno',Calcula:'Calcula',Mismo:'Mismo perímetro'},area:{Formula:'Mi fórmula',Calcula:'Calcula'},pit:{Calcula:'Calcula',Terna:'¿Es rectángulo?',Problemas:'Problemas de Pitágoras'},prob:{Problemas:'Problemas'},fra:{Completa:'Completa la tabla',Pistas:'Descubre con pistas',Tabla:'¿Qué tabla es?',Cuenta:'Cuenta y fracciones'}};
-var SECN={poli:'Polígonos',peri:'Perímetro',area:'Área',pit:'Pitágoras',prob:'Problemas',fra:'Fracciones y figuras'};
+var SC={poli:{ok:0,n:0},peri:{ok:0,n:0},area:{ok:0,n:0},pit:{ok:0,n:0},prob:{ok:0,n:0},fra:{ok:0,n:0},mov:{ok:0,n:0}};
+var SUBN={poli:{Clasifica:'Clasifica',Tablas:'Tablas',Elementos:'Elementos',Angulos:'Suma de ángulos',Construye:'Construye',Real:'En la vida real'},peri:{Recorre:'Recorre el contorno',Calcula:'Calcula',Mismo:'Mismo perímetro'},area:{Formula:'Mi fórmula',Calcula:'Calcula'},pit:{Calcula:'Calcula',Terna:'¿Es rectángulo?',Problemas:'Problemas de Pitágoras'},prob:{Problemas:'Problemas'},fra:{Completa:'Completa la tabla',Pistas:'Descubre con pistas',Tabla:'¿Qué tabla es?',Cuenta:'Cuenta y fracciones'},mov:{Cual:'¿Qué movimiento es?',Traslada:'Traslada',Gira:'Gira',Simetria:'Simetría',Ejes:'Ejes de simetría'}};
+var SECN={poli:'Polígonos',peri:'Perímetro',area:'Área',pit:'Pitágoras',prob:'Problemas',fra:'Fracciones y figuras',mov:'Movimientos'};
 var LOG=[],perfilKey='';
 function lsGet(k){try{return window.localStorage.getItem(k);}catch(_e){return null;}}
 function lsSet(k,v){try{window.localStorage.setItem(k,v);}catch(_e){}}
@@ -11989,7 +12097,7 @@ function enviarGeo(){
   if(!nombre){est.textContent='⚠️ Escribe tu nombre primero.';return;}
   store('set','pizarraNombreAlumna',nombre);if(grupo)store('set','pizarraGrupoAlumna',grupo);
   var T=totales(),ok=T.ok,n=T.n;
-  var puntos={Grupo:grupo||'(sin grupo)',"Geometría · Polígonos":SC.poli.ok,"Geometría · Perímetro":SC.peri.ok,"Geometría · Área":SC.area.ok,"Geometría · Pitágoras":SC.pit.ok,"Geometría · Problemas":SC.prob.ok,"Geometría · Fracciones y figuras":SC.fra.ok,"Geometría · Total de retos":ok,"Geometría · Acierto (%)":n?Math.round(100*ok/n):0};
+  var puntos={Grupo:grupo||'(sin grupo)',"Geometría · Polígonos":SC.poli.ok,"Geometría · Perímetro":SC.peri.ok,"Geometría · Área":SC.area.ok,"Geometría · Pitágoras":SC.pit.ok,"Geometría · Problemas":SC.prob.ok,"Geometría · Fracciones y figuras":SC.fra.ok,"Geometría · Movimientos":SC.mov.ok,"Geometría · Total de retos":ok,"Geometría · Acierto (%)":n?Math.round(100*ok/n):0};
   est.textContent='Enviando...';
   fetch(URL_GEO,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({nombre:nombre,puntos:puntos})})
     .then(function(){est.textContent='✅ ¡Progreso enviado, '+nombre+'!';})
@@ -12337,16 +12445,244 @@ function initFra(){window.GEO_FR=FR;
   $('fd-ver2').addEventListener('click',frVerQ);
 }
 
+/* ===== MOVIMIENTOS: traslación, giro y simetría ===== */
+var MV={Q:null,T:null,G:null,S:null,E:null};
+var MVSH=[
+ [[0,0],[3,0],[3,1],[1,1],[1,2],[0,2]],
+ [[0,0],[4,0],[4,1],[1,1],[1,2],[0,2]],
+ [[0,0],[2,0],[2,2],[1,2],[1,3],[0,3]],
+ [[0,0],[1,0],[1,1],[3,1],[3,2],[0,2]]
+];
+var MVC=40;
+function mvKey(P){return P.map(function(p){return p[0]+','+p[1];}).sort().join('|');}
+function mvTr(P,dx,dy){return P.map(function(p){return [p[0]+dx,p[1]+dy];});}
+function mvRot(P,pv,k){k=((k%4)+4)%4;return P.map(function(p){var x=p[0]-pv[0],y=p[1]-pv[1];for(var i=0;i<k;i++){var t=x;x=-y;y=t;}return [pv[0]+x,pv[1]+y];});}
+function mvRefV(P,a){return P.map(function(p){return [2*a-p[0],p[1]];});}
+function mvRefH(P,b){return P.map(function(p){return [p[0],2*b-p[1]];});}
+function mvIn(P,W,H){return P.every(function(p){return p[0]>=0&&p[0]<=W&&p[1]>=0&&p[1]<=H;});}
+function mvPts(P,c){return P.map(function(p){return (p[0]*c)+','+(p[1]*c);}).join(' ');}
+function mvGrid(W,H,c){
+  var s='<rect width="'+(W*c)+'" height="'+(H*c)+'" fill="#fff"/>',i;
+  for(i=0;i<=W;i++)s+='<line x1="'+i*c+'" y1="0" x2="'+i*c+'" y2="'+H*c+'" stroke="#e0e0ea" stroke-width="1"/>';
+  for(i=0;i<=H;i++)s+='<line x1="0" y1="'+i*c+'" x2="'+W*c+'" y2="'+i*c+'" stroke="#e0e0ea" stroke-width="1"/>';
+  return s;
+}
+function mvPoly(P,fill,stroke,op,c,cls){
+  return '<polygon '+(cls?'class="'+cls+'" ':'')+'points="'+mvPts(P,c)+'" fill="'+fill+'" fill-opacity="'+op+'" stroke="'+stroke+'" stroke-width="3" stroke-linejoin="round"/>'+
+    '<circle cx="'+P[0][0]*c+'" cy="'+P[0][1]*c+'" r="6" fill="#d32f2f" stroke="#fff" stroke-width="2"/>';
+}
+function mvSvg(W,H,c,inner,id){return '<svg viewBox="0 0 '+(W*c)+' '+(H*c)+'" class="mv-svg" '+(id?'id="'+id+'" ':'')+'role="img" aria-label="Cuadrícula con figuras">'+mvGrid(W,H,c)+inner+'</svg>';}
+function mvJuzga(p,S,sub,ok,o){
+  if(S.done)return;
+  if(ok){S.done=true;anota('mov',true,sub);say(p+'-res','✅ '+o.okMsg+(S.tries?' (¡lo has conseguido al razonarlo!)':''),'ok');$(p+'-exp').style.display='none';return;}
+  S.tries++;anota('mov',false,sub);
+  if(S.tries===1){say(p+'-res','❌ '+o.bad+' Piensa un momento:','bad');frReflex(p,o.refl);}
+  else{S.done=true;if(o.reveal)o.reveal();say(p+'-res','❌ Todavía no. '+o.revMsg,'bad');$(p+'-exp').style.display='none';}
+}
+
+/* ---- Q: ¿qué movimiento es? ---- */
+var MVN={t:'Traslación',s:'Simetría',g:'Giro'};
+function mvNewQ(){
+  var niv=$('mq-niv').value,kinds=niv==='f'?['t','s','g2']:niv==='m'?['t','s','g2','g1']:['t','s','g2','g1','sh'],W=12,H=8;
+  for(var n=0;n<800;n++){
+    var base=frPick(MVSH),k=frPick(kinds),P=mvTr(base,frR(0,3),frR(1,4)),I;
+    if(k==='t')I=mvTr(P,frPick([-1,1])*frR(3,7),frR(-2,2));
+    else if(k==='s'){var mx=Math.max.apply(null,P.map(function(p){return p[0];}));I=mvRefV(P,mx+frR(1,2));}
+    else if(k==='sh'){var my=Math.max.apply(null,P.map(function(p){return p[1];}));I=mvRefH(P,my+frR(1,2));}
+    else I=mvRot(P,P[frR(0,P.length-1)],k==='g2'?2:frPick([1,3]));
+    if(!mvIn(P,W,H)||!mvIn(I,W,H)||mvKey(I)===mvKey(P))continue;
+    var ans=k==='t'?'t':(k==='s'||k==='sh')?'s':'g';
+    MV.Q={ans:ans,S:{tries:0,done:false}};
+    $('mq-box').innerHTML=mvSvg(W,H,MVC,mvPoly(P,'#1e88e5','#0d47a1',0.75,MVC)+mvPoly(I,'#fb8c00','#e65100',0.75,MVC));
+    $('mq-opts').querySelectorAll('button').forEach(function(b){b.classList.remove('sel');});
+    frReset('mq');return;
+  }
+}
+function mvAnsQ(k){
+  var Q=MV.Q;if(!Q||Q.S.done)return;
+  var R={t:'Imagina que deslizas la figura azul sin girarla ni darle la vuelta. ¿Coincide con la naranja? Fíjate en el punto rojo: si se mueve en línea recta y la figura sigue «mirando» igual, es una <b>traslación</b>.',
+    s:'Imagina un espejo entre las dos figuras. ¿La naranja es como el reflejo de la azul, con la derecha y la izquierda (o arriba y abajo) cambiadas? Entonces es una <b>simetría</b>.',
+    g:'Imagina que clavas una chincheta en un punto y giras el papel. ¿La figura azul encaja con la naranja al girarla? Entonces es un <b>giro</b>.'};
+  mvJuzga('mq',Q.S,'Cual',k===Q.ans,{okMsg:'Es una <b>'+MVN[Q.ans].toLowerCase()+'</b>.',bad:'No es una '+MVN[k].toLowerCase()+'.',refl:R[Q.ans],
+    revMsg:'Era una <b>'+MVN[Q.ans].toLowerCase()+'</b>.'});
+}
+
+/* ---- T: traslada ---- */
+function mvNewT(){
+  var niv=$('mt-niv').value,W=12,H=8;
+  for(var n=0;n<800;n++){
+    var P=mvTr(frPick(MVSH),frR(0,3),frR(2,4)),dx=niv==='f'?frPick([-1,1])*frR(2,5):frR(-6,6),dy=niv==='f'?0:frR(-3,3);
+    if(niv==='f'&&frR(0,1))dy=frPick([-1,1])*frR(1,2);
+    if(dx===0&&dy===0)continue;
+    if(niv!=='f'&&(dx===0||dy===0))continue;
+    if(!mvIn(P,W,H)||!mvIn(mvTr(P,dx,dy),W,H))continue;
+    MV.T={P:P,dx:dx,dy:dy,cx:0,cy:0,S:{tries:0,done:false}};
+    var txt=[];
+    if(dx)txt.push('<b>'+Math.abs(dx)+'</b> '+(Math.abs(dx)===1?'cuadro':'cuadros')+' a la <b>'+(dx>0?'derecha':'izquierda')+'</b>');
+    if(dy)txt.push('<b>'+Math.abs(dy)+'</b> '+(Math.abs(dy)===1?'cuadro':'cuadros')+' '+(dy>0?'<b>hacia abajo</b>':'<b>hacia arriba</b>'));
+    $('mt-inst').innerHTML='Traslada la figura '+txt.join(' y ')+'.';
+    mvDrawT();frReset('mt');return;
+  }
+}
+function mvDrawT(){
+  var T=MV.T,W=12,H=8,c=MVC;
+  var svg=mvSvg(W,H,c,mvPoly(T.P,'#bbdefb','#1e88e5',0.55,c)+mvPoly(mvTr(T.P,T.cx,T.cy),'#fb8c00','#e65100',0.8,c,'mv-move'),'mt-svg');
+  $('mt-box').innerHTML=svg;
+  var el=$('mt-svg').querySelector('.mv-move');
+  el.style.cursor='grab';el.style.touchAction='none';
+  el.addEventListener('pointerdown',function(e){
+    if(T.S.done)return;
+    var svgEl=$('mt-svg'),sc=svgEl.getBoundingClientRect().width/(W*c),sx=e.clientX,sy=e.clientY,ox=T.cx,oy=T.cy;
+    el.setPointerCapture(e.pointerId);
+    var mv=function(ev){var nx=ox+Math.round((ev.clientX-sx)/sc/c),ny=oy+Math.round((ev.clientY-sy)/sc/c);
+      if(mvIn(mvTr(T.P,nx,ny),W,H)&&(nx!==T.cx||ny!==T.cy)){T.cx=nx;T.cy=ny;el.parentNode&&mvDrawT();}};
+    var up=function(){document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);};
+    document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up);
+  });
+}
+function mvMoveT(dx,dy){
+  var T=MV.T;if(!T||T.S.done)return;
+  if(mvIn(mvTr(T.P,T.cx+dx,T.cy+dy),12,8)){T.cx+=dx;T.cy+=dy;mvDrawT();}
+}
+function mvVerT(){
+  var T=MV.T;if(!T||T.S.done)return;
+  var cx=T.cx,cy=T.cy;
+  mvJuzga('mt',T.S,'Traslada',cx===T.dx&&cy===T.dy,{okMsg:'¡Bien trasladada! La figura se ha movido sin girar.',bad:'Tu figura no está en el sitio pedido.',
+    refl:'Cuenta con el dedo los cuadros que se ha movido tu figura naranja: primero en horizontal (derecha o izquierda) y luego en vertical (arriba o abajo). Compáralo con lo que pide la frase. Fíjate en el punto rojo.',
+    reveal:function(){T.cx=T.dx;T.cy=T.dy;mvDrawT();},revMsg:'Esta es la figura bien trasladada: cuenta los cuadros desde el punto rojo.'});
+}
+
+/* ---- G: gira ---- */
+var MVGT=[{k:1,t:'<b>90°</b> en el sentido de las agujas del reloj ↻'},{k:3,t:'<b>90°</b> en sentido contrario a las agujas del reloj ↺'},{k:2,t:'<b>180°</b> (media vuelta)'}];
+function mvNewG(){
+  var niv=$('mg-niv').value,opts=niv==='f'?[MVGT[0],MVGT[2]]:MVGT,W=10,H=8,c=34;
+  for(var n=0;n<800;n++){
+    var base=frPick(MVSH),P=mvTr(base,3,3),pv=P[frR(0,P.length-1)],T=frPick(opts);
+    var corr=mvRot(P,pv,T.k),cand=[{P:corr,ok:1}],seen={};seen[mvKey(corr)]=1;
+    var dist=[mvRot(P,pv,T.k===1?3:1),mvRot(P,pv,2),mvRefV(P,pv[0]),mvRefH(P,pv[1]),mvRot(P,pv,T.k===3?3:3)];
+    if(T.k===2)dist=[mvRot(P,pv,1),mvRot(P,pv,3),mvRefV(P,pv[0]),mvRefH(P,pv[1])];
+    dist.forEach(function(D){if(cand.length<4&&!seen[mvKey(D)]&&mvKey(D)!==mvKey(P)){seen[mvKey(D)]=1;cand.push({P:D,ok:0});}});
+    if(cand.length<4)continue;
+    var all=cand.every(function(o){return mvIn(o.P,W,H);})&&mvIn(P,W,H);
+    if(!all)continue;
+    cand=frShuf(cand);
+    MV.G={P:P,pv:pv,cand:cand,sel:-1,S:{tries:0,done:false}};
+    $('mg-inst').innerHTML='Gira la figura '+T.t+' alrededor del <b style="color:#d32f2f">punto rojo</b>. ¿Qué dibujo es el correcto?';
+    var h='';
+    cand.forEach(function(o,i){
+      var inner=mvPoly(P,'#cfd8dc','#90a4ae',0.5,c).replace(/<circle[^>]*\/>/,'')+
+        '<polygon points="'+mvPts(o.P,c)+'" fill="#fb8c00" fill-opacity="0.8" stroke="#e65100" stroke-width="3" stroke-linejoin="round"/>'+
+        '<circle cx="'+pv[0]*c+'" cy="'+pv[1]*c+'" r="7" fill="#d32f2f" stroke="#fff" stroke-width="2"/>';
+      h+='<button type="button" class="mv-opt" data-i="'+i+'"><b>'+'ABCD'[i]+'</b>'+mvSvg(W,H,c,inner)+'</button>';
+    });
+    $('mg-opts').innerHTML=h;
+    $('mg-opts').querySelectorAll('.mv-opt').forEach(function(b){b.onclick=function(){
+      if(MV.G.S.done)return;MV.G.sel=+b.getAttribute('data-i');
+      $('mg-opts').querySelectorAll('.mv-opt').forEach(function(x){x.classList.toggle('sel',x===b);});};});
+    frReset('mg');return;
+  }
+}
+function mvVerG(){
+  var G=MV.G;if(!G||G.S.done)return;
+  if(G.sel<0){say('mg-res','Elige una de las cuatro opciones.','bad');return;}
+  var ci=G.cand.findIndex(function(o){return o.ok;});
+  mvJuzga('mg',G.S,'Gira',G.cand[G.sel].ok===1,{okMsg:'¡Bien girada! La figura gira alrededor del punto rojo sin cambiar de forma.',bad:'Ese dibujo no es el giro pedido.',
+    refl:'Gira tu cuaderno o la hoja con el punto rojo fijo. Mira hacia dónde apunta el trozo más largo de la figura gris y comprueba si coincide con el de la naranja. ¡Cuidado!: en un giro la figura <b>no se da la vuelta como en un espejo</b>.',
+    reveal:function(){$('mg-opts').querySelectorAll('.mv-opt').forEach(function(x,i){x.classList.toggle('sel',i===ci);});},revMsg:'La respuesta correcta es la <b>'+'ABCD'[ci]+'</b>.'});
+}
+
+/* ---- S: completa el dibujo simétrico ---- */
+function mvNewS(){
+  var niv=$('ms-niv').value,cfg=niv==='f'?{w:8,h:5,ax:'v'}:niv==='m'?{w:6,h:8,ax:'h'}:{w:10,h:6,ax:'v'};
+  var W=cfg.w,H=cfg.h,half=cfg.ax==='v'?[W/2,H]:[W,H/2],cells={},n=0;
+  var tot=half[0]*half[1],want=Math.max(5,Math.round(tot*0.4));
+  while(n<want){var x=frR(0,half[0]-1),y=frR(0,half[1]-1),k=x+','+y;if(!cells[k]){cells[k]=1;n++;}}
+  var mir={};
+  Object.keys(cells).forEach(function(k){var a=k.split(',').map(Number),x=a[0],y=a[1];
+    var m=cfg.ax==='v'?[W-1-x,y]:[x,H-1-y];mir[m[0]+','+m[1]]=1;});
+  MV.S={cfg:cfg,fixed:cells,mir:mir,mine:{},S:{tries:0,done:false}};
+  mvDrawS();frReset('ms');
+}
+function mvDrawS(){
+  var M=MV.S,cfg=M.cfg,W=cfg.w,H=cfg.h,c=46,s='';
+  for(var y=0;y<H;y++)for(var x=0;x<W;x++){
+    var k=x+','+y,fx=M.fixed[k],mn=M.mine[k],side=cfg.ax==='v'?x<W/2:y<H/2;
+    var fill=fx?'#1e88e5':mn?'#fb8c00':(side?'#f4f8ff':'#fffaf3');
+    s+='<rect class="mv-cell'+(side?'':' mv-ed')+'" data-k="'+k+'" x="'+(x*c)+'" y="'+(y*c)+'" width="'+c+'" height="'+c+'" fill="'+fill+'" stroke="#c9c9d6" stroke-width="1"/>';
+  }
+  s+=cfg.ax==='v'?'<line x1="'+W*c/2+'" y1="-4" x2="'+W*c/2+'" y2="'+(H*c+4)+'" stroke="#d32f2f" stroke-width="4" stroke-dasharray="9 6"/>':
+     '<line x1="-4" y1="'+H*c/2+'" x2="'+(W*c+4)+'" y2="'+H*c/2+'" stroke="#d32f2f" stroke-width="4" stroke-dasharray="9 6"/>';
+  $('ms-box').innerHTML='<svg viewBox="-6 -6 '+(W*c+12)+' '+(H*c+12)+'" class="mv-svg" id="ms-svg" role="img" aria-label="Cuadrícula para completar el dibujo simétrico">'+s+'</svg>';
+  $('ms-svg').querySelectorAll('.mv-ed').forEach(function(r){r.addEventListener('click',function(){
+    if(M.S.done)return;var k=r.getAttribute('data-k');if(M.mine[k])delete M.mine[k];else M.mine[k]=1;mvDrawS();});});
+}
+function mvVerS(){
+  var M=MV.S;if(!M||M.S.done)return;
+  var a=Object.keys(M.mir),b=Object.keys(M.mine),bad=0;
+  a.forEach(function(k){if(!M.mine[k])bad++;});b.forEach(function(k){if(!M.mir[k])bad++;});
+  mvJuzga('ms',M.S,'Simetria',bad===0,{okMsg:'¡Perfecto! Cada cuadro tiene su gemelo al otro lado del eje.',bad:'Hay '+bad+(bad===1?' cuadro mal':' cuadros mal')+' (falta alguno o sobra alguno).',
+    refl:'El eje rojo es como un espejo: cada cuadro azul tiene que tener su gemelo naranja a la <b>misma distancia del eje</b>, al otro lado. Empieza por los cuadros pegados al eje y ve alejándote.',
+    reveal:function(){M.mine=JSON.parse(JSON.stringify(M.mir));mvDrawS();},revMsg:'Este es el dibujo simétrico completo: cada cuadro naranja es el reflejo de uno azul.'});
+}
+
+/* ---- E: ejes de simetría ---- */
+var MVE=[
+ {n:'cuadrado',ax:[0,45,90,135],p:[[-1,-1],[1,-1],[1,1],[-1,1]]},
+ {n:'rectángulo',ax:[0,90],p:[[-1.6,-1],[1.6,-1],[1.6,1],[-1.6,1]]},
+ {n:'triángulo equilátero',ax:[90,30,150],p:[[0,-1.4],[1.212,0.7],[-1.212,0.7]]},
+ {n:'triángulo isósceles',ax:[90],p:[[0,-1.5],[1,1],[-1,1]]},
+ {n:'triángulo escaleno',ax:[],p:[[-1.5,1],[1.6,1],[-0.6,-1.4]]},
+ {n:'rombo',ax:[0,90],p:[[0,-1.5],[1,0],[0,1.5],[-1,0]]},
+ {n:'romboide',ax:[],p:[[-1.8,1],[0.8,1],[1.8,-1],[-0.8,-1]]},
+ {n:'trapecio isósceles',ax:[90],p:[[-1.6,1],[1.6,1],[0.8,-1],[-0.8,-1]]},
+ {n:'pentágono regular',ax:[90,126,162,18,54],p:[0,1,2,3,4].map(function(i){var a=(90+72*i)*Math.PI/180;return [1.4*Math.cos(a),-1.4*Math.sin(a)];})},
+ {n:'hexágono regular',ax:[0,30,60,90,120,150],p:[0,1,2,3,4,5].map(function(i){var a=60*i*Math.PI/180;return [1.4*Math.cos(a),-1.4*Math.sin(a)];})}
+];
+function mvDrawE(E,axes){
+  var u=52,cx=130,cy=110,pts=E.p.map(function(p){return (cx+p[0]*u).toFixed(1)+','+(cy+p[1]*u).toFixed(1);}).join(' ');
+  var s='<rect width="260" height="220" fill="#fff"/><polygon points="'+pts+'" fill="#ffcc80" stroke="#e65100" stroke-width="4" stroke-linejoin="round"/>';
+  if(axes)E.ax.forEach(function(a){var r=a*Math.PI/180,dx=Math.cos(r)*100,dy=-Math.sin(r)*100;
+    s+='<line x1="'+(cx-dx)+'" y1="'+(cy-dy)+'" x2="'+(cx+dx)+'" y2="'+(cy+dy)+'" stroke="#d32f2f" stroke-width="3" stroke-dasharray="8 5"/>';});
+  return '<svg viewBox="0 0 260 220" class="mv-svg" style="max-width:340px" role="img" aria-label="Figura: '+E.n+'">'+s+'</svg>';
+}
+function mvNewE(){
+  var niv=$('me-niv').value,pool=niv==='f'?MVE.slice(0,4):niv==='m'?MVE.slice(0,8):MVE,E=frPick(pool);
+  MV.E={E:E,S:{tries:0,done:false}};
+  $('me-box').innerHTML=mvDrawE(E,false);
+  $('me-q').innerHTML='¿Cuántos <b>ejes de simetría</b> tiene este <b>'+E.n+'</b>? <span class="small">(Los ejes son líneas que dividen la figura en dos mitades que se doblan y coinciden.)</span>';
+  var h='';for(var i=0;i<=6;i++)h+='<button type="button" class="mv-num" data-n="'+i+'">'+i+'</button>';
+  $('me-nums').innerHTML=h;
+  $('me-nums').querySelectorAll('.mv-num').forEach(function(b){b.onclick=function(){mvAnsE(+b.getAttribute('data-n'));};});
+  frReset('me');
+}
+function mvAnsE(n){
+  var M=MV.E;if(!M||M.S.done)return;
+  mvJuzga('me',M.S,'Ejes',n===M.E.ax.length,{okMsg:'Sí: el '+M.E.n+' tiene <b>'+M.E.ax.length+'</b> '+(M.E.ax.length===1?'eje':'ejes')+' de simetría.',
+    bad:'No tiene '+n+' '+(n===1?'eje':'ejes')+'.',
+    refl:'Imagina que doblas la figura por una línea: ¿las dos mitades coinciden exactamente? Si sí, esa línea es un eje. Prueba con líneas verticales, horizontales y también inclinadas (por las esquinas).',
+    reveal:function(){$('me-box').innerHTML=mvDrawE(M.E,true);},revMsg:'Tiene <b>'+M.E.ax.length+'</b> '+(M.E.ax.length===1?'eje':'ejes')+'. Te dibujo '+(M.E.ax.length?'los ejes en rojo':'la figura: no se puede doblar de modo que coincida')+'.'});
+  if(M.S.done&&n===M.E.ax.length)$('me-box').innerHTML=mvDrawE(M.E,true);
+}
+function initMov(){
+  window.GEO_MV=MV;
+  var q=$('mq-opts');q.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){mvAnsQ(b.getAttribute('data-k'));});});
+  [['q',mvNewQ],['t',mvNewT],['g',mvNewG],['s',mvNewS],['e',mvNewE]].forEach(function(a){
+    $('m'+a[0]+'-nuevo').addEventListener('click',a[1]);$('m'+a[0]+'-niv').addEventListener('change',a[1]);a[1]();});
+  $('mt-izq').addEventListener('click',function(){mvMoveT(-1,0);});$('mt-der').addEventListener('click',function(){mvMoveT(1,0);});
+  $('mt-arr').addEventListener('click',function(){mvMoveT(0,-1);});$('mt-aba').addEventListener('click',function(){mvMoveT(0,1);});
+  $('mt-ver').addEventListener('click',mvVerT);$('mg-ver').addEventListener('click',mvVerG);$('ms-ver').addEventListener('click',mvVerS);
+}
+
 function initGeo(){
   var n=store('get','pizarraNombreAlumna'),g=store('get','pizarraGrupoAlumna');
   if(n)$('geo-nombre').value=n;if(g)$('geo-grupo').value=g;
   $('geo-enviar').addEventListener('click',enviarGeo);
   ['input','change','blur'].forEach(function(ev){$('geo-nombre').addEventListener(ev,function(){cambiaNombre();if($('gp-prog').style.display==='block')renderProg();});});
   cambiaNombre();
-  wireTabs('geo-top',function(id){if(id==='gp-prog')renderProg();});wireTabs('geo-sub-poli');wireTabs('geo-sub-peri');wireTabs('geo-sub-area');wireTabs('geo-sub-pit');wireTabs('geo-sub-fra');
+  wireTabs('geo-top',function(id){if(id==='gp-prog')renderProg();});wireTabs('geo-sub-poli');wireTabs('geo-sub-peri');wireTabs('geo-sub-area');wireTabs('geo-sub-pit');wireTabs('geo-sub-fra');wireTabs('geo-sub-mov');
   initExplora();initClasifica();initConstruye();initVR();initFichas();initProb();initTablas();initElementos();initAngulos();initPit();
   initRecorre();initCalculaPer();initMismo();
-  initAE();initAI();initAF();initAC();initFra();
+  initAE();initAI();initAF();initAC();initFra();initMov();
 }
 initGeo();
 window.GEO={VRC:VRC,SC:SC,LOG:function(){return LOG;},genProb:genProb,nuevoPB:nuevoPB,PB:PB,VR:VR,nuevoVR:nuevoVR,renderProg:renderProg,verifica:verifica,genTriLat:genTriLat,genPolyCL:genPolyCL,genQuadNiv:genQuadNiv,clasTri:clasTri,clasQuad:clasQuad,genQuad:function(t){return genQuad(t);},genTriSides:genTriSides,genTriAng:genTriAng,genPer:genPer,genArea:genArea,genPoly:genPoly,evalExpr:evalExpr,chequea:chequea,FIG:FIG,PX:PX,PR:PR,AI:AI,CL:CL,CO:CO,AC:AC,PC:PC,PM:PM,AE:AE,
@@ -13539,5 +13875,57 @@ window.GL_LAND='M240.9,340.1L240.3,341.1L239.7,342L235.5,341.7L231,341.8L228.5,3
   window.DIB={init:function(){if(started)return;started=true;newD();$('db-new').onclick=newD;$('db-nv').onchange=newD;},D:D};
 })();
 
+</script>
+
+<script>
+/* ===== POTENCIAS: potencias de 10 y crecimiento ===== */
+(function(){
+  var pts10=0,ptsC=0,A10=null,AC=null,try10=0,tryC=0,T10=0,TC=0;
+  var $=function(i){return document.getElementById(i);};
+  var N=function(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,'.');};
+  var parse=function(v){v=String(v).replace(/[\s.]/g,'');return /^\d+$/.test(v)?parseInt(v,10):NaN;};
+  var P10=function(e){return Math.pow(10,e);};
+  window.p10Nuevo=function(){
+    clearTimeout(T10);
+    var t=pick(['exp','val','des','mul']),q,h='',ans,ex='';
+    if(t==='exp'){var e=rnd(2,7);q='Escribe '+N(P10(e))+' como potencia de 10: 10<sup>?</sup>';h='¿Cuántos ceros tiene? Escribe solo el exponente.';ans=e;ex='Tiene '+e+' ceros, así que es 10'+sup(e)+'.';}
+    else if(t==='val'){var e2=rnd(2,6);q='¿Cuánto vale 10'+sup(e2)+'?';h='Un 1 seguido de tantos ceros como indica el exponente.';ans=P10(e2);ex='10'+sup(e2)+' = '+Array(e2).fill(10).join(' × ')+' = '+N(ans)+'.';}
+    else if(t==='des'){var d=[rnd(1,9),rnd(1,9),rnd(1,9),rnd(1,9)];var n=d[0]*1000+d[1]*100+d[2]*10+d[3],hole=rnd(0,3);
+      var parts=d.map(function(c,i){return c+'×10'+(i===hole?'<sup>?</sup>':sup(3-i));});
+      q=N(n)+' = '+parts.join(' + ');h='Escribe el exponente que falta (cada orden tiene un exponente distinto).';ans=3-hole;ex='La cifra '+d[hole]+' está en el orden de 10'+sup(3-hole)+'.';}
+    else{var a=rnd(2,99),e3=rnd(1,4);q=a+' × 10'+sup(e3)+' = ?';h='Multiplicar por 10'+sup(e3)+' es poner '+e3+' '+(e3===1?'cero':'ceros')+' detrás.';ans=a*P10(e3);ex=a+' × '+N(P10(e3))+' = '+N(ans)+'.';}
+    A10={ans:ans,ex:ex};try10=0;$('p10-enun').innerHTML=q;$('p10-hint').textContent=h;$('p10-resp').value='';$('p10-res').innerHTML='';$('p10-resp').focus&&$('p10-resp').focus();
+  };
+  window.p10Ver=function(){
+    if(!A10)return;var v=parse($('p10-resp').value),r=$('p10-res');
+    if(isNaN(v)){r.innerHTML='<span style="color:#dc3545;">Escribe un número.</span>';return;}
+    if(v===A10.ans){r.innerHTML='<span style="color:#28a745;">✅ ¡Correcto! '+A10.ex+'</span>';pts10+=10;$('sc-pot10').textContent='Puntos: '+pts10;A10=null;T10=setTimeout(p10Nuevo,1800);return;}
+    try10++;
+    if(try10<2)r.innerHTML='<span style="color:#dc3545;">❌ No es '+N(v)+'. Piensa: el exponente es el número de ceros. Inténtalo otra vez.</span>';
+    else{r.innerHTML='<span style="color:#dc3545;">❌ Todavía no. '+A10.ex+'</span>';A10=null;T10=setTimeout(p10Nuevo,3500);}
+  };
+  window.pcNuevo=function(){
+    clearTimeout(TC);
+    var base=pick([3,3,2,4]),t=pick(['n','sup','cmp']),q,ans,ex,tab=true,n;
+    if(t==='n'){n=rnd(3,7);q='Cada persona reenvía el mensaje a '+base+' personas. En la ronda 0 lo manda 1 persona. ¿Cuántas personas lo reciben en la <b>ronda '+n+'</b>? (escribe el número)';ans=Math.pow(base,n);ex=base+sup(n)+' = '+Array(n).fill(base).join(' × ')+' = '+N(ans)+'.';}
+    else if(t==='sup'){var lim=pick([100,500,1000,5000,10000]);n=0;while(Math.pow(base,n)<=lim)n++;
+      q='Cada persona reenvía el mensaje a '+base+' personas. ¿En qué <b>ronda</b> se supera por primera vez las '+N(lim)+' personas? (escribe el número de la ronda)';ans=n;ex='En la ronda '+(n-1)+' hay '+N(Math.pow(base,n-1))+' (no supera '+N(lim)+') y en la ronda '+n+' hay '+N(Math.pow(base,n))+'.';}
+    else{n=rnd(4,8);q='Compara: A) cada ronda se suman '+base+' personas más (ronda '+n+': '+base+' × '+n+'); B) cada ronda se multiplica por '+base+' (ronda '+n+': '+base+sup(n)+'). ¿Cuántas personas <b>más</b> hay en B que en A en la ronda '+n+'?';ans=Math.pow(base,n)-base*n;ex=base+sup(n)+' = '+N(Math.pow(base,n))+' y '+base+' × '+n+' = '+(base*n)+'; la diferencia es '+N(ans)+'.';tab=false;}
+    AC={ans:ans,ex:ex};tryC=0;$('pc-enun').innerHTML=q;$('pc-resp').value='';$('pc-res').innerHTML='';
+    var h='';if(tab){h='<table style="border-collapse:collapse;"><tr><th style="border:1px solid #ccc;padding:4px 8px;background:#fce4ec;">Ronda</th>';for(var i=0;i<=4;i++)h+='<td style="border:1px solid #ccc;padding:4px 10px;text-align:center;font-weight:700;">'+i+'</td>';h+='</tr><tr><th style="border:1px solid #ccc;padding:4px 8px;background:#fce4ec;">Personas</th>';for(var j=0;j<=4;j++)h+='<td style="border:1px solid #ccc;padding:4px 10px;text-align:center;">'+N(Math.pow(base,j))+'</td>';h+='</tr><tr><th style="border:1px solid #ccc;padding:4px 8px;background:#fce4ec;">Potencia</th>';for(var k=0;k<=4;k++)h+='<td style="border:1px solid #ccc;padding:4px 10px;text-align:center;">'+base+sup(k)+'</td>';h+='</tr></table>';}
+    $('pc-tabla').innerHTML=h;
+  };
+  window.pcVer=function(){
+    if(!AC)return;var v=parse($('pc-resp').value),r=$('pc-res');
+    if(isNaN(v)){r.innerHTML='<span style="color:#dc3545;">Escribe un número.</span>';return;}
+    if(v===AC.ans){r.innerHTML='<span style="color:#28a745;">✅ ¡Correcto! '+AC.ex+'</span>';ptsC+=10;$('sc-potcre').textContent='Puntos: '+ptsC;AC=null;TC=setTimeout(pcNuevo,2200);return;}
+    tryC++;
+    if(tryC<2)r.innerHTML='<span style="color:#dc3545;">❌ No es '+N(v)+'. Cuidado: en cada ronda se <b>multiplica</b> por el mismo número (potencia), no se suma. Mira la tabla y vuelve a intentarlo.</span>';
+    else{r.innerHTML='<span style="color:#dc3545;">❌ Todavía no. '+AC.ex+'</span>';AC=null;TC=setTimeout(pcNuevo,4000);}
+  };
+  var prev=window.cambPOT;
+  window.cambPOT=function(e,id){prev(e,id);if(id==='pot-p10')p10Nuevo();if(id==='pot-crec')pcNuevo();};
+  if(window.PZ_COLS){window.PZ_COLS['sc-pot10']='Potencias · Potencias de 10';window.PZ_COLS['sc-potcre']='Potencias · Crecimiento';}
+})();
 </script>
 </body></html>
