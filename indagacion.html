@@ -266,7 +266,7 @@ function renderLista(){
   var tags=[];CARDS.forEach(function(c){if(tags.indexOf(c.tag)<0)tags.push(c.tag);});
   $('chips').innerHTML=['Todas'].concat(tags).map(function(t){return '<button class="chip'+((t==='Todas'&&!tagSel)||t===tagSel?' on':'')+'" data-t="'+(t==='Todas'?'':esc(t))+'">'+esc(t)+'</button>';}).join('');
   $('grid').innerHTML=CARDS.filter(function(c){return !tagSel||c.tag===tagSel;}).map(function(c){
-    return '<button class="tile" data-id="'+c.id+'">'+c.ill()+'<div class="tt"><span class="tag">'+esc(c.tag)+'</span><b>Una indagación sobre… '+esc(c.t.split(' ').slice(0,6).join(' '))+'…</b></div></button>';
+    return '<button class="tile" data-id="'+c.id+'">'+c.ill()+'<div class="tt"><span class="tag">'+esc(c.tag)+'</span><b>'+esc(c.n)+'</b></div></button>';
   }).join('');
   Array.prototype.forEach.call($('chips').children,function(b){b.onclick=function(){tagSel=b.getAttribute('data-t');renderLista();};});
   Array.prototype.forEach.call($('grid').children,function(b){b.onclick=function(){abre(b.getAttribute('data-id'));};});
