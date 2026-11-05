@@ -220,6 +220,55 @@ function ill8(){
   s+='<text x="'+a[0]+'" y="'+(a[1]+8)+'" font-size="26" text-anchor="middle">🌴</text><text x="'+b[0]+'" y="'+(b[1]+8)+'" font-size="26" text-anchor="middle">⛵</text><text x="'+c[0]+'" y="'+(c[1]+10)+'" font-size="34" text-anchor="middle" fill="#d32f2f" font-weight="700">✕</text><text x="'+d[0]+'" y="'+(d[1]+8)+'" font-size="26" text-anchor="middle">🏝️</text>';
   return s+'</svg>';
 }
+
+function ill9(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#e8eaf6"/>';
+  var xs=[300];s+='<text x="300" y="40" font-size="34" text-anchor="middle">📱</text><text x="300" y="62" font-size="13" text-anchor="middle" fill="#3949ab">1 persona</text>';
+  for(var i=0;i<3;i++){var x=140+i*160;s+='<line x1="300" y1="70" x2="'+x+'" y2="130" stroke="#7986cb" stroke-width="3"/>';s+='<circle cx="'+x+'" cy="140" r="16" fill="#5c6bc0"/>';}
+  
+  for(var j=0;j<3;j++){var px=140+j*160;for(var k=0;k<3;k++){var x2=px-50+k*50;s+='<line x1="'+px+'" y1="156" x2="'+x2+'" y2="236" stroke="#9fa8da" stroke-width="2"/><circle cx="'+x2+'" cy="246" r="12" fill="#26a69a"/>';}}
+  
+  s+='<text x="300" y="304" font-size="22" text-anchor="middle" fill="#283593" font-weight="700">¿y en la ronda 3? ¿y en la 10?</text>';
+  return s+'</svg>';
+}
+function ill10(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#fff3e0"/>';
+  var n=[1,2,4,8],x0=60;
+  for(var i=0;i<4;i++){
+    var x=x0+i*135,h=n[i]*14,y=250-h;
+    s+='<rect x="'+x+'" y="'+y+'" width="100" height="'+h+'" fill="#ffcc80" stroke="#ef6c00" stroke-width="2"/>';
+    for(var k=1;k<n[i];k++)s+='<line x1="'+x+'" y1="'+(y+k*14)+'" x2="'+(x+100)+'" y2="'+(y+k*14)+'" stroke="#ef6c00" stroke-width="1"/>';
+    s+='<text x="'+(x+50)+'" y="280" font-size="14" text-anchor="middle" fill="#6d4c41">'+(i===0?'sin doblar':i+(i===1?' doblez':' dobleces'))+'</text>';
+    s+='<text x="'+(x+50)+'" y="'+(y-8)+'" font-size="16" text-anchor="middle" fill="#bf360c" font-weight="700">'+n[i]+(n[i]===1?' capa':' capas')+'</text>';
+  }
+  s+='<text x="300" y="320" font-size="18" text-anchor="middle" fill="#6d4c41">Vista lateral de una tira de papel doblada por la mitad</text>';
+  return s+'</svg>';
+}
+function ill11(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#e0f2f1"/>';
+  var c=36,ox=70,oy=50;
+  for(var i=0;i<4;i++)for(var j=0;j<4;j++)s+='<rect x="'+(ox+i*c)+'" y="'+(oy+j*c)+'" width="'+c+'" height="'+c+'" fill="#4db6ac" stroke="#00695c" stroke-width="2"/>';
+  s+='<text x="'+(ox+2*c)+'" y="'+(oy+4*c+30)+'" font-size="18" text-anchor="middle" fill="#004d40">cuadrado de lado 4</text>';
+  var d=26,bx=320,by=150;
+  for(var z=2;z>=0;z--)for(var y=0;y<3;y++)for(var x=0;x<3;x++){
+    var px=bx+x*c+z*d,py=by+y*c-z*d;
+    s+='<rect x="'+px+'" y="'+py+'" width="'+c+'" height="'+c+'" fill="'+(z===0?'#ffb74d':z===1?'#ffcc80':'#ffe0b2')+'" stroke="#e65100" stroke-width="1.5"/>';
+  }
+  s+='<text x="'+(bx+90)+'" y="'+(by+3*c+30)+'" font-size="18" text-anchor="middle" fill="#bf360c">cubo de arista 3</text>';
+  return s+'</svg>';
+}
+function ill12(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#f3e5f5"/>';
+  var rows=[['10','#ab47bc',44],['100','#8e24aa',44],['1 000','#7b1fa2',44],['10 000','#6a1b9a',44],['100 000','#4a148c',44]];
+  rows.forEach(function(r,i){var w=90+i*58,y=34+i*58;
+    s+='<rect x="40" y="'+y+'" width="'+w+'" height="44" rx="8" fill="'+r[1]+'"/><text x="'+(40+w/2)+'" y="'+(y+30)+'" font-size="22" text-anchor="middle" fill="#fff" font-weight="700">'+r[0]+'</text>';
+    s+='<text x="'+(60+w+20)+'" y="'+(y+30)+'" font-size="20" fill="#4a148c">'+'× '.repeat(0)+'= 10 × '+(i===0?'1':'10'.repeat(0)+'…')+'</text>';
+  });
+  s=s.replace(/<text x="\d+" y="\d+" font-size="20" fill="#4a148c">[^<]*<\/text>/g,'');
+  s+='<text x="470" y="140" font-size="64" text-anchor="middle" fill="#6a1b9a" font-weight="700">10</text><text x="512" y="110" font-size="32" text-anchor="middle" fill="#6a1b9a" font-weight="700">?</text>';
+  s+='<text x="470" y="200" font-size="18" text-anchor="middle" fill="#4a148c">¿qué patrón ves?</text>';
+  return s+'</svg>';
+}
 /* ===== datos de las tarjetas ===== */
 var API='https://script.google.com/macros/s/AKfycbzAZRtNV1K_3nQ6ooO3QPVhITur2NkufoKKbd76EWCtmL7rz3aO-1Bx_x6xiU0rVbXk/exec';
 var CARDS=[
@@ -246,7 +295,19 @@ var CARDS=[
   q:['¿Qué tiene de raro este dibujo?','¿Qué matemáticas podemos usar para arreglarlo?','¿Encogerías a la persona o agrandarías la casa? ¿Por qué?','¿Qué escala haría que todo fuese coherente?','¿Cómo sabemos cuántas veces más grande es una cosa que otra?']},
  {id:'t8',n:'El tesoro del mapa',tag:'Coordenadas',ill:ill8,t:'cómo describir con números dónde está un lugar',
   rel:'Geometría: plano cartesiano · orientación · latitud y longitud',
-  q:['¿Cómo le explicarías a alguien dónde está el tesoro sin señalarlo con el dedo?','¿Por qué importa el orden de los dos números?','¿Qué tenemos que acordar antes de que dos personas se entiendan con las mismas indicaciones?','¿Qué cambia si el punto de partida (el origen) es otro?','¿Cómo usan los mapas y el GPS esta misma idea?']}
+  q:['¿Cómo le explicarías a alguien dónde está el tesoro sin señalarlo con el dedo?','¿Por qué importa el orden de los dos números?','¿Qué tenemos que acordar antes de que dos personas se entiendan con las mismas indicaciones?','¿Qué cambia si el punto de partida (el origen) es otro?','¿Cómo usan los mapas y el GPS esta misma idea?']},
+ {id:'t9',n:'El mensaje que se reenvía',tag:'Potencias',ill:ill9,t:'cómo algo que se repite por rondas puede crecer mucho más deprisa de lo que parece',
+  rel:'Números: potencias · multiplicación repetida · crecimiento',
+  q:['Una persona manda un mensaje a 3 amigas y cada una lo reenvía a otras 3. ¿Cuántas personas lo reciben en la ronda 1? ¿Y en la ronda 2?','¿Cómo podríamos calcular la ronda 5 sin dibujar todas las personas?','¿Cómo se escribe «3 × 3 × 3 × 3» de forma más corta? ¿Qué nos dice cada número?','¿En qué se diferencian 3 × 4 y 3⁴? ¿Dan lo mismo?','¿Crece igual repartir 3 mensajes más cada ronda que multiplicar por 3 cada ronda? ¿Cómo lo comprobarías?','¿Qué ocurre si en cada ronda el mensaje llega a más personas de las que existen? ¿Qué limita el crecimiento en la vida real?']},
+ {id:'t10',n:'El papel que se dobla',tag:'Potencias',ill:ill10,t:'qué ocurre con el número de capas cuando doblamos un papel por la mitad una y otra vez',
+  rel:'Números: potencias de 2 · patrones · crecimiento',
+  q:['Si doblamos una tira de papel por la mitad, ¿cuántas capas tiene? ¿Y si la doblamos otra vez?','¿Qué patrón ves en el número de capas después de cada doblez?','¿Cómo escribirías el número de capas después de 6 dobleces usando una potencia?','¿Cuántas capas habrá después de 10 dobleces? ¿Cómo lo calcularías sin doblar?','Si doblamos una vez más, ¿qué le ocurre al número de capas? ¿Por qué?','Probad a doblar un papel todas las veces que podáis. ¿Qué os limita? ¿Se parece esto a lo que dicen las matemáticas?']},
+ {id:'t11',n:'Al cuadrado y al cubo',tag:'Potencias',ill:ill11,t:'por qué algunas potencias se llaman «al cuadrado» y «al cubo» y qué tienen que ver con las figuras',
+  rel:'Números y geometría: potencias · área · volumen',
+  q:['¿Cuántos cuadraditos tiene un cuadrado de lado 4? ¿Cómo lo has contado?','¿Por qué crees que 4² se lee «4 al cuadrado»?','¿Cuántos cubitos hay en un cubo de arista 3? ¿Por qué se lee 3³ «3 al cubo»?','Si el lado de un cuadrado se duplica, ¿qué pasa con su área? ¿Se duplica también?','Y si la arista de un cubo se duplica, ¿qué pasa con su volumen? ¿Cómo podríamos comprobarlo?','¿Por qué no tiene sentido hablar de «4 al cuadrado» para medir una longitud?']},
+ {id:'t12',n:'Tantos ceros',tag:'Potencias',ill:ill12,t:'cómo las potencias de 10 nos ayudan a escribir y leer números muy grandes',
+  rel:'Números: potencias de 10 · valor posicional · números grandes',
+  q:['¿Qué tienen en común 10, 100, 1 000 y 10 000? ¿Qué cambia de uno a otro?','¿Cómo escribirías cada uno de ellos como potencia de 10? ¿Qué relación hay entre el exponente y el número de ceros?','Si cada número es 10 veces el anterior, ¿qué número iría antes del 10? ¿Y antes de ese?','¿Cómo escribirías 3 000 usando una potencia de 10? ¿Y 3 400?','¿Qué ventajas tiene escribir un número muy grande como una potencia de 10 en lugar de escribir todos los ceros?']}
 ];
 var COLORS=['#fff59d','#a5d6a7','#90caf9','#f8bbd0','#ffcc80'];
 var DOC=/[?&]docente\b/.test(location.search);
