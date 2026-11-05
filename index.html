@@ -145,6 +145,9 @@ details.ejemplo summary{cursor:pointer;font-weight:700;color:var(--purple);font-
 .sd-msg.ok{color:var(--okink);background:var(--okbg);border-radius:10px;padding:6px 12px}
 .sd-msg.bad{color:var(--badink);background:var(--badbg);border-radius:10px;padding:6px 12px}
 .sd-tiempo{font-size:18px}
+
+#sd-grid.g9{width:min(100%,540px)}
+#sd-grid.g9 .sd-c{font-size:clamp(18px,4.8vw,32px)}
 .pz-juego{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
 .pz-izq{flex:1 1 360px;min-width:0;max-width:600px}
 .pz-der{flex:1 1 300px;min-width:0}
@@ -590,13 +593,13 @@ details.ejemplo summary{cursor:pointer;font-weight:700;color:var(--purple);font-
 <details class="ejemplo" open>
   <summary>📘 ¿Cómo se juega?</summary>
   <div class="narr">
-    <p>Hay que llenar todas las casillas con los números del <b>1 al 4</b> (en el 4×4) o del <b>1 al 6</b> (en el 6×6).</p>
+    <p>Hay que llenar todas las casillas con los números del <b>1 al 4</b> (en el 4×4), del <b>1 al 6</b> (en el 6×6) o del <b>1 al 9</b> (en el 9×9).</p>
     <p>Regla: en cada <b>fila</b>, en cada <b>columna</b> y en cada <b>caja</b> (las zonas marcadas con línea gruesa) <b>no se puede repetir ningún número</b>.</p>
     <p>Truco: busca una casilla donde <b>solo cabe un número</b>. Mira qué números ya hay en su fila, su columna y su caja, y piensa cuál falta. Todos los sudokus de esta pizarra tienen <b>una única solución</b>, así que nunca hace falta adivinar.</p>
   </div>
 </details>
 <div class="ctrl">
-  <select id="sd-tam" aria-label="Tamaño"><option value="4">4 × 4</option><option value="6">6 × 6</option></select>
+  <select id="sd-tam" aria-label="Tamaño"><option value="4">4 × 4</option><option value="6">6 × 6</option><option value="9">9 × 9</option></select>
   <select id="sd-niv" aria-label="Nivel"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select>
   <button class="act" id="sd-nuevo">🎲 Nuevo</button>
   <span class="sd-tiempo">⏱️ <b id="sd-tiempo">0:00</b></span>
@@ -743,7 +746,7 @@ details.ejemplo summary{cursor:pointer;font-weight:700;color:var(--purple);font-
 
 <script>
 (function(){
-var VER='17';
+var VER='18';
 function mk(){var d={};return{getItem:function(k){return Object.prototype.hasOwnProperty.call(d,k)?d[k]:null;},setItem:function(k,v){d[k]=String(v);},removeItem:function(k){delete d[k];},clear:function(){d={};},key:function(i){return Object.keys(d)[i]||null;},get length(){return Object.keys(d).length;}};}
 ['localStorage','sessionStorage'].forEach(function(n){var ok=false;try{var s=window[n];s.setItem('__t','1');s.removeItem('__t');ok=true;}catch(e){}
 if(!ok){try{Object.defineProperty(window,n,{value:mk(),configurable:true});}catch(e){}window.__SIN_ALMACEN=true;}});
@@ -1929,9 +1932,9 @@ window.ptNuevo=ptNuevo;window.ptProgresos=ptProgresos;window.ptResumen=ptResumen
 </script>
 <script>
 (function(){
-const SDCFG={titulo:'Sudoku',ud:'sudoku',uds:'sudokus',labs:['Sin pistas','Con pista','Sin terminar'],grupos:{'4x4':'Sudoku 4×4','6x6':'Sudoku 6×6'},errs:{error:'Casillas mal al pulsar Comprobar'}};
-const BOX={4:[2,2],6:[2,3]};
-const GIV={4:{f:10,m:8,d:6},6:{f:24,m:20,d:16}};
+const SDCFG={titulo:'Sudoku',ud:'sudoku',uds:'sudokus',labs:['Sin pistas','Con pista','Sin terminar'],grupos:{'4x4':'Sudoku 4×4','6x6':'Sudoku 6×6','9x9':'Sudoku 9×9'},errs:{error:'Casillas mal al pulsar Comprobar'}};
+const BOX={4:[2,2],6:[2,3],9:[3,3]};
+const GIV={4:{f:10,m:8,d:6},6:{f:24,m:20,d:16},9:{f:44,m:38,d:32}};
 const $s=id=>document.getElementById(id);
 const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 function ok(g,n,i,v){const r=Math.floor(i/n),c=i%n,[br,bc]=BOX[n];
@@ -1956,9 +1959,9 @@ function log(res,e){perfil().log.push({g:S.n+'x'+S.n,niv:S.niv,res,d:PG.hoy(),e:
 function msg(t,c){const m=$s('sd-msg');m.textContent=t||'';m.className='sd-msg'+(c?' '+c:'');}
 function tiempo(){const s=Math.floor((Date.now()-S.t0)/1000);$s('sd-tiempo').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function dibuja(){const n=S.n,[br,bc]=BOX[n],g=$s('sd-grid');g.style.gridTemplateColumns='repeat('+n+',1fr)';g.innerHTML='';
-  const selv=S.sel>=0?S.cur[S.sel]:0;
+  g.classList.toggle('g9',n===9);
   for(let i=0;i<n*n;i++){const r=Math.floor(i/n),c=i%n,b=document.createElement('button');
-    b.className='sd-c '+S.kind[i]+((c+1)%bc===0&&c<n-1?' bd-r':'')+((r+1)%br===0&&r<n-1?' bd-b':'')+(i===S.sel?' sel':'')+(selv&&S.cur[i]===selv&&i!==S.sel?' igual':'');
+    b.className='sd-c '+S.kind[i]+((c+1)%bc===0&&c<n-1?' bd-r':'')+((r+1)%br===0&&r<n-1?' bd-b':'')+(i===S.sel?' sel':'');
     b.textContent=S.cur[i]||'';b.dataset.i=i;b.setAttribute('aria-label','Fila '+(r+1)+', columna '+(c+1)+(S.cur[i]?': '+S.cur[i]:': vacía'));
     b.onclick=()=>{S.sel=i;dibuja();};g.appendChild(b);}
 }
