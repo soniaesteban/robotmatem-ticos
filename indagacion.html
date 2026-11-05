@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Preguntas para pensar</title>
+<style>
+:root{--ink:#26214a;--acc:#6a3fc4;--acc2:#00897b;--bg:#f3f0ff;--card:#fff;--line:#d9d0f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+header.top h1{margin:0;font-size:1.7em;flex:1}
+.modo{background:#fff;border:2px solid var(--line);border-radius:20px;padding:4px 12px;font-weight:700;font-size:.9em}
+.modo.doc{background:#fff3cd;border-color:#f0c24b}
+.sub{color:#5b5780;margin:0 0 12px}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:10px;padding:8px 14px;font-weight:700}
+.btn.sec{background:#fff;color:var(--acc);border:2px solid var(--acc)}
+.btn.ok{background:#2e9e5b}.btn.warn{background:#e0662b}
+.btn:disabled{opacity:.5;cursor:default}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+.chip{background:#fff;border:2px solid var(--line);border-radius:20px;padding:5px 12px;font-weight:600;color:var(--ink)}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.tile{background:var(--card);border:2px solid var(--line);border-radius:14px;overflow:hidden;text-align:left;padding:0;color:inherit;transition:transform .12s,box-shadow .12s}
+.tile:hover,.tile:focus-visible{transform:translateY(-3px);box-shadow:0 6px 16px rgba(80,50,160,.18);outline:none}
+.tile svg{display:block;width:100%;height:150px}
+.tile .tt{padding:10px 12px}.tile .tt b{display:block}.tile .tag{font-size:.8em;color:var(--acc2);font-weight:700}
+.det{display:none}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:14px}
+.panel .ill{background:#eef;text-align:center}.panel .ill svg{display:block;width:100%;max-width:820px;margin:0 auto;height:auto}
+.panel .body{padding:14px 20px 18px}
+.kick{letter-spacing:.14em;text-transform:uppercase;text-align:center;font-weight:600;color:#4b4573;margin:8px 0 14px;font-size:1.05em}
+.qh{text-align:center;font-weight:800;margin:6px 0}
+.qs{font-size:1.2em;margin:4px auto;max-width:820px;padding-left:26px}
+.qs li{margin:5px 0}
+.rel{margin-top:12px;font-size:.92em;color:#5b5780;text-align:center}
+.nota-box{padding:14px 18px 18px;background:#faf8ff;border-top:2px dashed var(--line)}
+.nota-box h3,.tab h3{margin:0 0 8px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.row input[type=text],.row select,textarea{font:inherit;padding:7px 10px;border:2px solid var(--line);border-radius:10px;background:#fff}
+textarea{width:100%;min-height:90px;resize:vertical}
+.cols{display:flex;gap:6px}
+.sw{width:30px;height:30px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);padding:0}
+.sw.on{box-shadow:0 0 0 3px var(--acc)}
+.msg{min-height:1.4em;font-weight:600;margin:6px 0}
+.msg.ok{color:#237a46}.msg.bad{color:#c0392b}
+.mine{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.mini{border-radius:6px;padding:8px 10px;max-width:260px;box-shadow:1px 2px 4px rgba(0,0,0,.18);font-size:.95em;white-space:pre-wrap;overflow-wrap:anywhere}
+.board-wrap{background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px}
+.board{position:relative;background:#fdfcff;border:2px dashed var(--line);border-radius:12px;min-height:380px;overflow:hidden;touch-action:none}
+.sticky{position:absolute;width:200px;border-radius:4px;padding:8px 10px 10px;box-shadow:2px 4px 8px rgba(0,0,0,.22);font-size:1em;cursor:grab;user-select:none;overflow-wrap:anywhere;white-space:pre-wrap}
+.sticky .who{font-weight:800;font-size:.8em;opacity:.75;margin-bottom:4px;display:flex;justify-content:space-between;gap:6px}
+.sticky .x{border:0;background:transparent;padding:0 2px;font-size:1em;opacity:.55}
+.sticky .x:hover{opacity:1}
+.sticky.drag{cursor:grabbing;box-shadow:4px 8px 16px rgba(0,0,0,.3);z-index:50}
+.board-wrap.proj{position:fixed;inset:0;z-index:99;border-radius:0;overflow:auto}
+.board-wrap.proj .board{min-height:calc(100vh - 90px)}
+.board-wrap.proj .sticky{font-size:1.35em;width:270px}
+.small{font-size:.88em;color:#6a6690}
+@media(max-width:600px){.wrap{padding:10px}header.top h1{font-size:1.35em}.sticky{width:160px}}
+</style></head><body>
+<div class="wrap">
+<header class="top"><h1>🧠 Preguntas para pensar</h1><span class="modo" id="modo">✍️ Alumna</span></header>
+<p class="sub" id="sub">Elige una tarjeta, piensa y comparte tu idea.</p>
+
+<div id="lista">
+  <div class="chips" id="chips"></div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="det" id="det">
+  <p><button class="btn sec" id="volver">← Todas las tarjetas</button></p>
+  <div class="panel">
+    <div class="ill" id="d-ill"></div>
+    <div class="body">
+      <div class="kick" id="d-kick"></div>
+      <p class="qh">Preguntas para pensar</p>
+      <ul class="qs" id="d-qs"></ul>
+      <p class="rel" id="d-rel"></p>
+    </div>
+    <div class="nota-box" id="alu">
+      <h3>✍️ Tu idea</h3>
+      <div class="row"><label>Nombre <input type="text" id="n-nombre" maxlength="60" placeholder="Tu nombre"></label>
+        <label>Grupo <select id="n-grupo"><option value="">Elige…</option><option>PEP 8</option><option>PEP 9</option></select></label></div>
+      <textarea id="n-texto" maxlength="400" placeholder="Escribe tu respuesta, una duda o una pregunta nueva…"></textarea>
+      <div class="row"><span class="small">Color:</span><div class="cols" id="n-cols"></div>
+        <span style="flex:1"></span><span class="small" id="n-cnt">0 / 400</span>
+        <button class="btn ok" id="n-env">📤 Enviar mi nota</button></div>
+      <div class="msg" id="n-msg"></div>
+      <div class="mine" id="n-mine"></div>
+    </div>
+  </div>
+
+  <div class="board-wrap" id="doc" style="display:none">
+    <h3 style="margin:0 0 8px">🧩 Tablero de la clase</h3>
+    <div class="row" id="b-bar">
+      <label>Grupo <select id="b-grupo"><option value="">Todos</option></select></label>
+      <label><input type="checkbox" id="b-nom" checked> Mostrar nombres</label>
+      <label><input type="checkbox" id="b-auto" checked> Actualizar solo</label>
+      <button class="btn sec" id="b-ref">🔄 Actualizar</button>
+      <button class="btn sec" id="b-ord">🧹 Ordenar</button>
+      <button class="btn" id="b-proy">🖥️ Proyectar</button>
+      <span class="small" id="b-n"></span>
+    </div>
+    <div class="msg" id="b-msg"></div>
+    <div class="board" id="board"></div>
+    <p class="small">Arrastra las notas para agruparlas. Con ✕ ocultas una nota (no se borra de la hoja). Enlace para las alumnas: <b id="b-link"></b></p>
+    <p class="row"><button class="btn sec" id="b-ver">👀 Ver como alumna</button></p>
+  </div>
+</div>
+</div>
+<script>
+/* ===== ilustraciones propias (SVG) ===== */
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function svgOpen(){return '<svg viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid slice">';}
+function ill1(){
+  var R=rng(11),s=svgOpen()+'<rect width="600" height="340" fill="#b0bec5"/>';
+  s+='<rect x="0" y="0" width="600" height="38" fill="#78909c"/><rect x="0" y="302" width="600" height="38" fill="#78909c"/><rect x="0" y="0" width="38" height="340" fill="#90a4ae"/><rect x="562" y="0" width="38" height="340" fill="#90a4ae"/>';
+  for(var i=0;i<15;i++){s+='<rect x="'+(48+i*35)+'" y="10" width="20" height="16" fill="#eceff1"/><rect x="'+(48+i*35)+'" y="314" width="20" height="16" fill="#eceff1"/>';}
+  s+='<rect x="38" y="38" width="524" height="264" fill="#cfd8dc"/>';
+  s+='<circle cx="300" cy="170" r="46" fill="#90caf9" stroke="#607d8b" stroke-width="6"/><circle cx="300" cy="170" r="14" fill="#b0bec5" stroke="#607d8b" stroke-width="3"/>';
+  var cols=['#3e2723','#5d4037','#212121','#8d6e63','#d84315','#1565c0','#6a1b9a'],n=0,guard=0;
+  while(n<950&&guard<20000){guard++;
+    var x=46+R()*508,y=46+R()*248,dx=x-300,dy=y-170;
+    if(dx*dx+dy*dy<56*56)continue;
+    if(R()>0.25+0.75*(1-(x-46)/508))continue;
+    s+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.8" fill="'+cols[Math.floor(R()*cols.length)]+'"/>';n++;
+  }
+  return s+'</svg>';
+}
+function ill2(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#8d6e63"/>';
+  var L=['L','L','L','T','T','M','L','L','L','T','T','M','P','P','Z','Z','M','M','P','Z','B','B','B','B'];
+  var W=88,H=74,x0=26,y0=14,g=8;
+  L.forEach(function(k,i){
+    var c=i%6,r=Math.floor(i/6),x=x0+c*(W+g),y=y0+r*(H+g);
+    s+='<rect x="'+x+'" y="'+y+'" width="'+W+'" height="'+H+'" rx="6" fill="#a1887f" stroke="#6d4c41" stroke-width="2"/>';
+    for(var a=0;a<3;a++)for(var b=0;b<2;b++){
+      var cx=x+18+a*26,cy=y+22+b*30;
+      if(k==='L')s+='<circle cx="'+cx+'" cy="'+cy+'" r="11" fill="#66bb6a" stroke="#2e7d32" stroke-width="2"/>';
+      if(k==='T')s+='<circle cx="'+cx+'" cy="'+cy+'" r="10" fill="#e53935" stroke="#b71c1c" stroke-width="2"/>';
+      if(k==='P')s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="11" ry="8" fill="#d7b98a" stroke="#8d6e63" stroke-width="2"/>';
+      if(k==='B')s+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="7" ry="11" fill="#7b1fa2" stroke="#4a148c" stroke-width="2"/>';
+      if(k==='Z')s+='<polygon points="'+cx+','+(cy+13)+' '+(cx-7)+','+(cy-11)+' '+(cx+7)+','+(cy-11)+'" fill="#fb8c00" stroke="#e65100" stroke-width="2"/>';
+      if(k==='M')s+='<rect x="'+(cx-6)+'" y="'+(cy-12)+'" width="12" height="24" rx="5" fill="#fdd835" stroke="#f9a825" stroke-width="2"/>';
+    }
+  });
+  return s+'</svg>';
+}
+function wins(x,y,w,h,c,r,col){
+  var s='',cw=w/(c*2+1),rh=h/(r*2+1);
+  for(var i=0;i<c;i++)for(var j=0;j<r;j++)s+='<rect x="'+(x+cw*(1+2*i)).toFixed(1)+'" y="'+(y+rh*(1+2*j)).toFixed(1)+'" width="'+cw.toFixed(1)+'" height="'+rh.toFixed(1)+'" fill="'+col+'"/>';
+  return s;
+}
+function ill3(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#e3f2fd"/><rect y="290" width="600" height="50" fill="#a5d6a7"/>';
+  s+='<rect x="60" y="90" width="70" height="200" fill="#546e7a"/>'+wins(60,90,70,200,2,8,'#ffe082');
+  s+='<rect x="190" y="220" width="200" height="70" fill="#8d6e63"/>'+wins(190,220,200,70,8,1,'#fff3c4');
+  s+='<rect x="450" y="172" width="118" height="118" fill="#7e57c2"/>'+wins(450,172,118,118,4,4,'#d1c4e9');
+  s+='<circle cx="30" cy="40" r="22" fill="#fff59d"/>';
+  return s+'</svg>';
+}
+function ill4(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#eceff1"/>';
+  var cs=28,ox=188,oy=16;
+  s+='<rect x="'+(ox-6)+'" y="'+(oy-6)+'" width="'+(8*cs+12)+'" height="'+(11*cs+12)+'" rx="10" fill="#263238"/><rect x="'+ox+'" y="'+oy+'" width="'+(8*cs)+'" height="'+(11*cs)+'" fill="#111"/>';
+  for(var i=1;i<8;i++)s+='<line x1="'+(ox+i*cs)+'" y1="'+oy+'" x2="'+(ox+i*cs)+'" y2="'+(oy+11*cs)+'" stroke="#2a2a2a"/>';
+  for(var j=1;j<11;j++)s+='<line x1="'+ox+'" y1="'+(oy+j*cs)+'" x2="'+(ox+8*cs)+'" y2="'+(oy+j*cs)+'" stroke="#2a2a2a"/>';
+  function cell(c,r,col,o){return '<rect x="'+(ox+c*cs+1)+'" y="'+(oy+r*cs+1)+'" width="'+(cs-2)+'" height="'+(cs-2)+'" rx="3" '+(o?'fill="none" stroke="'+col+'" stroke-width="2" stroke-dasharray="4 3"':'fill="'+col+'"')+'/>';}
+  var P=[[0,10,'#e53935'],[1,10,'#e53935'],[2,10,'#e53935'],[2,9,'#e53935'],[3,10,'#43a047'],[4,10,'#43a047'],[4,9,'#43a047'],[5,9,'#43a047'],[5,10,'#1e88e5'],[6,10,'#1e88e5'],[7,10,'#1e88e5'],[7,9,'#fdd835'],[6,9,'#1e88e5'],[0,9,'#fb8c00'],[1,9,'#fb8c00'],[1,8,'#fb8c00'],[2,8,'#8e24aa'],[3,9,'#8e24aa'],[3,8,'#8e24aa'],[4,8,'#8e24aa']];
+  P.forEach(function(p){s+=cell(p[0],p[1],p[2]);});
+  [[3,1],[4,1],[5,1],[4,2]].forEach(function(p){s+=cell(p[0],p[1],'#00acc1');});
+  [[3,7],[4,7],[5,7],[4,6]].forEach(function(p){s+=cell(p[0],p[1],'#00acc1',1);});
+  s+='<text x="80" y="150" font-size="64" text-anchor="middle" fill="#455a64">↻</text><text x="80" y="200" font-size="15" text-anchor="middle" fill="#455a64">girar</text>';
+  s+='<text x="520" y="150" font-size="56" text-anchor="middle" fill="#455a64">⇆</text><text x="520" y="200" font-size="15" text-anchor="middle" fill="#455a64">deslizar</text>';
+  s+='<rect x="470" y="226" width="100" height="86" rx="8" fill="#fff" stroke="#90a4ae" stroke-width="2"/><text x="520" y="246" font-size="13" text-anchor="middle" fill="#455a64">siguiente</text>';
+  [[0,0],[0,1],[0,2],[1,2]].forEach(function(p){s+='<rect x="'+(505+p[0]*18)+'" y="'+(252+p[1]*17)+'" width="16" height="15" rx="2" fill="#fb8c00"/>';});
+  return s+'</svg>';
+}
+function ill5(){
+  var s=svgOpen();
+  s+='<rect width="600" height="170" fill="#e1f5fe"/><rect y="170" width="600" height="170" fill="#29a9e0"/><rect y="230" width="600" height="110" fill="#1b7fc4"/><rect y="290" width="600" height="50" fill="#0f5a9c"/><line x1="0" y1="170" x2="600" y2="170" stroke="#fff" stroke-width="3"/>';
+  for(var v=5;v>=-5;v--){var y=170-v*30+(v<-4?0:0);if(y<8||y>332)continue;
+    s+='<line x1="74" y1="'+y+'" x2="96" y2="'+y+'" stroke="#263238" stroke-width="2"/><text x="64" y="'+(y+5)+'" font-size="16" text-anchor="end" font-weight="700" fill="'+(v<0?'#fff':'#263238')+'">'+(v>0?'+'+v:v<0?'−'+(-v):'0')+'</text>';}
+  s+='<line x1="96" y1="10" x2="96" y2="330" stroke="#263238" stroke-width="3"/>';
+  s+='<polygon points="330,170 450,50 520,120 580,170" fill="#8d6e63"/><polygon points="435,66 450,50 466,68 456,64 446,70" fill="#fff"/><line x1="450" y1="50" x2="450" y2="22" stroke="#333" stroke-width="3"/><polygon points="450,22 474,30 450,38" fill="#e53935"/>';
+  s+='<text x="230" y="110" font-size="30">🐦</text>';
+  s+='<ellipse cx="250" cy="260" rx="52" ry="22" fill="#fdd835" stroke="#f9a825" stroke-width="3"/><rect x="238" y="228" width="22" height="16" rx="3" fill="#fdd835" stroke="#f9a825" stroke-width="3"/><circle cx="270" cy="260" r="6" fill="#e3f2fd"/><circle cx="248" cy="260" r="6" fill="#e3f2fd"/>';
+  s+='<text x="360" y="215" font-size="26">🐟</text><text x="480" y="300" font-size="26">🐙</text>';
+  return s+'</svg>';
+}
+function ill6(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#b3e5fc"/>';
+  s+='<path d="M0,60 C60,30 120,50 150,110 C170,170 110,230 60,250 C30,260 0,250 0,250 Z" fill="#81c784" stroke="#4caf50" stroke-width="3"/>';
+  s+='<path d="M600,90 C540,70 470,110 460,170 C450,230 520,300 600,300 Z" fill="#a5d6a7" stroke="#4caf50" stroke-width="3"/>';
+  s+='<path d="M110,150 C220,60 360,60 500,190" fill="none" stroke="#e53935" stroke-width="4" stroke-dasharray="10 8"/>';
+  s+='<circle cx="110" cy="150" r="9" fill="#e53935"/><circle cx="500" cy="190" r="9" fill="#e53935"/><text x="300" y="68" font-size="38" text-anchor="middle">✈️</text>';
+  function sign(x,y,t,r){return '<g transform="rotate('+r+' '+x+' '+y+')"><rect x="'+(x-64)+'" y="'+(y-16)+'" width="128" height="32" rx="6" fill="#ffee58" stroke="#f57f17" stroke-width="2.5"/><text x="'+x+'" y="'+(y+6)+'" font-size="16" font-weight="700" text-anchor="middle" fill="#3e2723">'+t+'</text></g>';}
+  s+=sign(140,300,'1 200 km',-4)+sign(300,300,'2 h 30 min',3)+sign(300,250,'≈ 746 millas',-3)+sign(470,320,'150 min',2)+sign(240,200,'1 200 000 m',4);
+  return s+'</svg>';
+}
+function ill7(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#e1f5fe"/><rect y="296" width="600" height="44" fill="#a5d6a7"/>';
+  s+='<circle cx="300" cy="62" r="30" fill="#ffcc80" stroke="#e65100" stroke-width="3"/><circle cx="290" cy="58" r="3.5" fill="#333"/><circle cx="311" cy="58" r="3.5" fill="#333"/><path d="M288,74 Q300,84 312,74" fill="none" stroke="#333" stroke-width="3"/>';
+  s+='<rect x="268" y="92" width="64" height="120" rx="12" fill="#1e88e5"/><rect x="272" y="212" width="26" height="84" fill="#37474f"/><rect x="302" y="212" width="26" height="84" fill="#37474f"/><rect x="262" y="290" width="40" height="10" rx="4" fill="#212121"/><rect x="298" y="290" width="40" height="10" rx="4" fill="#212121"/><rect x="236" y="98" width="30" height="86" rx="12" fill="#ffcc80"/><rect x="334" y="98" width="30" height="86" rx="12" fill="#ffcc80"/>';
+  s+='<polygon points="395,262 425,238 455,262" fill="#c62828"/><rect x="399" y="262" width="52" height="34" fill="#ffe0b2"/><rect x="418" y="274" width="14" height="22" fill="#6d4c41"/>';
+  s+='<rect x="478" y="238" width="12" height="58" fill="#6d4c41"/><circle cx="484" cy="226" r="36" fill="#43a047"/>';
+  s+='<rect x="64" y="270" width="92" height="26" rx="8" fill="#e53935"/><rect x="82" y="254" width="52" height="20" rx="6" fill="#ef9a9a"/><circle cx="86" cy="298" r="10" fill="#212121"/><circle cx="136" cy="298" r="10" fill="#212121"/>';
+  s+='<text x="300" y="334" font-size="0"> </text>';
+  return s+'</svg>';
+}
+function ill8(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#fff8e1"/>';
+  var cs=40,ox=70,oy=16;
+  s+='<rect x="'+ox+'" y="'+oy+'" width="'+(12*cs)+'" height="'+(7*cs)+'" fill="#b3e5fc"/>';
+  s+='<path d="M110,60 C150,40 230,50 250,100 C260,150 190,200 130,170 C90,150 80,90 110,60Z" fill="#c5e1a5"/><path d="M330,170 C380,130 470,140 490,200 C500,250 420,280 360,260 C320,245 310,200 330,170Z" fill="#c5e1a5"/>';
+  for(var i=0;i<=12;i++){s+='<line x1="'+(ox+i*cs)+'" y1="'+oy+'" x2="'+(ox+i*cs)+'" y2="'+(oy+7*cs)+'" stroke="#78909c" stroke-width="'+(i===0?3:1)+'"/><text x="'+(ox+i*cs)+'" y="'+(oy+7*cs+20)+'" font-size="15" text-anchor="middle" fill="#37474f">'+i+'</text>';}
+  for(var j=0;j<=7;j++){s+='<line x1="'+ox+'" y1="'+(oy+280-j*cs)+'" x2="'+(ox+12*cs)+'" y2="'+(oy+280-j*cs)+'" stroke="#78909c" stroke-width="'+(j===0?3:1)+'"/><text x="'+(ox-12)+'" y="'+(oy+285-j*cs)+'" font-size="15" text-anchor="middle" fill="#37474f">'+j+'</text>';}
+  function P(x,y){return [ox+x*cs,oy+280-y*cs];}
+  var a=P(2,5),b=P(5,3),c=P(9,2),d=P(11,6);
+  s+='<text x="'+a[0]+'" y="'+(a[1]+8)+'" font-size="26" text-anchor="middle">🌴</text><text x="'+b[0]+'" y="'+(b[1]+8)+'" font-size="26" text-anchor="middle">⛵</text><text x="'+c[0]+'" y="'+(c[1]+10)+'" font-size="34" text-anchor="middle" fill="#d32f2f" font-weight="700">✕</text><text x="'+d[0]+'" y="'+(d[1]+8)+'" font-size="26" text-anchor="middle">🏝️</text>';
+  return s+'</svg>';
+}
+/* ===== datos de las tarjetas ===== */
+var API='https://script.google.com/macros/s/AKfycbzAZRtNV1K_3nQ6ooO3QPVhITur2NkufoKKbd76EWCtmL7rz3aO-1Bx_x6xiU0rVbXk/exec';
+var CARDS=[
+ {id:'t1',n:'La plaza llena',tag:'Medidas',ill:ill1,t:'cómo la estimación, el área y la densidad nos ayudan a saber cuánta gente cabe en un espacio público',
+  rel:'Medidas: área · estimación · razonamiento proporcional',
+  q:['¿Cuántas personas crees que caben en esta plaza? ¿En qué te basas?','¿Cómo podríamos estimar cuánta gente hay sin contar a cada persona?','¿Está la gente repartida por igual por toda la plaza? ¿Qué cambia si no es así?','¿Cuánto espacio necesita una persona? ¿Es siempre el mismo?','¿Cómo podríamos dividir la plaza en partes más pequeñas para estimar mejor?','¿Cómo comprobaríamos y mejoraríamos la precisión de nuestra estimación?']},
+ {id:'t2',n:'La granja por parcelas',tag:'Fracciones',ill:ill2,t:'la conexión entre las fracciones y la agricultura',
+  rel:'Fracciones: parte-todo · equivalentes · comparar y operar',
+  q:['¿Cómo podríamos dividir esta granja en partes y cómo describiríamos cada una?','Si cada cultivo necesita una cantidad distinta de agua, ¿cómo calcularíamos el agua que necesita toda la granja?','¿Qué pasa cuando juntamos o comparamos distintas partes de la granja?','¿Cómo representaríamos y simplificaríamos la parte del terreno dedicada a cada cultivo?','¿Se puede decir lo mismo con fracciones diferentes? ¿Cuándo nos resulta útil?']},
+ {id:'t3',n:'Mismo espacio, distintos edificios',tag:'Geometría',ill:ill3,t:'cómo un mismo espacio puede organizarse de maneras diferentes',
+  rel:'Geometría y medidas: perímetro · área · volumen',
+  q:['¿Qué medidas hacen que un edificio sea más adecuado para un uso u otro?','¿Cómo pueden dos edificios verse muy distintos y ocupar el mismo espacio?','¿Qué cambia dentro de un edificio si lo estiramos hacia arriba o lo hacemos más ancho?','¿Cómo podríamos comprobar si estos edificios tienen realmente la misma cantidad de espacio?','¿Qué conviene medir: la base, la altura, la superficie…? ¿Para qué?']},
+ {id:'t4',n:'Piezas que giran y encajan',tag:'Geometría',ill:ill4,t:'cómo la manera en que movemos las figuras cambia lo que es posible',
+  rel:'Geometría: giros · traslaciones · simetría',
+  q:['¿Dónde y cómo colocarías las dos próximas piezas?','¿En qué te fijas para decidir dónde va cada pieza?','¿Cómo puede moverse una pieza sin cambiar su forma?','¿Qué cambia cuando giramos una pieza y qué sigue siendo igual?','Si se pudieran dar la vuelta a las piezas (como en un espejo), ¿el juego sería más fácil o más difícil? ¿Por qué?','¿Qué piezas encajan igual en varias posiciones? ¿Tiene que ver con su simetría?']},
+ {id:'t5',n:'Por debajo del cero',tag:'Números enteros',ill:ill5,t:'cómo los números negativos nos ayudan a describir lo que está por debajo de un punto de referencia',
+  rel:'Números enteros: recta numérica · comparar · sumar y restar',
+  q:['¿Qué significa el 0 en este dibujo? ¿Podría ser otro punto?','¿Qué diferencia hay entre estar 2 unidades por encima del 0 y 2 unidades por debajo?','¿Cómo comparamos dos posiciones, una por encima y otra por debajo del 0?','Si el submarino sube 3 unidades, ¿dónde queda? ¿Y si luego baja 5?','¿En qué otras situaciones de la vida usamos números negativos?']},
+ {id:'t6',n:'El mismo viaje, distintas formas',tag:'Medidas',ill:ill6,t:'cómo un mismo viaje puede describirse de maneras distintas y qué necesitamos para entenderlo',
+  rel:'Medidas: unidades · conversiones · tiempo',
+  q:['Si hicieras de verdad este viaje, ¿qué necesitarías averiguar antes?','¿Qué puede resultar confuso o distinto al comparar los carteles?','¿Cómo podrían dos personas describir el mismo viaje de formas completamente distintas?','¿Qué harías si la información que necesitas está en una unidad que no entiendes?','¿Cómo podríamos hacer más fácil comparar toda esta información?']},
+ {id:'t7',n:'¿Qué hay raro en la escala?',tag:'Proporcionalidad',ill:ill7,t:'qué ocurre con las proporciones cuando algo no está a escala',
+  rel:'Proporcionalidad: escala · razón · multiplicación',
+  q:['¿Qué tiene de raro este dibujo?','¿Qué matemáticas podemos usar para arreglarlo?','¿Encogerías a la persona o agrandarías la casa? ¿Por qué?','¿Qué escala haría que todo fuese coherente?','¿Cómo sabemos cuántas veces más grande es una cosa que otra?']},
+ {id:'t8',n:'El tesoro del mapa',tag:'Coordenadas',ill:ill8,t:'cómo describir con números dónde está un lugar',
+  rel:'Geometría: plano cartesiano · orientación · latitud y longitud',
+  q:['¿Cómo le explicarías a alguien dónde está el tesoro sin señalarlo con el dedo?','¿Por qué importa el orden de los dos números?','¿Qué tenemos que acordar antes de que dos personas se entiendan con las mismas indicaciones?','¿Qué cambia si el punto de partida (el origen) es otro?','¿Cómo usan los mapas y el GPS esta misma idea?']}
+];
+var COLORS=['#fff59d','#a5d6a7','#90caf9','#f8bbd0','#ffcc80'];
+var DOC=/[?&]docente\b/.test(location.search);
+var $=function(i){return document.getElementById(i);};
+function lsG(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsS(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function ssG(k){try{return sessionStorage.getItem(k);}catch(e){return null;}}
+function ssS(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function norm(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();}
+
+var cur=null,color=COLORS[0],tagSel='',viewAs=false,timer=null,NOTAS=[];
+function modeDoc(){return DOC&&!viewAs;}
+
+/* ---- lista ---- */
+function renderLista(){
+  var tags=[];CARDS.forEach(function(c){if(tags.indexOf(c.tag)<0)tags.push(c.tag);});
+  $('chips').innerHTML=['Todas'].concat(tags).map(function(t){return '<button class="chip'+((t==='Todas'&&!tagSel)||t===tagSel?' on':'')+'" data-t="'+(t==='Todas'?'':esc(t))+'">'+esc(t)+'</button>';}).join('');
+  $('grid').innerHTML=CARDS.filter(function(c){return !tagSel||c.tag===tagSel;}).map(function(c){
+    return '<button class="tile" data-id="'+c.id+'">'+c.ill()+'<div class="tt"><span class="tag">'+esc(c.tag)+'</span><b>Una indagación sobre… '+esc(c.t.split(' ').slice(0,6).join(' '))+'…</b></div></button>';
+  }).join('');
+  Array.prototype.forEach.call($('chips').children,function(b){b.onclick=function(){tagSel=b.getAttribute('data-t');renderLista();};});
+  Array.prototype.forEach.call($('grid').children,function(b){b.onclick=function(){abre(b.getAttribute('data-id'));};});
+}
+function abre(id){
+  var c=CARDS.filter(function(x){return x.id===id;})[0];if(!c){cierra();return;}
+  cur=c;history.replaceState(null,'','#'+id);
+  $('lista').style.display='none';$('det').style.display='block';
+  $('d-ill').innerHTML=c.ill();
+  $('d-kick').textContent='Una indagación sobre '+c.t;
+  $('d-qs').innerHTML=c.q.map(function(q){return '<li>'+esc(q)+'</li>';}).join('');
+  $('d-rel').innerHTML=modeDoc()?'📚 '+esc(c.rel):'';
+  $('sub').textContent=modeDoc()?'Modo docente: proyecta la tarjeta y mira las notas de la clase.':'Lee, piensa y escribe tu idea.';
+  $('alu').style.display=modeDoc()?'none':'block';
+  $('doc').style.display=modeDoc()?'block':'none';
+  $('n-msg').textContent='';$('n-msg').className='msg';
+  pintaMias();
+  if(modeDoc())abreTablero();
+  window.scrollTo(0,0);
+}
+function cierra(){
+  cur=null;history.replaceState(null,'',location.pathname+location.search);
+  $('lista').style.display='block';$('det').style.display='none';
+  if(timer){clearInterval(timer);timer=null;}
+  $('sub').textContent=DOC?'Modo docente: elige una tarjeta para proyectarla.':'Elige una tarjeta, piensa y comparte tu idea.';
+}
+
+/* ---- alumna: enviar notas ---- */
+function pend(){try{return JSON.parse(lsG('indPend')||'[]');}catch(e){return [];}}
+function setPend(a){lsS('indPend',JSON.stringify(a));}
+function apiPost(o){return fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)});}
+function flush(){
+  var p=pend();if(!p.length)return Promise.resolve();
+  var left=[];
+  return p.reduce(function(pr,n){return pr.then(function(){return apiPost(n).catch(function(){left.push(n);});});},Promise.resolve()).then(function(){setPend(left);});
+}
+function misKey(){return 'indMis:'+cur.id;}
+function pintaMias(){
+  var a=[];try{a=JSON.parse(lsG(misKey())||'[]');}catch(e){}
+  $('n-mine').innerHTML=a.map(function(n){return '<div class="mini" style="background:'+n.color+'">'+esc(n.texto)+'</div>';}).join('');
+}
+function initAlumna(){
+  $('n-cols').innerHTML=COLORS.map(function(c,i){return '<button type="button" class="sw'+(i?'':' on')+'" style="background:'+c+'" data-c="'+c+'" aria-label="color '+(i+1)+'"></button>';}).join('');
+  Array.prototype.forEach.call($('n-cols').children,function(b){b.onclick=function(){color=b.getAttribute('data-c');Array.prototype.forEach.call($('n-cols').children,function(x){x.classList.toggle('on',x===b);});};});
+  $('n-nombre').value=lsG('pizarraNombreAlumna')||'';$('n-grupo').value=lsG('pizarraGrupoAlumna')||'';
+  $('n-texto').oninput=function(){$('n-cnt').textContent=$('n-texto').value.length+' / 400';};
+  $('n-env').onclick=function(){
+    var nom=$('n-nombre').value.trim(),gr=$('n-grupo').value,tx=$('n-texto').value.trim(),m=$('n-msg');
+    if(!nom){m.textContent='⚠️ Escribe tu nombre.';m.className='msg bad';return;}
+    if(!gr){m.textContent='⚠️ Elige tu grupo.';m.className='msg bad';return;}
+    if(!tx){m.textContent='⚠️ Escribe algo en la nota.';m.className='msg bad';return;}
+    lsS('pizarraNombreAlumna',nom);lsS('pizarraGrupoAlumna',gr);
+    var n={tipo:'nota',id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),tarjeta:cur.id,nombre:nom,grupo:gr,texto:tx,color:color};
+    var a=[];try{a=JSON.parse(lsG(misKey())||'[]');}catch(e){}a.push({texto:tx,color:color});lsS(misKey(),JSON.stringify(a.slice(-30)));
+    var p=pend();p.push(n);setPend(p);
+    m.textContent='Enviando…';m.className='msg';
+    flush().then(function(){
+      if(pend().length){m.textContent='📥 Guardada en este dispositivo; se enviará cuando haya conexión.';m.className='msg bad';}
+      else{m.textContent='✅ ¡Nota enviada, '+nom+'!';m.className='msg ok';}
+    });
+    $('n-texto').value='';$('n-cnt').textContent='0 / 400';pintaMias();
+  };
+}
+
+/* ---- docente: tablero ---- */
+function codigo(){var c=ssG('indCod');if(!c){c=prompt('Código docente:')||'';ssS('indCod',c);}return c;}
+function posKey(){return 'indPos:'+cur.id;}
+function getPos(){try{return JSON.parse(lsG(posKey())||'{}');}catch(e){return {};}}
+function savePos(o){lsS(posKey(),JSON.stringify(o));}
+function abreTablero(){
+  $('b-link').textContent=location.origin&&location.origin!=='null'?location.origin+location.pathname+'#'+cur.id:'indagacion.html#'+cur.id;
+  cargaNotas();
+  if(timer)clearInterval(timer);
+  timer=setInterval(function(){if($('b-auto').checked&&!document.hidden&&!dragging)cargaNotas(true);},15000);
+}
+function cargaNotas(quiet){
+  var m=$('b-msg');if(!quiet){m.textContent='Cargando…';m.className='msg';}
+  var u=API+'?'+new URLSearchParams({accion:'notas',tarjeta:cur.id,codigo:codigo()});
+  fetch(u).then(function(r){return r.json();}).then(function(d){
+    if(!d.ok){m.textContent=d.error==='codigo'?'⚠️ Código incorrecto. Recarga la página para volver a escribirlo.':'⚠️ El script no respondió como se esperaba.';m.className='msg bad';if(d.error==='codigo')ssS('indCod','');return;}
+    m.textContent='';NOTAS=d.notas||[];pintaTablero();
+  }).catch(function(){m.textContent='⚠️ No se pudo conectar. Comprueba la conexión y que el script esté actualizado.';m.className='msg bad';});
+}
+var dragging=false;
+function cols(){var w=$('board').clientWidth,nw=document.querySelector('.board-wrap.proj')?290:220;return Math.max(1,Math.floor(w/nw));}
+function pintaTablero(){
+  var g=$('b-grupo'),vg=g.value,gs=[];
+  NOTAS.forEach(function(n){if(gs.indexOf(n.grupo)<0)gs.push(n.grupo);});
+  g.innerHTML='<option value="">Todos</option>'+gs.sort().map(function(x){return '<option'+(x===vg?' selected':'')+'>'+esc(x)+'</option>';}).join('');
+  var vis=NOTAS.filter(function(n){return !g.value||n.grupo===g.value;});
+  $('b-n').textContent=vis.length+(vis.length===1?' nota':' notas');
+  var pos=getPos(),b=$('board'),nc=cols(),nw=document.querySelector('.board-wrap.proj')?290:220,maxY=0,i=0,showN=$('b-nom').checked;
+  b.innerHTML='';
+  vis.forEach(function(n){
+    var p=pos[n.id];
+    if(!p){p={x:10+(i%nc)*nw,y:10+Math.floor(i/nc)*(document.querySelector('.board-wrap.proj')?190:150)};}
+    i++;
+    var d=document.createElement('div');d.className='sticky';d.setAttribute('data-id',n.id);
+    d.style.background=n.color||'#fff59d';d.style.left=p.x+'px';d.style.top=p.y+'px';
+    d.style.transform='rotate('+(((n.id.charCodeAt(0)+n.id.length)%5)-2)*0.6+'deg)';
+    d.innerHTML='<div class="who"><span>'+(showN?esc(n.nombre):'')+'</span><button class="x" title="Ocultar nota" aria-label="Ocultar nota">✕</button></div>'+esc(n.texto);
+    b.appendChild(d);maxY=Math.max(maxY,p.y+d.offsetHeight+20);
+    d.querySelector('.x').onclick=function(ev){ev.stopPropagation();ocultar(n);};
+    arrastra(d,n);
+  });
+  b.style.minHeight=Math.max(380,maxY)+'px';
+}
+function arrastra(d,n){
+  d.addEventListener('pointerdown',function(e){
+    if(e.target.className==='x')return;
+    dragging=true;d.classList.add('drag');d.setPointerCapture(e.pointerId);
+    var sx=e.clientX,sy=e.clientY,ox=parseFloat(d.style.left),oy=parseFloat(d.style.top);
+    var mv=function(ev){d.style.left=Math.max(0,ox+ev.clientX-sx)+'px';d.style.top=Math.max(0,oy+ev.clientY-sy)+'px';};
+    var up=function(){
+      d.removeEventListener('pointermove',mv);d.removeEventListener('pointerup',up);d.removeEventListener('pointercancel',up);
+      d.classList.remove('drag');dragging=false;
+      var pos=getPos();pos[n.id]={x:parseFloat(d.style.left),y:parseFloat(d.style.top)};savePos(pos);
+      var b=$('board');b.style.minHeight=Math.max(parseFloat(b.style.minHeight)||380,pos[n.id].y+d.offsetHeight+20)+'px';
+    };
+    d.addEventListener('pointermove',mv);d.addEventListener('pointerup',up);d.addEventListener('pointercancel',up);
+  });
+}
+function ocultar(n){
+  if(!confirm('¿Ocultar esta nota? (seguirá en la hoja de cálculo)'))return;
+  apiPost({tipo:'ocultar',id:n.id,codigo:codigo()}).then(function(){NOTAS=NOTAS.filter(function(x){return x.id!==n.id;});pintaTablero();});
+}
+function initDoc(){
+  $('b-ref').onclick=function(){cargaNotas();};
+  $('b-grupo').onchange=pintaTablero;$('b-nom').onchange=pintaTablero;
+  $('b-ord').onclick=function(){savePos({});pintaTablero();};
+  $('b-proy').onclick=function(){
+    var w=$('doc'),on=w.classList.toggle('proj');
+    $('b-proy').textContent=on?'↩️ Salir de proyección':'🖥️ Proyectar';
+    if(on&&w.requestFullscreen){try{w.requestFullscreen();}catch(e){}}
+    if(!on&&document.fullscreenElement){try{document.exitFullscreen();}catch(e){}}
+    pintaTablero();
+  };
+  document.addEventListener('fullscreenchange',function(){if(!document.fullscreenElement&&$('doc').classList.contains('proj')){$('doc').classList.remove('proj');$('b-proy').textContent='🖥️ Proyectar';pintaTablero();}});
+  $('b-ver').onclick=function(){viewAs=true;$('modo').textContent='✍️ Alumna (vista previa)';abre(cur.id);};
+}
+
+/* ---- arranque ---- */
+$('volver').onclick=function(){if(viewAs){viewAs=false;$('modo').textContent='👩‍🏫 Docente';}cierra();};
+if(DOC){$('modo').textContent='👩‍🏫 Docente';$('modo').classList.add('doc');}
+var h=location.hash.replace('#','');
+initAlumna();initDoc();renderLista();
+cierra();
+window.addEventListener('online',flush);flush();
+if(h)abre(h);
+</script></body></html>
