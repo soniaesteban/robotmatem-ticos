@@ -17,6 +17,12 @@ button{font:inherit;cursor:pointer}
 .btn.ok{background:#2e9e5b}.btn.warn{background:#e0662b}
 .btn:disabled{opacity:.5;cursor:default}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+.tw{position:relative}.tw .tile{width:100%;display:block}.tw.off .tile{opacity:.55}
+.lib{position:absolute;top:8px;right:8px;border:2px solid #b0a6d6;background:#fff;color:#4a3d8f;border-radius:16px;padding:4px 10px;font-weight:700;font-size:.85em;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.lib.on{background:#2e7d32;border-color:#1b5e20;color:#fff}
+.libbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0}
+.libbar span{flex:1;min-width:200px}
+.ghost{background:#fff;border:2px solid var(--line);border-radius:10px;padding:5px 10px;font-weight:600;color:var(--ink)}
 .chip{background:#fff;border:2px solid var(--line);border-radius:20px;padding:5px 12px;font-weight:600;color:var(--ink)}
 .chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
@@ -63,6 +69,8 @@ textarea{width:100%;min-height:90px;resize:vertical}
 <p class="sub" id="sub">Elige una tarjeta, piensa y comparte tu idea.</p>
 
 <div id="lista">
+  <div id="lib-bar" class="libbar" style="display:none"></div>
+  <div class="msg" id="lib-msg"></div>
   <div class="chips" id="chips"></div>
   <div class="grid" id="grid"></div>
 </div>
@@ -320,17 +328,65 @@ function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;
 function norm(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();}
 
 var cur=null,color=COLORS[0],tagSel='',viewAs=false,timer=null,NOTAS=[];
+/* tarjetas liberadas por la docente: null = aún sin saber (cargando / sin conexión y sin copia) */
+var LIB=null,LIBERR='';
+function visibles(){return DOC?CARDS:(LIB?CARDS.filter(function(c){return LIB.indexOf(c.id)>=0;}):[]);}
+function cargaLib(){
+  return fetch(API+'?accion=liberadas&_='+Date.now()).then(function(r){return r.json();}).then(function(d){
+    if(!d||!d.ok||!d.ids)throw new Error('x');
+    LIB=d.ids;LIBERR='';lsS('indLib',JSON.stringify(LIB));
+  }).catch(function(){
+    var c=null;try{c=JSON.parse(lsG('indLib')||'null');}catch(e){}
+    if(c){LIB=c;LIBERR='Sin conexión: se muestran las tarjetas de la última vez.';}
+    else if(!LIB){LIB=null;LIBERR='No se pudo comprobar qué tarjetas hay disponibles. Revisa la conexión a internet y recarga la página.';}
+  });
+}
+function guardaLib(ids){
+  var antes=LIB;LIB=ids;renderLista();
+  return apiPost({tipo:'liberar',ids:ids,codigo:codigo()}).then(function(){
+    return new Promise(function(ok){setTimeout(ok,1800);});
+  }).then(cargaLib).then(function(){
+    var m=$('lib-msg');
+    if(LIB&&ids.slice().sort().join()!==LIB.slice().sort().join()){m.textContent='⚠️ No se guardó. ¿El código docente es correcto? Recarga la página y vuelve a escribirlo.';m.className='msg bad';ssS('indCod','');}
+    else{m.textContent='';m.className='msg';}
+    renderLista();
+  }).catch(function(){LIB=antes;renderLista();});
+}
 function modeDoc(){return DOC&&!viewAs;}
 
 /* ---- lista ---- */
 function renderLista(){
-  var tags=[];CARDS.forEach(function(c){if(tags.indexOf(c.tag)<0)tags.push(c.tag);});
+  var VIS=visibles();
+  var tags=[];VIS.forEach(function(c){if(tags.indexOf(c.tag)<0)tags.push(c.tag);});
+  if(tagSel&&tags.indexOf(tagSel)<0)tagSel='';
+  var lm=$('lib-msg');
+  if(!DOC){
+    if(LIB===null&&!LIBERR){lm.textContent='Cargando tarjetas…';lm.className='msg';}
+    else if(LIB===null){lm.textContent='⚠️ '+LIBERR;lm.className='msg bad';}
+    else if(!VIS.length){lm.textContent='Aún no hay tarjetas disponibles. Tu profe las irá abriendo en clase.';lm.className='msg';}
+    else{lm.textContent=LIBERR?LIBERR:'';lm.className='msg';}
+  }
+  var lc=$('lib-bar');
+  if(DOC){
+    var n=LIB?LIB.length:0;
+    lc.style.display='flex';
+    lc.innerHTML='<span><b>🔓 '+n+' de '+CARDS.length+'</b> tarjetas liberadas para las alumnas</span><button type="button" id="lib-all" class="ghost">Liberar todas</button><button type="button" id="lib-none" class="ghost">Bloquear todas</button>';
+    $('lib-all').onclick=function(){guardaLib(CARDS.map(function(c){return c.id;}));};
+    $('lib-none').onclick=function(){guardaLib([]);};
+  }else lc.style.display='none';
   $('chips').innerHTML=['Todas'].concat(tags).map(function(t){return '<button class="chip'+((t==='Todas'&&!tagSel)||t===tagSel?' on':'')+'" data-t="'+(t==='Todas'?'':esc(t))+'">'+esc(t)+'</button>';}).join('');
-  $('grid').innerHTML=CARDS.filter(function(c){return !tagSel||c.tag===tagSel;}).map(function(c){
-    return '<button class="tile" data-id="'+c.id+'">'+c.ill()+'<div class="tt"><span class="tag">'+esc(c.tag)+'</span><b>'+esc(c.n)+'</b></div></button>';
+  $('grid').innerHTML=VIS.filter(function(c){return !tagSel||c.tag===tagSel;}).map(function(c){
+    var tile='<button class="tile" data-id="'+c.id+'">'+c.ill()+'<div class="tt"><span class="tag">'+esc(c.tag)+'</span><b>'+esc(c.n)+'</b></div></button>';
+    if(!DOC)return tile;
+    var on=LIB&&LIB.indexOf(c.id)>=0;
+    return '<div class="tw'+(on?'':' off')+'">'+tile+'<button type="button" class="lib'+(on?' on':'')+'" data-lib="'+c.id+'" aria-pressed="'+(on?'true':'false')+'">'+(on?'🔓 Liberada':'🔒 Bloqueada')+'</button></div>';
   }).join('');
   Array.prototype.forEach.call($('chips').children,function(b){b.onclick=function(){tagSel=b.getAttribute('data-t');renderLista();};});
-  Array.prototype.forEach.call($('grid').children,function(b){b.onclick=function(){abre(b.getAttribute('data-id'));};});
+  Array.prototype.forEach.call($('grid').querySelectorAll('.tile'),function(b){b.onclick=function(){abre(b.getAttribute('data-id'));};});
+  Array.prototype.forEach.call($('grid').querySelectorAll('.lib'),function(b){b.onclick=function(){
+    var id=b.getAttribute('data-lib'),cur2=(LIB||[]).slice(),i=cur2.indexOf(id);
+    if(i>=0)cur2.splice(i,1);else cur2.push(id);
+    guardaLib(cur2);};});
 }
 function abre(id){
   var c=CARDS.filter(function(x){return x.id===id;})[0];if(!c){cierra();return;}
@@ -476,5 +532,12 @@ var h=location.hash.replace('#','');
 initAlumna();initDoc();renderLista();
 cierra();
 window.addEventListener('online',flush);flush();
-if(h)abre(h);
+if(DOC){cargaLib().then(renderLista);if(h)abre(h);}
+else cargaLib().then(function(){
+  renderLista();
+  if(h){
+    if(LIB&&LIB.indexOf(h)>=0)abre(h);
+    else{var lm=$('lib-msg');lm.textContent='Esta tarjeta todavía no está disponible. Tu profe la abrirá en clase.';lm.className='msg bad';}
+  }
+});
 </script></body></html>
