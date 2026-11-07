@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script>
+/* Nombre y grupo se recuerdan en este Chromebook (localStorage) aunque se cierre la pestaña */
+(function(){try{var K={pizarraNombreAlumna:1,pizarraGrupoAlumna:1},ss=window.sessionStorage,ls=window.localStorage,P=Storage.prototype,g=P.getItem,s=P.setItem,r=P.removeItem;
+P.getItem=function(k){if(this===ss&&K[k]){var v=g.call(ls,k);return v===null?g.call(ss,k):v;}return g.call(this,k);};
+P.setItem=function(k,v){if(this===ss&&K[k]){try{s.call(ls,k,v);}catch(e){}}return s.call(this,k,v);};
+P.removeItem=function(k){if(this===ss&&K[k]){try{r.call(ls,k);}catch(e){}}return r.call(this,k);};}catch(e){}})();
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pizarra Interactiva — Conceptos Matemáticos 5º y 6º Primaria</title>
@@ -12092,6 +12100,14 @@ function initPit(){
 /* ===== envío de progreso ===== */
 var URL_GEO='https:'+'/'+'/script.google.com/macros/s/AKfycbzAZRtNV1K_3nQ6ooO3QPVhITur2NkufoKKbd76EWCtmL7rz3aO-1Bx_x6xiU0rVbXk/exec';
 function store(op,k,v){try{if(op==='get')return window.sessionStorage.getItem(k);window.sessionStorage.setItem(k,v);}catch(_e){}return null;}
+function geoPuntosDe(nombre){
+  var L=[];try{L=JSON.parse(lsGet('geoLog:'+normName(nombre))||'[]')||[];}catch(_e){L=[];}
+  if(!L.length)return null;
+  var S={};Object.keys(SC).forEach(function(k){S[k]={ok:0,n:0};});
+  var ok=0,n=0;L.forEach(function(e){if(S[e.s]){S[e.s].n++;n++;if(e.ok){S[e.s].ok++;ok++;}}});
+  return {"Geometría · Polígonos":S.poli.ok,"Geometría · Perímetro":S.peri.ok,"Geometría · Área":S.area.ok,"Geometría · Pitágoras":S.pit.ok,"Geometría · Problemas":S.prob.ok,"Geometría · Fracciones y figuras":S.fra.ok,"Geometría · Movimientos":S.mov.ok,"Geometría · Total de retos":ok,"Geometría · Acierto (%)":n?Math.round(100*ok/n):0};
+}
+window.GEO_PUNTOS=geoPuntosDe;
 function enviarGeo(){
   var nombre=($('geo-nombre').value||'').trim(),grupo=($('geo-grupo').value||'').trim(),est=$('geo-estado');
   if(!nombre){est.textContent='⚠️ Escribe tu nombre primero.';return;}
@@ -13929,3 +13945,50 @@ window.GL_LAND='M240.9,340.1L240.3,341.1L239.7,342L235.5,341.7L231,341.8L228.5,3
 })();
 </script>
 </body></html>
+<script>
+/* ===== Envío automático del progreso (al cerrar, al volver internet y cada pocos minutos) ===== */
+(function(){
+  var DEST=(typeof URL_SHEET_SCRIPT!=='undefined')?URL_SHEET_SCRIPT:'';
+  function norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\s+/g,' ').trim();}
+  function lsG(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function lsS(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  function nombre(){
+    var i=[].slice.call(document.querySelectorAll('input[id^="alumna-nombre"],#geo-nombre'));
+    for(var k=0;k<i.length;k++)if(i[k].value.trim())return i[k].value.trim();
+    return (lsG('pizarraNombreAlumna')||'').trim();
+  }
+  function grupo(){
+    var i=[].slice.call(document.querySelectorAll('[id^="alumna-grupo"],#geo-grupo'));
+    for(var k=0;k<i.length;k++)if((i[k].value||'').trim())return i[k].value.trim();
+    return (lsG('pizarraGrupoAlumna')||'').trim();
+  }
+  function construye(n,g){
+    var p={Grupo:g},a={};
+    try{a=JSON.parse(lsG('pgAcc:'+norm(n))||'{}')||{};}catch(e){}
+    var hay=false;for(var c in a){if(a[c]>0){p[c]=a[c];hay=true;}}
+    try{var gp=window.GEO_PUNTOS&&window.GEO_PUNTOS(n);if(gp){for(var c2 in gp)p[c2]=gp[c2];hay=true;}}catch(e){}
+    return hay?p:null;
+  }
+  var enviando=false;
+  function auto(motivo){
+    var n=nombre(),g=grupo();
+    if(!n||!g||!navigator.onLine)return;           /* sin nombre o sin grupo no se envía */
+    var p=construye(n,g);if(!p)return;
+    var body=JSON.stringify({nombre:n,puntos:p}),h=norm(n)+'|'+body;
+    if(lsG('autoEnv:hash')===h)return;               /* nada nuevo desde el último envío */
+    if(enviando&&motivo!=='cierre')return;
+    enviando=true;
+    try{
+      fetch(DEST,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:body})
+      .then(function(){lsS('autoEnv:hash',h);lsS('autoEnv:fecha',new Date().toISOString());enviando=false;})
+      .catch(function(){enviando=false;});
+    }catch(e){enviando=false;}
+  }
+  window.autoEnviaProgreso=auto;
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')auto('cierre');});
+  window.addEventListener('pagehide',function(){auto('cierre');});
+  window.addEventListener('online',function(){auto('online');});
+  setInterval(function(){auto('tiempo');},240000);
+  setTimeout(function(){auto('inicio');},15000);
+})();
+</script>
