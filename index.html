@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script>
+/* Nombre y grupo se recuerdan en este Chromebook (localStorage) aunque se cierre la pestaña */
+(function(){try{var K={pizarraNombreAlumna:1,pizarraGrupoAlumna:1},ss=window.sessionStorage,ls=window.localStorage,P=Storage.prototype,g=P.getItem,s=P.setItem,r=P.removeItem;
+P.getItem=function(k){if(this===ss&&K[k]){var v=g.call(ls,k);return v===null?g.call(ss,k):v;}return g.call(this,k);};
+P.setItem=function(k,v){if(this===ss&&K[k]){try{s.call(ls,k,v);}catch(e){}}return s.call(this,k,v);};
+P.removeItem=function(k){if(this===ss&&K[k]){try{r.call(ls,k);}catch(e){}}return r.call(this,k);};}catch(e){}})();
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>El robot matemático</title>
@@ -434,7 +442,8 @@ details.ejemplo summary{cursor:pointer;font-weight:700;color:var(--purple);font-
   <button data-t="rec">4. La recta</button>
   <button data-t="seg">5. Seguimos a...</button>
   <button data-t="arr">6. Arregla el programa</button>
-  <button data-t="ope">7. Operaciones en el tablero</button>
+  <button data-t="proc">7. Arregla el procedimiento</button>
+  <button data-t="ope">8. Operaciones en el tablero</button>
   <button data-t="fic">🖨️ Ficha en papel</button>
 </nav>
 
@@ -460,13 +469,18 @@ details.ejemplo summary{cursor:pointer;font-weight:700;color:var(--purple);font-
 </section>
 <section class="panel" id="p-seg">
   <div class="hint">El robot solo puede pisar las casillas que cumplen la regla. La meta es la bandera que también la cumple.</div>
-  <div class="ctrl"><select id="niv-seg"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select><select id="regla-seg"><option value="azar">Regla al azar</option><option value="mult5">Múltiplos de 5</option><option value="mult3">Múltiplos de 3</option><option value="primos">Números primos</option><option value="divex">Divisiones exactas</option><option value="romanos">Romanos mayores que 50</option><option value="siglo">Años del siglo XIX</option><option value="doce">Operaciones que dan 12</option><option value="mitad">Fracciones equivalentes a 1/2</option></select><button class="act" data-new="seg">🎲 Nuevo</button><span class="score" id="sc-seg">Puntos: 0</span></div>
+  <div class="ctrl"><select id="niv-seg"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select><select id="regla-seg"><option value="azar">Regla al azar</option><option value="mult5">Múltiplos de 5</option><option value="mult3">Múltiplos de 3</option><option value="primos">Números primos</option><option value="divex">Divisiones exactas</option><option value="romanos">Romanos mayores que 50</option><option value="siglo">Años del siglo XIX</option><option value="doce">Operaciones que dan 12</option><option value="mitad">Fracciones equivalentes a 1/2</option><option value="eq34">Fracciones equivalentes a 3/4</option><option value="pc25">Iguales a 25 %</option><option value="mayor1">Fracciones mayores que 1</option></select><button class="act" data-new="seg">🎲 Nuevo</button><span class="score" id="sc-seg">Puntos: 0</span></div>
   <div id="z-seg"></div>
 </section>
 <section class="panel" id="p-arr">
   <div class="hint">Este programa tiene <b>una tarjeta equivocada</b>. Ejecútalo para ver qué pasa, toca la tarjeta que está mal y elige la que debería ir.</div>
   <div class="ctrl"><select id="niv-arr"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select><button class="act" data-new="arr">🎲 Nuevo</button><span class="score" id="sc-arr">Puntos: 0</span></div>
   <div id="z-arr"></div>
+</section>
+<section class="panel" id="p-proc">
+  <div class="hint">Alguien ha resuelto una operación con fracciones, pero <b>uno de los pasos está mal</b>. Toca el paso equivocado y después elige cómo se corrige. Comprueba cada paso en tu cuaderno.</div>
+  <div class="ctrl"><select id="niv-proc"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select><button class="act" data-new="proc">🎲 Nuevo</button><span class="score" id="sc-proc">Puntos: 0</span></div>
+  <div id="z-proc"></div>
 </section>
 <section class="panel" id="p-ope">
   <div class="hint">Calcula la operación (o busca el número que cumple lo que piden) y lleva al robot hasta esa casilla. El robot sale de la casa, mirando hacia arriba. Primero piensa en papel y después escribe el programa.</div>
@@ -649,7 +663,7 @@ details.ejemplo summary{cursor:pointer;font-weight:700;color:var(--purple);font-
       <option value="sum">Sumas</option><option value="res">Restas</option><option value="mul">Multiplicaciones</option><option value="div">Divisiones</option><option value="tabla">Tablas de multiplicar</option><option value="comb">Operaciones combinadas</option>
     </optgroup>
     <optgroup label="Números">
-      <option value="desc">Descomposición de números</option><option value="dec">Decimales</option><option value="fra">Fracciones</option><option value="pct">Porcentajes</option><option value="pot">Potencias y raíces</option><option value="mmc">Múltiplos y divisores (mcm, mcd)</option>
+      <option value="desc">Descomposición de números</option><option value="dec">Decimales</option><option value="fra">Fracciones</option><option value="pct">Porcentajes</option><option value="eq">Equivalencias (fracción, decimal, %)</option><option value="pot">Potencias y raíces</option><option value="mmc">Múltiplos y divisores (mcm, mcd)</option>
     </optgroup>
     <optgroup label="Otras">
       <option value="mix">Mezcla de todo</option><option value="custom">Mis propias operaciones</option>
@@ -722,7 +736,7 @@ details.ejemplo summary{cursor:pointer;font-weight:700;color:var(--purple);font-
       <option value="10">10. Fracción de una cantidad</option><option value="11">11. ¿Cuánto queda?</option><option value="12">12. Hallar el todo</option>
     </optgroup>
     <optgroup label="Razones y proporciones">
-      <option value="13">13. Razones: total y diferencia</option><option value="14">14. Regla de tres: por escala</option><option value="15">15. Regla de tres: reducción a la unidad</option><option value="16">16. Regla de tres: ¿cuántos puedo comprar?</option><option value="17">17. Regla de tres inversa</option><option value="18">18. Porcentajes</option>
+      <option value="13">13. Razones: total y diferencia</option><option value="14">14. Regla de tres: por escala</option><option value="15">15. Regla de tres: reducción a la unidad</option><option value="16">16. Regla de tres: ¿cuántos puedo comprar?</option><option value="17">17. Regla de tres inversa</option><option value="18">18. Porcentajes</option><option value="21">★ ¿De qué total?</option>
     </optgroup>
     <option value="19">19. Repaso de todo</option>
   </select>
@@ -924,7 +938,7 @@ function walkTo(R,C,start,dir0,straight,maxLen,stopFn){
 }
 
 /* ---------- Resultado común ---------- */
-const SC={lab:0,pre:0,rep:0,rec:0,seg:0,arr:0,ope:0},PTS={f:10,m:15,d:20};
+const SC={lab:0,pre:0,rep:0,rec:0,seg:0,arr:0,proc:0,ope:0},PTS={f:10,m:15,d:20};
 function result(t,ex,ok,msg,expl,btn={}){
   const fb=ex.fb;
   logResult(t,ex,ok,msg);
@@ -1192,8 +1206,15 @@ const RULES={
   siglo:{name:'Seguimos a los años del siglo XIX',gen:v=>{const y=v?rnd(1801,1900):pick([1800,1901,rnd(1701,1799),rnd(1902,2026),rnd(1500,1700)]);return{text:y,why:`${y} es del siglo ${roman(Math.ceil(y/100))}`};}},
   doce:{name:'Seguimos a las operaciones que dan 12',small:true,gen:v=>{const s=pick(v?DOCE_OK:DOCE_NO);return{text:s,why:`${s} = ${calc(s)}`};}},
   mitad:{name:'Seguimos a las fracciones equivalentes a 1/2',gen:v=>{if(v){const n=rnd(2,12);return{text:`${n}/${2*n}`};}let a,b;do{b=rnd(3,12);a=rnd(1,b-1);}while(2*a===b);return{text:`${a}/${b}`,why:`la mitad de ${b} no es ${a}`};}}
+,
+  eq34:{name:'Seguimos a las fracciones equivalentes a 3/4',gen:v=>{if(v){const k=rnd(1,12);return{text:`${3*k}/${4*k}`};}let a,b,g=0;do{b=rnd(3,24);a=rnd(1,b+4);g++;}while((4*a===3*b)&&g<200);return{text:`${a}/${b}`,why:`${a}/${b} no es equivalente a 3/4: ${a} × 4 = ${4*a}, pero ${b} × 3 = ${3*b}`};}},
+  pc25:{name:'Seguimos a lo que vale lo mismo que 25 %',gen:v=>{if(v){const t=Math.random();if(t<.12)return{text:'25 %'};if(t<.24)return{text:'0,25'};if(t<.3)return{text:'0,250'};const k=rnd(1,12);return{text:`${k}/${4*k}`};}
+    const NO=[['52 %','52 % no es 25 %'],['0,52','0,52 es 52 %'],['2,5 %','2,5 % es la décima parte de 25 %'],['0,025','0,025 es 2,5 %'],['0,2','0,2 es 20 %'],['0,5','0,5 es 50 %'],['0,75','0,75 es 75 %'],['75 %','75 % son tres cuartos'],['15 %','15 % no es 25 %'],['20 %','20 % es 1/5'],['50 %','50 % es la mitad'],['1/5','1/5 es 20 %'],['1/2','1/2 es 50 %'],['3/4','3/4 es 75 %'],['2/5','2/5 es 40 %']];
+    if(Math.random()<.5){const e=pick(NO);return{text:e[0],why:e[1]};}
+    let a,b,g=0;do{b=rnd(5,40);a=rnd(1,b-1);g++;}while(4*a===b&&g<200);return{text:`${a}/${b}`,why:`para valer 25 %, ${a}/${b} tendría que tener denominador ${4*a}`};}},
+  mayor1:{name:'Seguimos a las fracciones mayores que 1',gen:v=>{if(v){const b=rnd(2,9);return{text:`${rnd(b+1,2*b+4)}/${b}`};}const b=rnd(2,12),a=rnd(1,b);return{text:`${a}/${b}`,why:a===b?`${a}/${b} es igual a 1, no mayor`:`${a} es menor que ${b}, así que es menor que 1`};}}
 };
-const SEG_POOL={f:['mult5','romanos','mitad','siglo'],m:['mult3','primos','divex','siglo','mult5','romanos'],d:['doce','primos','mult3','mitad','divex']};
+const SEG_POOL={f:['mult5','romanos','mitad','siglo','mayor1'],m:['mult3','primos','divex','siglo','mult5','romanos','eq34','pc25'],d:['doce','primos','mult3','mitad','divex','eq34','pc25','mayor1']};
 function genSeg(niv,rule){
   const R=5,C=6;
   for(let t=0;t<300;t++){
@@ -1267,7 +1288,86 @@ function exArr(niv){
   }};
 }
 
-/* ---------- 7. Operaciones en el tablero ---------- */
+/* ---------- 7. Arregla el procedimiento ---------- */
+document.head.insertAdjacentHTML('beforeend','<style>.pr{max-width:760px}.pr-head{font-size:1.1em;font-weight:700;margin:6px 0 10px}.pr-steps{list-style:none;margin:0;padding:0;display:grid;gap:8px}.pr-st{display:block;width:100%;text-align:left;font:inherit;font-size:1.02em;padding:10px 12px;border:3px solid var(--ink);border-radius:12px;background:var(--bg);color:inherit;cursor:pointer}.pr-st:hover{background:rgba(127,127,127,.12)}.pr-st.bad{border-color:var(--red);background:rgba(217,68,58,.13)}.pr-st.ok{border-color:var(--green);background:rgba(46,158,79,.15)}.pr-st:disabled{cursor:default}.pr-res{margin:10px 0;font-size:1.1em}.pr-fix{margin-top:10px}.pr-fix .pr-st{margin-top:8px}</style>');
+const PRN=['Marta','Luis','Ana','Pablo','Lucía','Hugo','Irene','Mateo'];
+const prG=(a,b)=>b?prG(b,a%b):a,prL=(a,b)=>a/prG(a,b)*b,prF=x=>x<0?'−'+(-x):String(x);
+function prSimp(niv){
+  const P=niv==='f'?[[2,3],[3,4],[2,5],[3,5]]:[[2,7],[3,7],[5,6],[5,7],[3,8],[5,8],[7,8],[4,9],[7,9]],[p,q]=pick(P),g=pick(niv==='f'?[2,3,4,5]:[3,4,5,6,7]),n=g*p,d=g*q;
+  return{head:t=>`${t} quiere simplificar la fracción ${n}/${d}.`,
+    steps:[`Busco el mayor número que divide a ${n} y a ${d}: el mcd es ${g}.`,`Divido el numerador: ${n} ÷ ${g} = ${p}.`,`Divido el denominador: ${d} ÷ ${g} = ${q}.`],good:`${p}/${q}`,
+    V:{1:[{text:`Resto ${g} al numerador: ${n} − ${g} = ${n-g}.`,res:`${n-g}/${q}`},{text:`Multiplico el numerador por ${g}: ${n} × ${g} = ${n*g}.`,res:`${n*g}/${q}`},{text:`Divido el numerador: ${n} ÷ ${g} = ${p+1}.`,res:`${p+1}/${q}`}],
+       2:[{text:`Dejo el denominador igual: ${d}.`,res:`${p}/${d}`},{text:`Resto ${g} al denominador: ${d} − ${g} = ${d-g}.`,res:`${p}/${d-g}`},{text:`Divido el denominador: ${d} ÷ ${g} = ${q+1}.`,res:`${p}/${q+1}`}]}};
+}
+function prEquiv(niv){
+  let b,k,a;do{b=pick([2,3,4,5,6]);k=pick(niv==='f'?[2,3,4]:[2,3,4,5,6]);}while(k===b);a=rnd(1,b-1);const D=b*k;
+  return{head:t=>`${t} quiere completar esta igualdad: ${a}/${b} = ?/${D}.`,
+    steps:[`Veo cuántas veces cabe ${b} en ${D}: ${D} ÷ ${b} = ${k}.`,`Multiplico el numerador por ${k}: ${a} × ${k} = ${a*k}.`,`Multiplico el denominador por ${k}: ${b} × ${k} = ${D}.`],good:`${a*k}/${D}`,
+    V:{1:[{text:`Sumo ${k} al numerador: ${a} + ${k} = ${a+k}.`,res:`${a+k}/${D}`},{text:`Dejo el numerador igual: ${a}.`,res:`${a}/${D}`},{text:`Multiplico el numerador por ${b}: ${a} × ${b} = ${a*b}.`,res:`${a*b}/${D}`}],
+       2:[{text:`Sumo ${k} al denominador: ${b} + ${k} = ${b+k}.`,res:`${a*k}/${b+k}`},{text:`Dejo el denominador igual: ${b}.`,res:`${a*k}/${b}`},{text:`Multiplico el denominador por ${b}: ${b} × ${b} = ${b*b}.`,res:`${a*k}/${b*b}`}]}};
+}
+function prQty(niv){
+  const b=pick([3,4,5,6,8]),a=rnd(2,b-1),m=rnd(a+1,12),N=b*m;
+  return{head:t=>`${t} quiere calcular ${a}/${b} de ${N}.`,
+    steps:[`El denominador ${b} dice en cuántas partes iguales divido ${N}: ${N} ÷ ${b} = ${m}.`,`El numerador ${a} dice cuántas partes cojo: ${m} × ${a} = ${m*a}.`,`Compruebo: ${m*a} es menor que ${N}, porque ${a}/${b} es menor que 1.`],good:String(m*a),
+    V:{0:[{text:`Multiplico la cantidad por el denominador: ${N} × ${b} = ${N*b}.`,res:String(N*b*a)},{text:`Resto el denominador a la cantidad: ${N} − ${b} = ${N-b}.`,res:String((N-b)*a)},{text:`Sumo el denominador a la cantidad: ${N} + ${b} = ${N+b}.`,res:String((N+b)*a)}],
+       1:[{text:`El numerador ${a} dice cuántas partes cojo: ${m} + ${a} = ${m+a}.`,res:String(m+a)},{text:`El numerador ${a} dice cuántas partes cojo: ${m} × ${b} = ${m*b}.`,res:String(m*b)},{text:`El numerador ${a} dice cuántas partes cojo: ${m} − ${a} = ${m-a}.`,res:String(m-a)}]}};
+}
+function prMixed(niv){
+  const w=rnd(2,5),d=pick([3,4,5,6,8]),n=rnd(1,d-1),X=w*d+n;
+  return{head:t=>`${t} quiere pasar ${w} enteros y ${n}/${d} a una sola fracción.`,
+    steps:[`Multiplico el entero por el denominador: ${w} × ${d} = ${w*d}.`,`Sumo el numerador: ${w*d} + ${n} = ${X}.`,`Dejo el mismo denominador: ${X}/${d}.`],good:`${X}/${d}`,
+    V:{0:[{text:`Sumo el entero y el denominador: ${w} + ${d} = ${w+d}.`,res:`${w+d+n}/${d}`},{text:`Multiplico el entero por el numerador: ${w} × ${n} = ${w*n}.`,res:`${w*n+n}/${d}`},{text:`Dejo el entero como está: ${w}.`,res:`${w+n}/${d}`}],
+       1:[{text:`Resto el numerador: ${w*d} − ${n} = ${w*d-n}.`,res:`${w*d-n}/${d}`},{text:`Multiplico por el numerador: ${w*d} × ${n} = ${w*d*n}.`,res:`${w*d*n}/${d}`},{text:`No sumo nada: me quedo con ${w*d}.`,res:`${w*d}/${d}`}],
+       2:[{text:`Pongo como denominador el entero: ${X}/${w}.`,res:`${X}/${w}`},{text:`Cambio el denominador por el numerador: ${X}/${n}.`,res:`${X}/${n}`},{text:`Multiplico el denominador por el entero: ${X}/${d*w}.`,res:`${X}/${d*w}`}]}};
+}
+function prAdd(niv){
+  let b,d,a,c,M,a1,c1,op='+';
+  for(let g=0;g<500;g++){
+    [b,d]=pick([[2,3],[3,4],[2,5],[3,5],[4,5],[3,2],[5,3],[4,3],[5,2],[5,4],[4,6],[6,4],[6,9],[9,6]]);M=prL(b,d);
+    op=niv==='d'&&Math.random()<.5?'−':'+';a=rnd(1,b-1);c=rnd(1,d-1);a1=a*M/b;c1=c*M/d;
+    if(op==='−'&&!(a1>c1&&a>c))continue;if(a1+c1===M*0)continue;break;
+  }
+  const verb=op==='+'?'Sumo':'Resto',r=op==='+'?a1+c1:a1-c1,x=op==='+'?a+c:a-c,mn=Math.min(b,d),df=Math.abs(b-d),c1b=c*M/d;
+  return{head:t=>`${t} quiere calcular ${a}/${b} ${op} ${c}/${d}.`,
+    steps:[`Busco un denominador común: mcm(${b}, ${d}) = ${M}.`,`Paso las dos fracciones a ese denominador: ${a}/${b} = ${a1}/${M} y ${c}/${d} = ${c1}/${M}.`,`${verb} los numeradores y dejo el denominador: ${r}/${M}.`],good:`${r}/${M}`,
+    V:{0:[{text:`El denominador común es la suma de los denominadores: ${b} + ${d} = ${b+d}.`,res:`${prF(x)}/${b+d}`},{text:`Elijo el menor de los dos denominadores: ${mn}.`,res:`${prF(x)}/${mn}`},{text:`El denominador común es la diferencia de los denominadores: ${df}.`,res:`${prF(x)}/${df}`}],
+       1:[{text:`Paso las dos fracciones a ese denominador sin cambiar los numeradores: ${a}/${b} = ${a}/${M} y ${c}/${d} = ${c}/${M}.`,res:`${prF(x)}/${M}`},{text:`Paso las dos fracciones a ese denominador multiplicando los numeradores por ${M}: ${a}/${b} = ${a*M}/${M} y ${c}/${d} = ${c*M}/${M}.`,res:`${prF(x*M)}/${M}`},{text:`Paso las dos fracciones a ese denominador, pero solo cambio la segunda: ${a}/${b} = ${a}/${M} y ${c}/${d} = ${c1b}/${M}.`,res:`${prF(op==='+'?a+c1b:a-c1b)}/${M}`}],
+       2:[{text:`${verb} los numeradores y sumo también los denominadores: ${r}/${2*M}.`,res:`${r}/${2*M}`},{text:`Multiplico los numeradores y dejo el denominador: ${a1*c1}/${M}.`,res:`${a1*c1}/${M}`},{text:`${verb} los numeradores y multiplico los denominadores: ${r}/${M*M}.`,res:`${r}/${M*M}`}]}};
+}
+const PR_POOL={f:[prSimp,prEquiv],m:[prSimp,prEquiv,prQty,prMixed,prAdd],d:[prAdd,prQty,prMixed,prSimp]};
+function genProc(niv){
+  let T;for(let g=0;g<300;g++){T=pick(PR_POOL[niv])(niv);if(Object.values(T.V).every(vs=>vs.every(v=>v.res!==T.good&&v.text!==T.steps[0]&&!T.steps.includes(v.text))))break;}
+  const i=+pick(Object.keys(T.V)),vi=rnd(0,2),vs=T.V[i],bad=vs[vi],others=vs.filter((_,k)=>k!==vi),
+    opts=shuffle([{text:T.steps[i],ok:true},{text:others[0].text},{text:others[1].text}]);
+  const shown=T.steps.map((x,k)=>k===i?bad.text:x);
+  return{niv,kind:'proc',data:{name:pick(PRN),T,i,bad,shown,opts}};
+}
+function exProc(niv){
+  const ex=genProc(niv),g=ex.data;
+  ex.mount=function(z,t){
+    z.innerHTML=`<div class="pr"><p class="prompt">El procedimiento tiene <b>un paso equivocado</b>. ¿Cuál es?</p><div class="pr-head">${g.T.head(g.name)}</div><ol class="pr-steps">${g.shown.map((x,k)=>`<li><button type="button" class="pr-st" data-i="${k}"><b>Paso ${k+1}.</b> ${x}</button></li>`).join('')}</ol><div class="pr-res">Resultado de ${g.name}: <b>${g.bad.res}</b></div><div class="pr-fix"></div><div class="fb"></div></div>`;
+    this.fb=z.querySelector('.fb');const fix=z.querySelector('.pr-fix'),btns=[...z.querySelectorAll('.pr-steps .pr-st')];let tries=0;
+    const expl=`<p>El paso ${g.i+1} estaba mal. Tenía que decir: «${g.T.steps[g.i]}»</p><p>Procedimiento correcto:</p><ol>${g.T.steps.map(x=>`<li>${x}</li>`).join('')}</ol><p>Resultado correcto: <b>${g.T.good}</b></p>`;
+    const lock=()=>btns.forEach(b=>b.disabled=true);
+    btns.forEach(b=>b.onclick=()=>{
+      if(this.done||this.found)return;const k=+b.dataset.i;
+      if(k!==g.i){tries++;b.classList.add('bad');
+        if(tries>=2){this.done=true;lock();btns[g.i].classList.add('ok');result(t,this,false,`El paso equivocado era el número ${g.i+1}.`,expl);return;}
+        this.fb.innerHTML=`<div class="msg bad">Ese paso es correcto. Pista: haz cada cuenta en tu cuaderno y compara con lo que dice el paso.</div>`;return;}
+      this.found=true;lock();b.classList.add('ok');this.fb.innerHTML='<div class="msg ok">¡Bien visto! Ese es el paso equivocado.</div>';
+      fix.innerHTML=`<p style="font-weight:700;margin:10px 0 0">¿Cómo debería decir el paso ${k+1}?</p>`+g.opts.map((o,j)=>`<button type="button" class="pr-st" data-j="${j}">${o.text}</button>`).join('');
+      fix.querySelectorAll('.pr-st').forEach(c=>c.onclick=()=>{
+        if(this.done)return;this.done=true;fix.querySelectorAll('.pr-st').forEach(x=>x.disabled=true);const o=g.opts[+c.dataset.j];c.classList.add(o.ok?'ok':'bad');
+        if(o.ok){btns[k].innerHTML=`<b>Paso ${k+1}.</b> ${g.T.steps[k]}`;result(t,this,true,'¡Procedimiento arreglado! Ahora todos los pasos son correctos.',expl);}
+        else result(t,this,false,'Esa corrección no es la buena. El paso estaba bien localizado, pero la corrección no es correcta.',expl);
+      });
+    });
+  };
+  return ex;
+}
+
+/* ---------- 8. Operaciones en el tablero ---------- */
 const OPE_TIPOS={tabla:'Tablas de multiplicar',x10:'Multiplicar por 10, 100 y 1000',d10:'Dividir entre 10, 100 y 1000',sumres:'Sumas y restas',div1:'Divisiones de una cifra',mult:'Múltiplos',crit:'Criterios de divisibilidad',primo:'Números primos',divis:'Divisores'};
 const opeRev=n=>+String(n).split('').reverse().join('');
 function opeFill(ans,nears,rng,pred){
@@ -1350,7 +1450,7 @@ function exOpe(niv){
 }
 
 /* ---------- Motor de pestañas ---------- */
-const GEN={lab:genLab,pre:genPre,rep:exRep,rec:exRec,seg:exSeg,arr:exArr,ope:exOpe};
+const GEN={lab:genLab,pre:genPre,rep:exRep,rec:exRec,seg:exSeg,arr:exArr,proc:exProc,ope:exOpe};
 const CUR={};
 function nuevo(t){const niv=$('niv-'+t).value;const ex=GEN[t](niv);CUR[t]=ex;ex.mount($('z-'+t),t);}
 
@@ -1493,12 +1593,13 @@ const PG_CSS=`.pg-box{background:var(--pg-bg,#f5f6fa);border:3px solid var(--pg-
 document.head.insertAdjacentHTML('beforeend','<style>'+PG_CSS+'</style>');
 
 /* ---------- Registro y resumen ---------- */
-const KNAME={lab:'Instrucciones (laberinto)',fig:'Instrucciones (rectángulo)',pred:'Predecir',sim:'Simétrico',rep:'Lo que se repite',rec:'La recta',seg:'Seguimos a',arr:'Arregla el programa',ope:'Operaciones en el tablero'};
+const KNAME={lab:'Instrucciones (laberinto)',fig:'Instrucciones (rectángulo)',pred:'Predecir',sim:'Simétrico',rep:'Lo que se repite',rec:'La recta',seg:'Seguimos a',arr:'Arregla el programa',proc:'Arregla el procedimiento',ope:'Operaciones en el tablero'};
 const NIVN={f:'fácil',m:'medio',d:'difícil'};
-const RERR={giro:'Girar hacia el lado equivocado (izquierda o derecha del robot)',avance:'Contar mal los avances',incompleto:'Dejar el programa incompleto o con instrucciones de más',regla:'Pisar una casilla que no cumple la regla',predecir:'Seguir mal el programa al predecir dónde acaba',simgiro:'No cambiar un giro en el camino simétrico',simavance:'Cambiar un avance que debía quedarse igual',bucle:'Elegir mal el trozo que se repite',recta:'Contar mal los saltos en la recta',localizar:'Localizar mal la instrucción equivocada',calculo:'Calcular mal la operación o el criterio (el robot va a un número equivocado)',otros:'Otros errores'};
+const RERR={giro:'Girar hacia el lado equivocado (izquierda o derecha del robot)',avance:'Contar mal los avances',incompleto:'Dejar el programa incompleto o con instrucciones de más',regla:'Pisar una casilla que no cumple la regla',predecir:'Seguir mal el programa al predecir dónde acaba',simgiro:'No cambiar un giro en el camino simétrico',simavance:'Cambiar un avance que debía quedarse igual',bucle:'Elegir mal el trozo que se repite',recta:'Contar mal los saltos en la recta',localizar:'Localizar mal la instrucción equivocada',correccion:'Elegir mal cómo corregir el paso equivocado',calculo:'Calcular mal la operación o el criterio (el robot va a un número equivocado)',otros:'Otros errores'};
 const RCFG={titulo:'El robot matemático',ud:'reto',uds:'retos',labs:['A la primera','Al repetirlo','Sin conseguirlo'],grupos:KNAME,errs:RERR};
 function clasifica(ex,m){m=m||'';const k=ex.kind;
   if(k==='ope')return/se sale del tablero/.test(m)?'avance':'calculo';
+  if(k==='proc')return/corrección/.test(m)?'correccion':'localizar';
   if(k==='arr')return'localizar';if(k==='pred')return'predecir';if(k==='rec')return'recta';if(k==='rep')return'bucle';
   if(k==='sim'){if(/pusiste «gira/.test(m))return'simgiro';if(/pusiste «(avanza|retrocede)/.test(m))return'simavance';return'incompleto';}
   if(/no cumple la regla/.test(m))return'regla';
@@ -1535,7 +1636,7 @@ document.querySelectorAll('#tabs button').forEach(bt=>bt.onclick=()=>{
   const t=bt.dataset.t;if(t!=='fic'&&!CUR[t])nuevo(t);if(t==='fic'&&!$('ficha').innerHTML.trim())ficha();
 });
 document.querySelectorAll('[data-new]').forEach(b=>b.onclick=()=>nuevo(b.dataset.new));
-['niv-lab','niv-pre','tipo-pre','niv-rep','niv-rec','niv-seg','regla-seg','niv-arr','niv-ope','tipo-ope'].forEach(id=>$(id).onchange=()=>nuevo(id.split('-')[1]==='pre'||id==='tipo-pre'?'pre':id.split('-')[1]==='seg'||id==='regla-seg'?'seg':id.split('-')[1]));
+['niv-lab','niv-pre','tipo-pre','niv-rep','niv-rec','niv-seg','regla-seg','niv-arr','niv-proc','niv-ope','tipo-ope'].forEach(id=>$(id).onchange=()=>nuevo(id.split('-')[1]==='pre'||id==='tipo-pre'?'pre':id.split('-')[1]==='seg'||id==='regla-seg'?'seg':id.split('-')[1]));
 $('f-gen').onclick=ficha;$('f-dl').onclick=descargar;$('f-sol').onchange=()=>$('ficha').classList.toggle('consol',$('f-sol').checked);
 window.__R1=1;try{ejemplo();window.__R2=1;nuevo('lab');window.__R3=1;}catch(e){window.__show&&window.__show('inicio robot: '+e.message+(e.stack?' @'+String(e.stack).split('\n')[1]:''));}
 
@@ -2071,10 +2172,21 @@ const G={
   if(r<.85||n==='f'){const g=n==='f'?pick([2,3,4,5]):n==='m'?rnd(3,9):rnd(4,15),pq=n==='f'?pick([[2,3],[1,2],[2,5],[3,4]]):pick([[2,3],[3,4],[2,5],[3,5],[4,5],[5,6]]);return{t:`mcd(${g*pq[0]}, ${g*pq[1]})`,a:fmt(g)};}
   const N=pick([12,18,20,24,30,36,40,48]);return{t:`Nº de divisores de ${N}`,a:fmt(divs(N))};}
 };
+/* Equivalencias: fracción, decimal y porcentaje. [numerador, denominador, nivel] */
+const EQF=[[1,2,1],[1,4,1],[3,4,1],[1,5,1],[2,5,1],[3,5,1],[4,5,1],[1,10,1],[3,10,1],[7,10,1],[9,10,1],[1,20,1],[3,20,1],[7,20,1],[11,20,1],[19,20,1],
+ [2,25,2],[3,25,2],[4,25,2],[6,25,2],[1,50,2],[3,50,2],[7,50,2],[9,50,2],[9,20,2],[13,20,2],[17,20,2],[21,50,2],
+ [1,8,3],[3,8,3],[5,8,3],[7,8,3],[5,4,3],[3,2,3],[6,5,3],[7,4,3],[9,8,3],[1,25,3],[11,50,3]];
+const eqTxt=(nu,de,f)=>f==='f'?`${nu}/${de}`:f==='d'?fmt(nu/de):fmt(nu/de*100)+' %';
+function genEq(niv,n){
+  const L=niv==='f'?1:niv==='m'?2:3;let pool=EQF.map((x,i)=>[x,i]).filter(p=>p[0][2]<=L);if(pool.length<n)pool=EQF.map((x,i)=>[x,i]);
+  return shuffle(pool).slice(0,n).map(p=>{const[nu,de]=p[0],fs=shuffle(['f','d','p']);return{t:eqTxt(nu,de,fs[0]),a:eqTxt(nu,de,fs[1]),k:'eq'+p[1]};});
+}
+G.eq=niv=>genEq(niv,1)[0];
 const MIXK=['sum','res','mul','div','tabla','desc','dec','fra','pct','pot','comb','mmc'];
-const CATN={sum:'Sumas',res:'Restas',mul:'Multiplicaciones',div:'Divisiones',tabla:'Tablas de multiplicar',desc:'Descomposición',dec:'Decimales',fra:'Fracciones',pct:'Porcentajes',pot:'Potencias y raíces',comb:'Operaciones combinadas',mmc:'Múltiplos y divisores',mix:'Mezcla de todo',custom:'Mis propias operaciones'};
-const NOTA={desc:'UM = unidades de millar · C = centenas · D = decenas · U = unidades.',fra:'Las fracciones se dan simplificadas. «3/4 de 20» significa la fracción de un número.',mmc:'mcm = mínimo común múltiplo · mcd = máximo común divisor.',comb:'Recuerda el orden: primero paréntesis, después × y ÷, y al final + y −.',pot:'a² = a × a · a³ = a × a × a · √ es la raíz cuadrada.',dec:'Los decimales se escriben con coma.'};
+const CATN={sum:'Sumas',res:'Restas',mul:'Multiplicaciones',div:'Divisiones',tabla:'Tablas de multiplicar',desc:'Descomposición',dec:'Decimales',fra:'Fracciones',pct:'Porcentajes',pot:'Potencias y raíces',eq:'Equivalencias (fracción, decimal, %)',comb:'Operaciones combinadas',mmc:'Múltiplos y divisores',mix:'Mezcla de todo',custom:'Mis propias operaciones'};
+const NOTA={eq:'Cada casilla tiene un número escrito como fracción, como decimal o como porcentaje. Busca la pieza que vale lo mismo, escrito de otra forma. Ejemplo: 1/2 = 0,5 = 50 %.',desc:'UM = unidades de millar · C = centenas · D = decenas · U = unidades.',fra:'Las fracciones se dan simplificadas. «3/4 de 20» significa la fracción de un número.',mmc:'mcm = mínimo común múltiplo · mcd = máximo común divisor.',comb:'Recuerda el orden: primero paréntesis, después × y ÷, y al final + y −.',pot:'a² = a × a · a³ = a × a × a · √ es la raíz cuadrada.',dec:'Los decimales se escriben con coma.'};
 function genSet(cat,niv,n){
+  if(cat==='eq')return genEq(niv,n);
   const out=[],seen=new Set();let tries=0;
   while(out.length<n&&tries<4000){tries++;const k=cat==='mix'?pick(MIXK):cat;const it=G[k](niv);if(!seen.has(it.a)){seen.add(it.a);out.push(it);}}
   while(out.length<n){const k=cat==='mix'?pick(MIXK):cat;out.push(G[k](niv));}
@@ -2195,7 +2307,7 @@ const sg=(v,c,o)=>Object.assign({w:v,v,c:c||'a'},o||{});
 const sq=(w,o)=>Object.assign({w,q:true,c:'q'},o||{});
 const rep=(n,f)=>Array.from({length:n},(_,i)=>f(i));
 const eur=n=>fmt(n)+' €';
-const TIPOS={1:'Sumar hasta 10',2:'Restar: la parte que falta',3:'Juntar y quitar',4:'Sumar y restar hasta 100',5:'Comparar',6:'Dos pasos',7:'Multiplicar: grupos iguales',8:'Dividir: repartir y agrupar',9:'El doble, el triple',10:'Fracción de una cantidad',11:'¿Cuánto queda?',12:'Hallar el todo',13:'Razones',14:'Regla de tres: escala',15:'Regla de tres: unidad',16:'¿Cuántos puedo comprar?',17:'Regla de tres inversa',18:'Porcentajes',20:'Partes y total: ¿cuántos faltan?'};
+const TIPOS={1:'Sumar hasta 10',2:'Restar: la parte que falta',3:'Juntar y quitar',4:'Sumar y restar hasta 100',5:'Comparar',6:'Dos pasos',7:'Multiplicar: grupos iguales',8:'Dividir: repartir y agrupar',9:'El doble, el triple',10:'Fracción de una cantidad',11:'¿Cuánto queda?',12:'Hallar el todo',13:'Razones',14:'Regla de tres: escala',15:'Regla de tres: unidad',16:'¿Cuántos puedo comprar?',17:'Regla de tres inversa',18:'Porcentajes',20:'Partes y total: ¿cuántos faltan?',21:'¿De qué total?'};
 const GEN={
  1(){const c=pick(COSAS),[A,B]=two(),a=rnd(1,8),b=rnd(1,10-a);return{t:`${A} tiene ${a} ${c.n} y ${B} tiene ${b}. ¿${Cu(c)} ${c.n} tienen entre los dos?`,spec:{rows:[{segs:[sg(a,'a'),sg(b,'b')],over:Q}]},ans:a+b,ex:`Se juntan las dos partes: ${a} + ${b} = ${a+b}.`};},
  2(){const c=pick(COSAS),[A]=two(),t=rnd(6,20),p=rnd(1,t-2);return{t:`${A} necesita ${t} ${c.n} para un juego y ya tiene ${p}. ¿${Cu(c)} le faltan?`,spec:{rows:[{segs:[sg(p,'a'),sq(t-p)],over:{t:t,v:t}}]},ans:t-p,ex:`Falta la parte que no tiene: ${t} − ${p} = ${t-p}.`};},
@@ -2255,6 +2367,29 @@ const GEN={
    lst=kn.map(o=>`${o.v} ${COL[o.i]}`),tx=lst.length>1?lst.slice(0,-1).join(', ')+' y '+lst[lst.length-1]:lst[0],cont=pick(['una caja','una bolsa','un cajón']);
   return{t:`En ${cont} hay ${T} ${c.n}: ${tx}; ${c.g==='f'?'las demás':'los demás'} son ${COL[u]}. ¿${Cu(c)} ${c.n} ${COL[u]} hay?`,spec:{rows:[{segs:a.map((v,i)=>i===u?sq(v):sg(v,CL[i])),over:{t:T,v:T}}]},ans:a[u],ex:`Todas las partes suman ${T}. Al total le quitamos las partes que conocemos: ${T} − ${kn.map(o=>o.v).join(' − ')} = ${a[u]}.`};}
 };
+
+GEN[21]=function(n){
+  const NM=['Marta','Luis','Ana','Pablo','Lucía','Hugo'];
+  if(n==='f'){
+    for(let g=0;g<400;g++){
+      const A=pick([4,5,8,10]),B=pick([10,20,25,50]),x=rnd(1,A-1);
+      if(B<=A||(100*x)%B!==0||(100*x)%A!==0)continue;
+      const X=pick(NM);let Y;do Y=pick(NM);while(Y===X);const M=Math.max(A,B),pa=100*x/A,pb=100*x/B;
+      return{t:`${X} acierta ${x} de las ${A} preguntas de un test. ${Y} también acierta ${x}, pero en un test de ${B} preguntas. ¿Qué porcentaje de aciertos tiene ${Y}?`,
+        spec:{rows:[{name:X,wd:A/M,segs:[sg(x,'a'),sg(A-x,'b')],over:{t:A,v:A}},{name:Y,wd:B/M,segs:[sg(x,'a'),sg(B-x,'b')],over:{t:B,v:B},under:{from:0,to:0,t:'? %'}}],note:'La parte marcada es la misma, pero el total de cada barra es distinto.'},
+        ans:pb,unit:'%',ex:`${X}: ${x} de ${A} es ${fmt(pa)} %. ${Y}: ${x} de ${B} es ${x} ÷ ${B} × 100 = ${fmt(pb)} %. La parte es la misma (${x}), pero el total cambia, y por eso cambia el porcentaje.`};
+    }
+  }
+  const YES=n==='m'?[[9,10],[3,4],[4,5],[1,2],[7,10]]:[[9,10],[3,4],[4,5],[1,2],[7,10],[3,5],[2,5],[1,4]],VOT=n==='m'?[[1,2],[3,4],[4,5],[1,4]]:[[2,3],[1,2],[3,4],[2,5],[3,5],[1,4],[4,5]];
+  let a=9,b=10,p=2,q=3;
+  for(let g=0;g<300;g++){const y=pick(YES),v=pick(VOT);if((100*y[0]*v[0])%(y[1]*v[1])===0){a=y[0];b=y[1];p=v[0];q=v[1];break;}}
+  const T=q*b,V=p*b,Y=a*p,pct=100*Y/T,vot=Math.random()<.5;
+  const t=vot?`En una votación, ${a} de cada ${b} votantes dicen sí, pero solo vota ${p} de cada ${q} personas. ¿Qué porcentaje del total de personas dijo sí?`
+    :`En una encuesta, solo contestan ${p} de cada ${q} personas. De las que contestan, ${a} de cada ${b} prefieren el helado de chocolate. ¿Qué porcentaje de todas las personas encuestadas prefiere el helado de chocolate?`;
+  return{t,spec:{rows:[{name:vot?'Personas':'Encuestadas',segs:[sg(V,'a'),sg(T-V,'b')],over:{t:T,v:T}},{name:vot?'Votantes':'Contestan',wd:V/T,segs:[sg(Y,'c'),sg(V-Y,'b')],over:{t:V,v:V},under:{from:0,to:0,t:'? % del total'}}],
+    note:'La segunda barra es solo la parte de la primera que vota (o contesta). La parte marcada es la misma persona en las dos.'},
+    ans:pct,unit:'%',ex:`Imagina ${T} personas en total. ${vot?'Votan':'Contestan'} ${p} de cada ${q}: son ${V}. De esas ${V}, ${a} de cada ${b} ${vot?'dicen sí':'prefieren chocolate'}: son ${Y}. ${Y} de ${T} es ${Y} ÷ ${T} × 100 = ${fmt(pct)} %. No es ${fmt(100*a/b)} %, porque ese porcentaje es solo de ${vot?'los votantes':'las que contestan'}, no del total de personas.`};
+};
 const SOBRA=()=>pick([`Ese día hacía ${rnd(15,30)} grados.`,`En la clase hay ${rnd(20,30)} alumnos.`,`La tienda abre a las ${rnd(8,10)} de la mañana.`,`El colegio tiene ${rnd(2,4)} patios.`]);
 function barHTML(spec,mode){
   const rows=spec.rows.slice();if(spec.totalRow)rows.push({name:'Entre los dos',segs:[].concat(...spec.rows.map(r=>r.segs)),over:Q});
@@ -2266,7 +2401,7 @@ function barHTML(spec,mode){
     const over=r.over?`<div class="pb-over"><span>${lab(r.over)}</span></div>`:`<div style="height:20px"></div>`;
     const segs=r.segs.map(s=>{let tx;if(s.q)tx=s.t||'?';else if(mode==='vac'&&s.v!=null&&!s.rep&&s.t==null)tx=box(s.v);else tx=s.t!=null?s.t:fmt(s.v);return `<div class="pb-seg ${s.c}${s.q?' hl':''}" style="flex-grow:${s.w}">${tx}</div>`;}).join('');
     let under='';if(r.under){const u=r.under;let before=0,span=0;r.segs.forEach((s,i)=>{if(i<u.from)before+=s.w;if(i>=u.from&&i<=u.to)span+=s.w;});under=`<div class="pb-under" style="margin-left:${before/W*100}%;width:${span/W*100}%"><span>${lab(u)}</span></div><div class="pb-pad"></div>`;}
-    html+=`<div class="pb-row">${spec.rows.length>1||r.name?`<div class="pb-name">${r.name||''}</div>`:''}<div class="pb-main">${over}<div class="pb-segs">${segs}</div>${under}</div></div>`;
+    html+=`<div class="pb-row">${spec.rows.length>1||r.name?`<div class="pb-name">${r.name||''}</div>`:''}<div class="pb-main"${r.wd?` style="flex:${r.wd} 1 0"`:''}>${over}<div class="pb-segs">${segs}</div>${under}</div>${r.wd&&r.wd<1?`<div style="flex:${1-r.wd} 1 0"></div>`:''}</div>`;
   });
   if(spec.note)html+=`<div style="font-size:15px;color:#445;font-weight:700">${spec.note}</div>`;
   return{html,exp};
@@ -2319,6 +2454,7 @@ $b('pb-nombre').addEventListener('input',()=>{try{localStorage.setItem('pbNombre
 $b('pb-grupo').addEventListener('change',()=>{try{localStorage.setItem('pbGrupo',$b('pb-grupo').value);}catch(e){}if(!$b('pb-progresos').hidden)verProg();});
 (window.PROG_SRC=window.PROG_SRC||[]).push({pref:'PROBLEMAS_',log:()=>perfil().log,cfg:CFG});
 window.problemasInit=()=>{if(!S.cur)nuevo();};
+window.__pb={S,GEN};
 window.__pb={S,GEN,nuevo,comprueba,ver};
 })();
 
@@ -2362,6 +2498,36 @@ const n0=document.getElementById('nombre').value||document.getElementById('pt-no
 if(n0){N.forEach(i=>{const e=document.getElementById(i);if(e&&!e.value)e.value=n0;});}
 const g0=G.map(i=>document.getElementById(i).value).find(v=>v);
 if(g0){G.forEach(i=>{const e=document.getElementById(i);if(e&&!e.value)e.value=g0;});}
+
+/* ===== Envío automático del progreso (al cerrar, al volver internet y cada pocos minutos) ===== */
+(function(){
+  function lsG(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function lsS(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  const first=ids=>{for(const i of ids){const e=document.getElementById(i);if(e&&(e.value||'').trim())return e.value.trim();}return '';};
+  let enviando=false;
+  function auto(motivo){
+    const nombre=first(N)||(lsG('pizarraNombreAlumna')||'').trim();
+    const grupo=first(G)||(lsG('pizarraGrupoAlumna')||'').trim();
+    if(!nombre||!grupo||!navigator.onLine)return;
+    const puntos={Grupo:grupo};let hay=false;
+    SRC.forEach(s=>{let log=[];try{log=s.log();}catch(e){}if(!log||!log.length)return;hay=true;const A=PG.stats(log,s.cfg);
+      puntos[s.pref+'TotalRetos']=A.tot.n;puntos[s.pref+'AciertoPrimera_pct']=A.pct(A.tot);
+      Object.keys(A.g).forEach(k=>{puntos[s.pref+(s.cfg.grupos[k]||k)]=A.pct(A.g[k]);});});
+    if(!hay)return;
+    const body=JSON.stringify({nombre:nombre,puntos:puntos}),h=nombre.toLowerCase()+'|'+body;
+    if(lsG('autoEnvR:hash')===h)return;
+    if(enviando&&motivo!=='cierre')return;
+    enviando=true;
+    try{fetch(URL_SHEET_SCRIPT_ROBOT,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:body})
+      .then(()=>{lsS('autoEnvR:hash',h);lsS('autoEnvR:fecha',new Date().toISOString());enviando=false;}).catch(()=>{enviando=false;});}catch(e){enviando=false;}
+  }
+  window.autoEnviaProgreso=auto;
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')auto('cierre');});
+  window.addEventListener('pagehide',()=>auto('cierre'));
+  window.addEventListener('online',()=>auto('online'));
+  setInterval(()=>auto('tiempo'),240000);
+  setTimeout(()=>auto('inicio'),15000);
+})();
 })();
 </script>
 </body>
