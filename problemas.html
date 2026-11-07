@@ -164,12 +164,19 @@ h2.bloque{font-size:1.05rem;color:var(--ink);margin:18px 0 8px}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .cab{background:linear-gradient(120deg,#142447 0%,#1A3365 55%,#21427F 100%);border-color:#6FA0F0}:root:not([data-theme="light"]) .cab h1{color:#CFE0FF}:root:not([data-theme="light"]) .cab h1 span{background:linear-gradient(90deg,#CFE0FF,#7FB0FF);-webkit-background-clip:text;background-clip:text;color:transparent}:root:not([data-theme="light"]) .cab .sub{color:#B9CEF5}}
 :root[data-theme="dark"] .cab{background:linear-gradient(120deg,#142447 0%,#1A3365 55%,#21427F 100%);border-color:#6FA0F0}:root[data-theme="dark"] .cab h1{color:#CFE0FF}:root[data-theme="dark"] .cab h1 span{background:linear-gradient(90deg,#CFE0FF,#7FB0FF);-webkit-background-clip:text;background-clip:text;color:transparent}:root[data-theme="dark"] .cab .sub{color:#B9CEF5}
 .cab h1{font-size:clamp(34px,5.2vw,60px)}
+.expl{margin-top:12px}.expl label{display:block;font-weight:700;margin-bottom:4px}
+.expl textarea{width:100%;min-height:54px;border:1px solid var(--line);border-radius:6px;padding:8px;background:var(--paper);color:var(--text);font:inherit;resize:vertical}
+.calc{margin:0 0 10px;font-weight:700;color:var(--ink)}
+.recuerda{background:var(--ink-soft);border-left:5px solid var(--ink);padding:8px 12px;border-radius:6px;font-weight:700;margin:12px 0}
+.repasa{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--bad);border-radius:6px;padding:8px 14px;margin:0 0 12px}
+.repasa ul{list-style:none;padding:0;margin:6px 0 0}
+.repasa li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:4px 0}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="cab"><div class="tit"><h1><span>Detectives de problemas</span></h1>
-    <p class="sub">5º y 6º de Primaria · Lee, piensa, resuelve y comprueba</p></div>
+    <p class="sub">5º y 6º de Primaria · Comprendo · ¿Qué estrategia uso? · Resuelvo · Compruebo</p></div>
     <div class="logo"><img src="data:image/png;base64,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" alt="Logo Las Chapas Ecos"></div></div>
   <header class="top">
     <div class="tools">
@@ -204,6 +211,13 @@ h2.bloque{font-size:1.05rem;color:var(--ink);margin:18px 0 8px}
 ['localStorage','sessionStorage'].forEach(function(n){var ok=false;try{var s=window[n];s.setItem('__t','1');s.removeItem('__t');ok=true;}catch(e){}if(!ok){try{Object.defineProperty(window,n,{value:mk(),configurable:true});}catch(e){}}});})();
 </script>
 <script>
+/* Nombre y grupo se recuerdan en este dispositivo (localStorage) aunque se cierre la pestaña */
+(function(){try{var K={pizarraNombreAlumna:1,pizarraGrupoAlumna:1},ss=window.sessionStorage,ls=window.localStorage,P=Storage.prototype,g=P.getItem,s=P.setItem,r=P.removeItem;
+P.getItem=function(k){if(this===ss&&K[k]){var v=g.call(ls,k);return v===null?g.call(ss,k):v;}return g.call(this,k);};
+P.setItem=function(k,v){if(this===ss&&K[k]){try{s.call(ls,k,v);}catch(e){}}return s.call(this,k,v);};
+P.removeItem=function(k){if(this===ss&&K[k]){try{r.call(ls,k);}catch(e){}}return r.call(this,k);};}catch(e){}})();
+</script>
+<script>
 // ===== Utilidades =====
 const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const pick=a=>a[Math.floor(Math.random()*a.length)];
@@ -227,7 +241,8 @@ const ERR={op:"Elegir una operación equivocada",mcmmcd:"Confundir MCM y MCD",mi
   frac:"Sumar numeradores y denominadores",parte:"Calcular la fracción a medias (dividir sin multiplicar o al revés)",resto:"Confundir la parte usada con la que queda",total:"Dividir entre el total equivocado",
   unid:"Errores con las unidades",geo:"Confundir perímetro y área, o radio y diámetro",orden:"Errores con el orden de las operaciones",supuesto:"Suponer algo que el problema no dice",
   dec:"Comparar decimales por el número de cifras",conc:"No reconocer el concepto o la propiedad",calc:"Errores de cálculo",cont:"Contar de más o de menos",preg:"No responder exactamente a lo que se pregunta",
-  cond:"No comprobar todas las condiciones del problema",redondeo:"No decidir bien qué hacer con el resto de una división"};
+  cond:"No comprobar todas las condiciones del problema",redondeo:"No decidir bien qué hacer con el resto de una división",
+  equiv:"Confundir una parte con su decimal sin dividir entre el total",mixto:"Errores al pasar de fracción impropia a número mixto",compfrac:"Comparar numeradores y denominadores por separado"};
 function MC(p,o,sol,h){ if(new Set(o.map(x=>x.t)).size!==o.length||o.filter(x=>x.ok).length!==1) throw "rep"; return {tipo:"mc",p,o:shuffle(o.slice()),sol,h}; }
 function NUM(p,unidad,ans,wrong,sol,h){ const w={}; for(const k in wrong){ if(Math.abs(Number(k)-ans)>1e-9) w[k]=wrong[k]; } return {tipo:"num",p,unidad,ans,wrong:w,sol,h}; }
 function SEL(p,sel,ans,why,sol,h){ return {tipo:"sel",p,sel,ans,why,sol,h}; }
@@ -248,6 +263,65 @@ function pictograma(nombres,halves,v,u){
 }
 const BLOQUES={num:"Números y operaciones",frac:"Fracciones, decimales y porcentajes",med:"Medida",geo:"Geometría",est:"Estadística y probabilidad"};
 const NIVELES={1:"Básico",2:"Medio",3:"Ampliación"};
+
+// ===== Ayudas para los problemas de fracción, decimal y porcentaje =====
+const H_FORMAS={c:"Necesitas la parte y el total.",p:"Escribe la fracción parte/total y simplifícala.",e:"Divide para obtener el decimal y multiplica por 100.",k:"Las tres formas deben dar la misma cantidad."};
+const H_MIXTO={c:"¿Cuántos enteros caben y cuánto sobra?",p:"Divide el numerador entre el denominador.",e:"El cociente son los enteros; el resto, el nuevo numerador.",k:"Multiplica el entero por el denominador y suma el resto: debe dar el numerador."};
+const H_COMP={c:"Buscas la fracción mayor.",p:"Para comparar hacen falta partes iguales.",e:"Busca el m.c.m. de los denominadores y pasa las dos fracciones.",k:"Compara también con 1/2: ¿cuál está más cerca?"};
+function formasQs(sing,T,P){
+  const g=gcd(P,T),a=P/g,b=T/g,dec=P/T,pct=P*100/T;
+  return [
+   MC(`¿Qué opción NO expresa la parte de la clase que ${sing}?`,[
+     {t:`El decimal ${fmt(P/100)}`,ok:true,e:"equiv"},
+     o(`La fracción ${a}/${b}`,`${P} de cada ${T} alumnas es ${P}/${T}${g>1?", que se simplifica a "+a+"/"+b:""}: sí expresa la parte de la clase.`,"conc"),
+     o(`El decimal ${fmt(dec)}`,`${P} ÷ ${T} = ${fmt(dec)}: sí expresa la parte de la clase.`,"conc"),
+     o(`El porcentaje ${fmt(pct)} %`,`${fmt(dec)} × 100 = ${fmt(pct)} %: sí expresa la parte de la clase.`,"conc")],
+     `La parte es ${P}/${T} = ${a}/${b} = ${fmt(dec)} = ${fmt(pct)} %. El decimal ${fmt(P/100)} no la expresa: sale de escribir el número de alumnas (${P}) como decimal, sin dividir entre el total (${T}).`,H_FORMAS),
+   NUM(`¿Qué porcentaje de la clase ${sing}?`,"%",pct,{[P]:[`${P} es el número de alumnas, no el porcentaje.`,"conc"],[dec]:[`${fmt(dec)} es el decimal. Para pasarlo a porcentaje hay que multiplicar por 100.`,"conc"]},
+     `${P} ÷ ${T} = ${fmt(dec)}; ${fmt(dec)} × 100 = ${fmt(pct)} %.`,H_FORMAS)
+  ];
+}
+function mixtoQs(N,D,Q2){
+  const q=Math.floor(N/D),r=N%D;
+  const qs=[MC("¿Cuánto dura en número mixto?",[
+    {t:`${q} ${r}/${D} minutos`,ok:true},
+    o(`${q} ${r}/${N} minutos`,`Has puesto ${N} como denominador. El denominador del número mixto sigue siendo ${D}.`,"mixto"),
+    o(`${r} ${q}/${D} minutos`,`Has cambiado los enteros y el resto. Los enteros son el cociente (${q}) y el resto (${r}) va en la fracción.`,"mixto"),
+    o(`${D}/${N} minutos`,`${D}/${N} es la fracción al revés: es menor que 1 minuto, y la canción dura más de ${q}.`,"conc")],
+    `${N} ÷ ${D} = ${q} y sobran ${r}. Dura ${q} ${r}/${D} minutos.`,H_MIXTO)];
+  if(Q2){ const E=Q2.E,a=Q2.a,b=Q2.b,ans=E*b+a;
+    qs.push(NUM(`Escribe el número mixto ${E} ${a}/${b} como fracción impropia. ¿Cuál es el numerador?`,"",ans,
+      {[E+a]:[`Has sumado ${E} + ${a}. Hay que multiplicar el entero por el denominador y después sumar: ${E} × ${b} + ${a}.`,"mixto"]},
+      `${E} × ${b} + ${a} = ${E*b} + ${a} = ${ans}. Es ${ans}/${b}.`,H_MIXTO)); }
+  return qs;
+}
+function comparaQs(a,b,c,d,modo){
+  const L=lcm(b,d),na=a*L/b,nb=c*L/d,W=na>nb?"A":"B",S=W==="A"?"B":"A";
+  const F=W==="A"?{n:a,d:b,N:na}:{n:c,d:d,N:nb}, Sm=W==="A"?{n:c,d:d,N:nb}:{n:a,d:b,N:na};
+  const conv=(n,den,N2)=>den===L?`${n}/${den}`:`${n}/${den} = ${N2}/${L}`;
+  const just=`${conv(a,b,na)} y ${conv(c,d,nb)}`;
+  const opts=[{t:`${W}, porque ${just}`,ok:true},
+    o(`${S}, porque sus partes son más grandes`,"Las partes de una fracción pueden ser más grandes, pero también cuenta cuántas partes se toman. Para comparar hay que pasar las dos fracciones a un común denominador.","compfrac")];
+  const igual=o("Los dos igual",`No son iguales: con denominador ${L} son ${na}/${L} y ${nb}/${L}.`,"conc");
+  const falso=F.n>Sm.n&&F.d>Sm.d;
+  /* opción con un error de cálculo plausible: o se infla la menor o se reduce la mayor (la que quede más cerca del valor correcto) */
+  let calcO=null; const cand=[];
+  if(Sm.d!==L){ const w=F.N+1; cand.push({r:w/Sm.N,fr:Sm,w,mal:S}); }
+  if(F.d!==L){ const w=Sm.N-1; if(w>=1) cand.push({r:F.N/w,fr:F,w,mal:W}); }
+  cand.sort((x,y)=>x.r-y.r);
+  if(cand.length&&cand[0].r<=1.8){ const k=cand[0], nA=k.mal==="A"?k.w:na, nB=k.mal==="B"?k.w:nb;
+    calcO=o(`${S}, porque ${conv(a,b,nA)} y ${conv(c,d,nB)}`,`Hay un error al pasar a común denominador: ${k.fr.n}/${k.fr.d} = ${k.fr.N}/${L}, no ${k.w}/${L}. Multiplica numerador y denominador por el mismo número.`,"calc"); }
+  if(falso){
+    opts.push(o(`${W}, porque su numerador y su denominador son mayores`,"La letra es correcta, pero el razonamiento no sirve: no se pueden comparar numeradores y denominadores por separado. Por ejemplo, 2/9 tiene los dos mayores que 1/3 y es menor.","compfrac"));
+    if(modo==="igual"||(modo!=="calc"&&(!calcO||Math.random()<.5))) opts.push(igual); else opts.push(calcO);
+  }else{
+    opts.push(igual);
+    if(!calcO) throw "rep";
+    opts.push(calcO);
+  }
+  return [MC("¿Qué periódico perdió más texto?",opts,
+    `Con denominador ${L}: ${na}/${L} y ${nb}/${L}. Como ${Math.max(na,nb)}/${L} es mayor que ${Math.min(na,nb)}/${L}, el periódico ${W} perdió más texto.`,H_COMP)];
+}
 
 // ===== Generadores (L = nivel 1, 2 o 3) =====
 const TIPOS=[
@@ -411,6 +485,28 @@ const TIPOS=[
      {c:"De menor a mayor: el primero es el más pequeño.",p:"Añade ceros para que todos tengan las mismas cifras decimales.",e:"Compara como si fueran números enteros: 3,200 y 3,025.",k:"Comprueba cada pareja de números seguidos."})];
   if(L>=2) qs.push(NUM(`¿Cuál es la diferencia entre el mayor y el menor de los ${ctx.x}?`,ctx.u,(asc[4]-asc[0])/1000,{},`${txt(asc[4])} − ${txt(asc[0])} = ${txt(asc[4]-asc[0])}.`,{c:"Busca el mayor y el menor.",p:"Réstalos.",e:"Alinea las comas al restar.",k:"Suma tu resultado al menor: debe dar el mayor."}));
   return {t:ctx.t,texto:[`Estos son los ${ctx.x} (en ${ctx.u==="m"?"metros":ctx.u==="s"?"segundos":"kilos"}):`],extra:tabla(["Participante","Marca"],shuffle(vals.slice()).map((x,i)=>[String.fromCharCode(65+i),txt(x)+" "+ctx.u])),qs};}},
+{id:"formas",b:"frac",t:"Una cantidad, varias formas",gen(L){
+  const F1=[[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,10],[3,10],[7,10],[9,10]];
+  const F2=F1.concat([[3,20],[7,20],[9,20],[11,20],[2,25],[3,25],[4,25],[6,25]]);
+  const F3=[[1,8],[3,8],[5,8],[7,8],[3,20],[7,20],[13,20],[17,20],[19,20],[9,20]];
+  const [a,b]=pick(L===1?F1:L===2?F2:F3);
+  const Ts=[20,21,22,24,25,26,27,28,30,32].filter(T=>T%b===0); if(!Ts.length) throw "rep";
+  const T=pick(Ts),P=a*T/b; if(P<2) throw "rep";
+  const [pl,sg]=pick([["tocan un instrumento","toca un instrumento"],["leen cada día","lee cada día"],["practican deporte","practica deporte"],["votan por el proyecto verde","vota por el proyecto verde"]]);
+  return {t:"Una parte de la clase",texto:[`En una clase de ${T} alumnas, ${P} ${pl}.`],extra:"",qs:formasQs(sg,T,P)};}},
+{id:"mixtos",b:"frac",t:"Números mixtos",gen(L){
+  const D=L===1?ri(2,4):L===2?ri(3,8):ri(5,12);
+  const rs=[]; for(let r=1;r<D;r++) if(gcd(r,D)===1) rs.push(r);
+  const r=pick(rs),q=ri(1,L===1?3:5),N=q*D+r;
+  let Q2=null; if(L>=2){ const b=L===2?ri(3,8):ri(5,12),bs=[]; for(let x=1;x<b;x++) if(gcd(x,b)===1) bs.push(x); Q2={E:ri(2,6),a:pick(bs),b}; }
+  return {t:"La duración de una canción",texto:[`Una canción dura ${N}/${D} minutos.`],extra:"",qs:mixtoQs(N,D,Q2)};}},
+{id:"compfr",b:"frac",t:"Comparar fracciones",gen(L){
+  let b,d;
+  if(L===1){ b=pick([2,3,4,5,6]); d=b*pick([2,3]); if(d>12) throw "rep"; if(Math.random()<.5) [b,d]=[d,b]; }
+  else { const mx=L===2?10:15; b=ri(2,mx); d=ri(2,mx); if(b===d||lcm(b,d)>60) throw "rep"; }
+  const co=x=>{const l=[];for(let i=1;i<x;i++) if(gcd(i,x)===1) l.push(i);return l;};
+  const a=pick(co(b)),c=pick(co(d)); if(a*d===c*b) throw "rep";
+  return {t:"El censor y los periódicos",texto:[`En el periódico A el censor tachó ${a}/${b} de las líneas.`,`En el periódico B tachó ${c}/${d}.`],extra:"",qs:comparaQs(a,b,c,d)};}},
 {id:"masa",b:"med",t:"Unidades de masa y mejor combinación",gen(L){
   const nombres=shuffle(["libro","chaqueta","linterna","botella de agua","estuche","toalla"]).slice(0,3);
   const ms=[0,0,0].map(()=>L===1?ri(3,25)*100:ri(6,50)*50); if(new Set(ms).size<3) throw "rep";
@@ -655,7 +751,23 @@ const CONTEXTOS = [
   {tipo:"mc", p:"¿Se puede saber cómo vienen al colegio las alumnas que no respondieron?",
    o:[o("Sí, en coche, porque es lo más frecuente","Eso es suponer algo que el problema no dice.","supuesto"),o("Sí, se reparten igual que las demás","Es una suposición.","supuesto"),{t:"No, no hay datos de ellas",ok:true},o("Sí, son 3 y vienen andando","Son 3, pero no sabemos cómo vienen.","supuesto")],
    sol:"No se puede saber: el gráfico solo recoge a las 22 que respondieron.",
-   h:{c:"¿Qué sabes de las que no respondieron?",p:"Separa lo que dice el problema de lo que supones.",e:"Busca algún dato de esas 3 alumnas.",k:"Sin datos no se puede afirmar nada."}}]}
+   h:{c:"¿Qué sabes de las que no respondieron?",p:"Separa lo que dice el problema de lo que supones.",e:"Busca algún dato de esas 3 alumnas.",k:"Sin datos no se puede afirmar nada."}}]},
+{ id:"radio", tipo:"mixtos", sim:["mixtos"], t:"La canción de la radio", tema:"Números mixtos",
+  texto:["Una canción de la radio dura 11/3 minutos."], extra:"", qs:mixtoQs(11,3,null)},
+{ id:"censura", tipo:"compfr", sim:["compfr"], t:"El periódico censurado", tema:"Comparar fracciones",
+  texto:["En el periódico A, el censor tachó 3/8 de las líneas.","En el periódico B, tachó 5/12."], extra:"", qs:comparaQs(3,8,5,12,"igual")},
+{ id:"diputadas", tipo:"formas", sim:["formas","fcant"], t:"Las diputadas de 1977", tema:"Fracción, decimal y porcentaje",
+  texto:["En las elecciones de 1977 se eligieron 350 diputados.","21 eran mujeres."], extra:"",
+  qs:[
+   MC("¿Qué porcentaje de los diputados eran mujeres?",[{t:"6 %",ok:true},
+     o("21 %","21 es el número de diputadas, no el porcentaje.","conc"),
+     o("16,6 %","Has dividido al revés: 350 ÷ 21. Hay que dividir la parte entre el total: 21 ÷ 350.","op"),
+     o("0,06 %","0,06 es el decimal. Para pasarlo a porcentaje hay que multiplicar por 100.","conc")],
+     "21 ÷ 350 = 21/350 = 3/50 = 0,06 = 6 %.",H_FORMAS),
+   NUM("Para cambiar la Constitución hacen falta 3/5 de los 350 diputados. ¿Cuántos votos son?","votos",210,
+     {70:["Has calculado solo 1/5 de 350. Falta multiplicar por 3.","parte"],1050:["Has multiplicado 350 × 3 sin dividir entre 5.","parte"]},
+     "350 ÷ 5 = 70; 70 × 3 = 210 votos.",
+     {c:"Necesitas 3/5 de 350.",p:"Divide entre el denominador y multiplica por el numerador.",e:"350 ÷ 5 × 3 = ?",k:"Es más de la mitad de 350."})]}
 ];
 
 // ===== Datos guardados (por alumna) =====
@@ -669,7 +781,8 @@ const fechaES=s=>{const [y,m,d]=s.split("-");return `${+d}/${+m}/${y}`;};
 function registrar(t,r,pistas,errs,src){ perfil().log.push({d:hoy(),t,r,p:pistas,e:errs,s:src}); guardar(); }
 const tipoDe=id=>TIPOS.find(t=>t.id===id);
 
-let tab="tipos", nivelTipos=2, sim=null, timerId=null;
+let tab="tipos", nivelTipos=2, sim=null, timerId=null, avisoEnviar=false;
+const AVISO_ENVIAR="Antes de cerrar, pulsa 📤 Enviar progreso. Tu progreso solo se guarda en este dispositivo.";
 const app=document.getElementById("app"), inNombre=document.getElementById("nombre");
 inNombre.value=DB.ultimo||"";
 inNombre.addEventListener("change",()=>{ DB.ultimo=inNombre.value.trim(); const P=perfil(); if(!P.nombre) P.nombre=DB.ultimo; guardar(); inicio(); });
@@ -699,24 +812,29 @@ function estadisticas(filtro){
 function inicio(){
   stopTimer();
   const nom=(DB.ultimo||"").trim();
+  const avisoHTML=avisoEnviar?`<p class="recuerda" role="status">${AVISO_ENVIAR}</p>`:""; avisoEnviar=false;
+  const EAr=estadisticas().repasar;
+  const repasaHTML=EAr.length?`<section class="repasa"><b>🔁 Te conviene repasar:</b><ul>${EAr.map(id=>`<li><span>${esc(tipoDe(id).t)}</span><button class="btn small" data-rep2="${id}">Practicar</button></li>`).join("")}</ul></section>`:"";
   app.innerHTML=`
   <section class="intro">
     <p><b>Cómo se trabaja:</b> el texto está a la izquierda y la pregunta a la derecha. Lee con calma, subraya los datos y piensa antes de elegir. Puedes usar tu calculadora.</p>
     ${nom?"":`<p class="aviso">Escribe tu nombre arriba para que tus resultados se guarden a tu nombre.</p>`}
   </section>
+  ${avisoHTML}${repasaHTML}
   <div class="tabs" role="tablist">
     ${[["tipos","Practicar por tipos"],["sesiones","Problemas de las sesiones"],["sim","Simulacro"],["prog","Mis progresos"]].map(([k,l])=>`<button role="tab" data-t="${k}" aria-selected="${tab===k}">${l}</button>`).join("")}
   </div>
   <div id="cuerpo"></div>`;
   app.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{tab=b.dataset.t;inicio();});
+  app.querySelectorAll("button[data-rep2]").forEach(b=>b.onclick=()=>nuevoTipo(b.dataset.rep2,nivelTipos));
   const cuerpo=document.getElementById("cuerpo");
   if(tab==="tipos") pestTipos(cuerpo); else if(tab==="sesiones") pestSesiones(cuerpo); else if(tab==="sim") pestSim(cuerpo); else pestProgresos(cuerpo);
 }
 function selNivel(actual,id){ return `<div class="seg" role="group" aria-label="Nivel" id="${id}">${[1,2,3].map(n=>`<button data-n="${n}" aria-pressed="${actual===n}">${NIVELES[n]}</button>`).join("")}</div>`; }
 function pestTipos(cuerpo){
-  const st=estadisticas().porTipo;
+  const EA=estadisticas(), st=EA.porTipo;
   cuerpo.innerHTML=`<div class="nivelbar"><span>Nivel:</span>${selNivel(nivelTipos,"niv")}</div>`+Object.keys(BLOQUES).map(bk=>`<h2 class="bloque">${BLOQUES[bk]}</h2><ol class="ctxlist">${TIPOS.filter(t=>t.b===bk).map(t=>{const z=st[t.id];
-    return `<li><div class="ctxinfo"><b>${esc(t.t)}</b></div><span class="state">${z?`${z.n} hechas · ${Math.round(z.primera/z.n*100)} % a la primera`:"Sin empezar"}</span><button class="btn" data-id="${t.id}">Practicar</button></li>`;}).join("")}</ol>`).join("");
+    return `<li><div class="ctxinfo"><b>${esc(t.t)}</b></div><span class="state">${z?`${z.n} hechas · ${Math.round(z.primera/z.n*100)} % a la primera${EA.repasar.includes(t.id)?" · 🔁 Para repasar":""}`:"Sin empezar"}</span><button class="btn" data-id="${t.id}">Practicar</button></li>`;}).join("")}</ol>`).join("");
   cuerpo.querySelectorAll("#niv button").forEach(b=>b.onclick=()=>{nivelTipos=+b.dataset.n;inicio();});
   cuerpo.querySelectorAll("button[data-id]").forEach(b=>b.onclick=()=>nuevoTipo(b.dataset.id,nivelTipos));
 }
@@ -737,8 +855,10 @@ function pestSim(cuerpo){
     <div class="checks">${Object.keys(BLOQUES).map(bk=>`<label><input type="checkbox" value="${bk}" checked> ${BLOQUES[bk]}</label>`).join("")}</div>
     <label>Problemas <select id="nprob"><option value="6">6</option><option value="10" selected>10</option><option value="20">20 (uno de cada tipo)</option></select></label>
     <label>Nivel <select id="nsim"><option value="1">Básico</option><option value="2" selected>Medio</option><option value="3">Ampliación</option></select></label>
-    <label>Tiempo <select id="minutos"><option>20</option><option selected>30</option><option>40</option><option>45</option><option>60</option></select> min</label>
-    <button class="btn primary" id="go">Empezar simulacro</button><span id="aviso" style="color:var(--bad)"></span></div>`;
+    <label>Tiempo <select id="minutos"><option>20</option><option>30</option><option selected>35</option><option>40</option><option>45</option><option>60</option></select> min</label>
+    <button class="btn primary" id="go">Empezar simulacro</button><button class="btn" id="getm" title="Todos los bloques · nivel Medio · 35 minutos · unas 15 preguntas">Modo GET</button><span id="aviso" style="color:var(--bad)"></span>
+    <div style="width:100%" class="muted">Modo GET: todos los bloques, nivel Medio, 35 minutos y unas 15 preguntas.</div></div>`;
+  document.getElementById("getm").onclick=()=>empezarSim(Object.keys(BLOQUES),0,2,35,15);
   document.getElementById("go").onclick=()=>{
     const bl=[...cuerpo.querySelectorAll(".checks input:checked")].map(i=>i.value);
     if(!bl.length){document.getElementById("aviso").textContent="Elige al menos un bloque.";return;}
@@ -792,17 +912,18 @@ function enlazarOpciones(){ document.querySelectorAll(".opt").forEach(b=>b.oncli
 
 // ===== Práctica =====
 function getRec(P,qi){ if(P.kind==="sesion"){ const R=perfil().res, k=P.ctx.id+"-"+qi; return R[k]||(R[k]={intentos:0,pistas:[],fin:false,res:null,errs:[]}); } return P.recs[qi]||(P.recs[qi]={intentos:0,pistas:[],fin:false,res:null,errs:[]}); }
+function volverLista(P){ if(P.ctx.qs.every((_,i)=>getRec(P,i).fin)) avisoEnviar=true; inicio(); }
 function practica(P,qi){
   stopTimer();
   const c=P.ctx,q=c.qs[qi],r=getRec(P,qi); r.errs=r.errs||[];
-  const fases=[["c","Comprender"],["p","Plan"],["e","Ejecutar"],["k","Comprobar"]];
+  const fases=[["c","Comprendo"],["p","¿Qué estrategia uso?"],["e","Resuelvo"],["k","Compruebo"]];
   const titulo=P.kind==="sesion"?`Problema de la sesión ${P.ci+1}`:(P.sesion!=null?`Similar a la sesión ${P.sesion+1} · ${NIVELES[P.nivel]}`:`${esc(tipoDe(P.tipoId).t)} · ${NIVELES[P.nivel]}`);
   app.innerHTML=`
   <div class="bar"><span class="where">${titulo}</span><span class="tools">${P.kind==="tipo"?`<button class="btn" id="otro">🔄 Otro problema</button>`:""}<button class="btn" id="volver">Volver a la lista</button></span></div>
   <div class="stage">${panelContexto(c)}
     <section class="question">
       <div class="qhead">Pregunta ${qi+1} de ${c.qs.length}</div>
-      <p class="prompt">${esc(q.p)}</p>${zonaRespuesta(q,null)}
+      <p class="prompt">${esc(q.p)}</p>${zonaRespuesta(q,null)}${q.tipo==="mc"?`<div class="expl"><label for="expl">Explica tu elección <span class="muted">(opcional)</span></label><textarea id="expl" maxlength="300" rows="2" placeholder="Escribe en una frase por qué la has elegido…"></textarea></div>`:""}
       <div class="actions"><button class="btn primary" id="comprobar">Comprobar</button><button class="btn hidden" id="versol">Ver solución</button>
         <button class="btn hidden" id="sig">${qi<c.qs.length-1?"Siguiente pregunta":(P.kind==="tipo"?"Otro problema":"Terminar")}</button></div>
       <div class="fb" id="fb" role="status" aria-live="polite"></div>
@@ -811,20 +932,23 @@ function practica(P,qi){
       <nav class="qnav" aria-label="Preguntas">${c.qs.map((_,i)=>{const x=getRec(P,i);let cl=i===qi?"cur":"";if(x.fin)cl+=(x.res==="sin"?" wrong":" good");return `<button class="${cl}" data-q="${i}" aria-label="Pregunta ${i+1}">${i+1}</button>`;}).join("")}</nav>
     </section></div>`;
   activarSubrayado(); enlazarOpciones();
-  document.getElementById("volver").onclick=inicio;
+  document.getElementById("volver").onclick=()=>volverLista(P);
   const otro=()=>{ if(P.sesion!=null) similar(P.sesion,P.nivel); else nuevoTipo(P.tipoId,P.nivel); };
   if(P.kind==="tipo") document.getElementById("otro").onclick=otro;
   document.querySelectorAll(".qnav button").forEach(b=>b.onclick=()=>practica(P,+b.dataset.q));
   const hint=document.getElementById("hint");
   document.querySelectorAll(".phbtns button").forEach(b=>b.onclick=()=>{ const f=b.dataset.f; hint.textContent=q.h[f]; hint.classList.add("show"); b.classList.add("seen"); if(!r.fin&&!r.pistas.includes(f)){ r.pistas.push(f); guardar(); } });
   const fb=document.getElementById("fb"),sig=document.getElementById("sig"),vs=document.getElementById("versol"),comp=document.getElementById("comprobar");
-  const cerrar=()=>{comp.classList.add("hidden");vs.classList.add("hidden");sig.classList.remove("hidden");sig.focus();};
+  const cerrar=()=>{comp.classList.add("hidden");vs.classList.add("hidden");sig.classList.remove("hidden");const ex=document.getElementById("expl");if(ex)ex.disabled=true;sig.focus();};
   const terminar=res=>{ r.fin=true; r.res=res; registrar(P.kind==="sesion"?c.tipo:P.tipoId,res,r.pistas.length,[],P.kind==="sesion"?"ses":"pra"); };
-  sig.onclick=()=>{ if(qi<c.qs.length-1) practica(P,qi+1); else if(P.kind==="tipo") otro(); else inicio(); };
-  if(r.fin){ fb.className="fb show info"; fb.innerHTML=`<b>Ya la has hecho.</b> ${esc(q.sol)}`; cerrar(); return; }
+  sig.onclick=()=>{ if(qi<c.qs.length-1) practica(P,qi+1); else if(P.kind==="tipo") otro(); else volverLista(P); };
+  if(r.fin){ fb.className="fb show info"; fb.innerHTML=`<b>Ya la has hecho.</b> ${esc(q.sol)}`; const ex0=document.getElementById("expl"); if(ex0) ex0.closest(".expl").classList.add("hidden"); cerrar(); return; }
   comp.onclick=()=>{
     const resp=leerRespuesta(q);
     if(resp==null){fb.className="fb show info";fb.textContent="Elige o escribe una respuesta antes de comprobar.";return;}
+    if(q.tipo==="mc"){ const tx=((document.getElementById("expl")||{}).value||"").replace(/\s+/g," ").trim();
+      if(tx){ const Pf=perfil(); Pf.expl=Pf.expl||[]; const ult=Pf.expl[Pf.expl.length-1], ent={d:hoy(),t:c.t,p:q.p,o:q.o[resp].t,ok:!!q.o[resp].ok,x:tx.slice(0,300)};
+        if(!(ult&&ult.d===ent.d&&ult.p===ent.p&&ult.o===ent.o&&ult.x===ent.x&&ult.ok===ent.ok)){ Pf.expl.push(ent); if(Pf.expl.length>200) Pf.expl.shift(); guardar(); } } }
     if(esCorrecta(q,resp)){
       r.intentos++; terminar(r.intentos===1?"primera":"repetir");
       if(q.tipo==="mc") document.querySelector(`.opt[data-i="${resp}"]`).classList.add("okk");
@@ -842,10 +966,17 @@ function practica(P,qi){
 }
 
 // ===== Simulacro =====
-function empezarSim(bloques,n,L,min){
-  const base=()=>shuffle(TIPOS.filter(t=>bloques.includes(t.b)).map(t=>t.id)); let ids=base(); const el=[];
-  while(el.length<n){ if(!ids.length) ids=base(); el.push(ids.pop()); }
-  const lista=[]; el.forEach(id=>{const c=generar(id,L); c.qs.forEach((q,qi)=>lista.push({c,qi}));});
+function empezarSim(bloques,n,L,min,objPreg){
+  const base=()=>shuffle(TIPOS.filter(t=>bloques.includes(t.b)).map(t=>t.id)); let ids=base(); const lista=[];
+  if(objPreg){ /* Modo GET: se añaden problemas hasta llegar a unas objPreg preguntas (±2) */
+    let tot=0,guard=0;
+    while(tot<objPreg&&guard++<80){ if(!ids.length) ids=base(); const c=generar(ids.pop(),L);
+      if(tot+c.qs.length>objPreg+2){ if(tot>=objPreg-2) break; continue; }
+      c.qs.forEach((q,qi)=>lista.push({c,qi})); tot+=c.qs.length; }
+  }else{
+    const el=[]; while(el.length<n){ if(!ids.length) ids=base(); el.push(ids.pop()); }
+    el.forEach(id=>{const c=generar(id,L); c.qs.forEach((q,qi)=>lista.push({c,qi}));});
+  }
   sim={lista,i:0,resp:{},fin:Date.now()+min*60000,min,inicio:Date.now()}; verSim(); timerId=setInterval(tick,1000); tick();
 }
 function tick(){ if(!sim) return; const q=Math.max(0,sim.fin-Date.now()), el=document.getElementById("timer");
@@ -855,6 +986,7 @@ function guardarRespSim(){ const it=sim.lista[sim.i], v=leerRespuesta(it.c.qs[it
 function verSim(){
   const it=sim.lista[sim.i], c=it.c, q=c.qs[it.qi];
   app.innerHTML=`<div class="bar"><span class="where">Simulacro · pregunta ${sim.i+1} de ${sim.lista.length}</span><span class="timer" id="timer"></span></div>
+  <p class="calc">🧮 Puedes usar la calculadora.</p>
   <div class="stage">${panelContexto(c)}<section class="question">
     <div class="qhead">${esc(c.t)} · pregunta ${it.qi+1} de ${c.qs.length}</div><p class="prompt">${esc(q.p)}</p>
     ${zonaRespuesta(q,sim.resp[sim.i]!==undefined?sim.resp[sim.i]:null)}
@@ -878,6 +1010,7 @@ function terminarSim(porTiempo){
   P.sims.push({d:hoy(),ok,total:items.length,min:usados,porTiempo}); guardar(); sim=null;
   app.innerHTML=`<section class="results"><h2>${porTiempo?"Se ha acabado el tiempo":"Simulacro terminado"}</h2><div class="score">${ok} de ${items.length}</div>
     <p>Tiempo usado: ${usados} min. Revisa las preguntas falladas: cada una explica qué error lleva a esa respuesta. Tus resultados ya están en «Mis progresos».</p>
+    <p class="recuerda" role="status">${AVISO_ENVIAR}</p>
     <ol class="rlist">${items.map((it,i)=>{let tu="Sin responder"; if(it.r!=null) tu=it.q.tipo==="mc"?it.q.o[it.r].t:it.q.tipo==="sel"?it.q.sel[it.r]:it.r+" "+(it.q.unidad||"");
       return `<li><span class="tag ${it.bien?"ok":"bad"}">${i+1}. ${it.bien?"Correcta":"Incorrecta"}</span> · ${esc(it.x.c.t)}<br>${esc(it.q.p)}<br><span class="muted">Tu respuesta: ${esc(tu)}</span>${it.bien?"":`<br>${it.f?esc(it.f.t)+" ":""}<b>Solución:</b> ${esc(it.q.sol)}`}</li>`;}).join("")}</ol>
     <div class="actions"><button class="btn primary" id="vi">Volver al inicio</button></div></section>`;
@@ -896,6 +1029,8 @@ function resumen(){
     t+=`\nErrores más repetidos: ${A.topErr.length?A.topErr.slice(0,3).map(([e,n])=>`${ERR[e]} (${n})`).join("; "):"ninguno"}.\n`;
     t+=`Tiene que repasar: ${A.repasar.length?A.repasar.map(id=>`${tipoDe(id).t} (${A.pct(A.porTipo[id])} %)`).join("; "):"nada por ahora"}.\n`;
     t+=`Lo domina: ${A.domina.length?A.domina.map(id=>tipoDe(id).t).join("; "):"todavía ninguno"}.\n`; }
+  const EX=(P.expl||[]).filter(x=>x.d===hoy());
+  if(EX.length){ t+=`\nExplico mis elecciones:\n`; EX.forEach(x=>{ t+=`- ${x.t} · ${x.p}\n  Elegí: ${x.o} (${x.ok?"correcta":"incorrecta"}). Mi explicación: ${x.x}\n`; }); }
   if(P.sims.length){ t+=`\nSimulacros:\n`; P.sims.forEach(s=>{ t+=`- ${fechaES(s.d)}: ${s.ok} de ${s.total} correctas en ${s.min} min${s.porTiempo?" (se acabó el tiempo)":""}.\n`; }); }
   return t;
 }
@@ -913,13 +1048,7 @@ const URL_SHEET_SCRIPT_PTP6='https://script.google.com/macros/s/AKfycbzAZRtNV1K_
   if(selG&&grupoGuardado)selG.value=grupoGuardado;
   selG&&selG.addEventListener('change',()=>{if(selG.value)sessionStorage.setItem('pizarraGrupoAlumna',selG.value);});
 })();
-document.getElementById('btnEnviarPTP6').onclick=function(){
-  const nombre=(document.getElementById('nombre').value||'').trim();
-  const grupo=(document.getElementById('grupoPTP6').value||'').trim();
-  const estado=document.getElementById('envioEstadoPTP6');
-  if(!nombre){estado.textContent='⚠️ Escribe tu nombre primero.';estado.style.color='var(--bad)';return;}
-  sessionStorage.setItem('pizarraNombreAlumna',nombre);
-  if(grupo)sessionStorage.setItem('pizarraGrupoAlumna',grupo);
+function puntosPTP6(grupo){
   const A=estadisticas(),P=perfil();
   const puntos={Grupo:grupo||'(sin grupo)'};
   puntos['DETECTIVES_TotalPreguntas']=A.tot.n;
@@ -932,6 +1061,19 @@ document.getElementById('btnEnviarPTP6').onclick=function(){
   Object.keys(BLOQUES).forEach(b=>{
     if(A.porBloque[b])puntos['DETECTIVES_'+BLOQUES[b]]=A.pct(A.porBloque[b]);
   });
+  if(A.tot.n)puntos['DETECTIVES_Repasar']=A.repasar.length?A.repasar.map(id=>tipoDe(id).t).join('; '):'nada por ahora';
+  const EX=(P.expl||[]).slice(-10);
+  if(EX.length)puntos['DETECTIVES_Explicaciones']=EX.map(x=>(fechaES(x.d)+' · '+x.t+' · '+x.p+' → '+x.o+' ('+(x.ok?'correcta':'incorrecta')+'): '+x.x).replace(/\s+/g,' ')).join(' | ');
+  return puntos;
+}
+document.getElementById('btnEnviarPTP6').onclick=function(){
+  const nombre=(document.getElementById('nombre').value||'').trim();
+  const grupo=(document.getElementById('grupoPTP6').value||'').trim();
+  const estado=document.getElementById('envioEstadoPTP6');
+  if(!nombre){estado.textContent='⚠️ Escribe tu nombre primero.';estado.style.color='var(--bad)';return;}
+  sessionStorage.setItem('pizarraNombreAlumna',nombre);
+  if(grupo)sessionStorage.setItem('pizarraGrupoAlumna',grupo);
+  const puntos=puntosPTP6(grupo);
   estado.textContent='Enviando...';estado.style.color='var(--muted)';
   fetch(URL_SHEET_SCRIPT_PTP6,{
     method:'POST',mode:'no-cors',
@@ -943,6 +1085,32 @@ document.getElementById('btnEnviarPTP6').onclick=function(){
     estado.textContent='❌ No se pudo enviar. Revisa tu conexión.';estado.style.color='var(--bad)';
   });
 };
+
+/* ===== Envío automático del progreso (al cerrar, al volver internet y cada pocos minutos) ===== */
+(function(){
+  function lsG(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function lsS(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  let enviando=false;
+  function auto(motivo){
+    const nombre=((document.getElementById('nombre').value||DB.ultimo||'')+'').trim();
+    const grupo=((document.getElementById('grupoPTP6').value||lsG('pizarraGrupoAlumna')||'')+'').trim();
+    if(!nombre||!grupo||!navigator.onLine)return;
+    const A=estadisticas();
+    if(!A.tot.n&&!perfil().sims.length)return;
+    const body=JSON.stringify({nombre:nombre,puntos:puntosPTP6(grupo)}),h=nombre.toLowerCase()+'|'+body;
+    if(lsG('autoEnvP:hash')===h)return;
+    if(enviando&&motivo!=='cierre')return;
+    enviando=true;
+    try{fetch(URL_SHEET_SCRIPT_PTP6,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body:body})
+      .then(()=>{lsS('autoEnvP:hash',h);lsS('autoEnvP:fecha',new Date().toISOString());enviando=false;}).catch(()=>{enviando=false;});}catch(e){enviando=false;}
+  }
+  window.autoEnviaProgreso=auto;
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')auto('cierre');});
+  window.addEventListener('pagehide',()=>auto('cierre'));
+  window.addEventListener('online',()=>auto('online'));
+  setInterval(()=>auto('tiempo'),240000);
+  setTimeout(()=>auto('inicio'),15000);
+})();
 </script>
 </body>
 </html>
