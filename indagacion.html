@@ -62,6 +62,9 @@ textarea{width:100%;min-height:90px;resize:vertical}
 .board-wrap.proj .board{min-height:calc(100vh - 90px)}
 .board-wrap.proj .sticky{font-size:1.35em;width:270px}
 .small{font-size:.88em;color:#6a6690}
+.mas{max-width:820px;margin:10px auto 0;background:#f4f0ff;border:2px solid var(--line);border-radius:12px;padding:8px 14px}
+.mas summary{cursor:pointer;font-weight:800;color:var(--acc)}
+.mas ol{margin:8px 0 4px;padding-left:24px;font-size:1.1em}.mas li{margin:6px 0}
 .vtabs .chip{font-size:1.02em;padding:7px 16px}
 .tile{display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch}.tw .tile{height:100%}.tile svg{flex:none}
 .tile .qq{display:block;font-size:.9em;color:#3d3868;margin-top:4px}
@@ -90,6 +93,7 @@ textarea{width:100%;min-height:90px;resize:vertical}
       <div class="kick" id="d-kick"></div>
       <p class="qh">Preguntas para pensar</p>
       <ul class="qs" id="d-qs"></ul>
+      <div id="d-mas"></div>
       <p class="rel" id="d-rel"></p>
     </div>
     <div class="nota-box" id="alu">
@@ -286,32 +290,46 @@ function ill12(){
 }
 
 function ill13(){
-  var s=svgOpen()+'<rect width="600" height="340" fill="#f5f1e8"/>';
-  var P=[[14,12],[306,12],[14,176],[306,176]],W=280,H=152;
-  P.forEach(function(p,i){s+='<rect x="'+p[0]+'" y="'+p[1]+'" width="'+W+'" height="'+H+'" fill="#fff" stroke="#222" stroke-width="2"/>';});
-  /* 1: mosaico de octógonos y cuadrados */
-  var a=P[0],cs=34,t=cs/(1+Math.SQRT2),oc=function(cx,cy,r,f){var q='';for(var k=0;k<8;k++){var an=(22.5+45*k)*Math.PI/180;q+=(cx+r*Math.cos(an)).toFixed(1)+','+(cy+r*Math.sin(an)).toFixed(1)+' ';}return '<polygon points="'+q+'" fill="'+f+'" stroke="#6d4c41" stroke-width="1.5"/>';};
-  var R=cs/2/Math.cos(Math.PI/8);
-  for(var r=0;r<4;r++)for(var c=0;c<7;c++){s+=oc(a[0]+46+c*32,a[1]+34+r*32,R*0.88,(r+c)%2?'#ffe0b2':'#ffcc80');}
-  /* 2: arcos con dovelas alternas */
-  var b=P[1];
-  for(var j=0;j<3;j++){var cx2=b[0]+56+j*84,cy2=b[1]+118;
-    s+='<path d="M'+(cx2-30)+','+cy2+' A30,30 0 0 1 '+(cx2+30)+','+cy2+'" fill="none" stroke="#8d6e63" stroke-width="12"/>';
-    s+='<path d="M'+(cx2-30)+','+cy2+' A30,30 0 0 1 '+(cx2+30)+','+cy2+'" fill="none" stroke="#fff3e0" stroke-width="12" stroke-dasharray="7 7"/>';
-    s+='<rect x="'+(cx2-36)+'" y="'+cy2+'" width="12" height="26" fill="#bcaaa4"/><rect x="'+(cx2+24)+'" y="'+cy2+'" width="12" height="26" fill="#bcaaa4"/>';}
-  /* 3: rosetón */
-  var d=P[2],ox=d[0]+W/2,oy=d[1]+H/2+4;
-  s+='<circle cx="'+ox+'" cy="'+oy+'" r="64" fill="#e8eaf6" stroke="#37474f" stroke-width="3"/>';
-  for(var k=0;k<12;k++){var an=k*30*Math.PI/180;s+='<line x1="'+ox+'" y1="'+oy+'" x2="'+(ox+64*Math.cos(an)).toFixed(1)+'" y2="'+(oy+64*Math.sin(an)).toFixed(1)+'" stroke="#37474f" stroke-width="1.5"/>';
-    s+='<circle cx="'+(ox+40*Math.cos(an+0.26)).toFixed(1)+'" cy="'+(oy+40*Math.sin(an+0.26)).toFixed(1)+'" r="10" fill="#c5cae9" stroke="#37474f" stroke-width="1.5"/>';}
-  s+='<circle cx="'+ox+'" cy="'+oy+'" r="14" fill="#9fa8da" stroke="#37474f" stroke-width="2"/>';
+  var s=svgOpen()+'<rect width="600" height="340" fill="#f1ebdd"/>';
+  var P=[[10,8],[304,8],[10,172],[304,172]],W=286,H=160;
+  var pt=function(cx,cy,r,deg){var a=deg*Math.PI/180;return (cx+r*Math.cos(a)).toFixed(1)+','+(cy-r*Math.sin(a)).toFixed(1);};
+  P.forEach(function(p){s+='<rect x="'+p[0]+'" y="'+p[1]+'" width="'+W+'" height="'+H+'" rx="6" fill="#fffdf8" stroke="#2b2b2b" stroke-width="2.5"/>';});
+  /* 1: mosaico de octógonos regulares y cuadrados (4.8.8) */
+  var a=P[0],sd=19.5,L=sd*(1+Math.SQRT2),R=sd/(2*Math.sin(Math.PI/8)),gx=a[0]+(W-5*L)/2,gy=a[1]+(H-3*L)/2;
+  var oct=function(cx,cy,r,f,sw){var q='';for(var k=0;k<8;k++)q+=pt(cx,cy,r,22.5+45*k)+' ';return '<polygon points="'+q+'" fill="'+f+'" stroke="#5d3a2a" stroke-width="'+sw+'" stroke-linejoin="round"/>';};
+  for(var j=0;j<3;j++)for(var i=0;i<5;i++){var cx=gx+L/2+i*L,cy=gy+L/2+j*L;
+    s+=oct(cx,cy,R,(i+j)%2?'#f3d3a4':'#e0a35f',1.6)+oct(cx,cy,R*0.62,(i+j)%2?'#e0a35f':'#f3d3a4',1);}
+  for(var j2=0;j2<2;j2++)for(var i2=0;i2<4;i2++){var sx=gx+L+i2*L,sy=gy+L+j2*L,h=sd*Math.SQRT1_2;
+    s+='<polygon points="'+sx+','+(sy-sd*0.7071*1)+' '+(sx+sd*0.7071)+','+sy+' '+sx+','+(sy+sd*0.7071)+' '+(sx-sd*0.7071)+','+sy+'" fill="#1f5fa8" stroke="#5d3a2a" stroke-width="1.2"/><circle cx="'+sx+'" cy="'+sy+'" r="3" fill="#f6e7c8"/>';}
+  /* 2: arcada de arcos de herradura con dovelas alternas */
+  var b=P[1],fy=b[1]+H-16;
+  s+='<rect x="'+(b[0]+1)+'" y="'+(b[1]+1)+'" width="'+(W-2)+'" height="'+(H-2)+'" rx="5" fill="#f3e4c8"/><rect x="'+(b[0]+1)+'" y="'+fy+'" width="'+(W-2)+'" height="14" fill="#c9b79a"/>';
+  var cyA=b[1]+82,r1=24,r2=38,nv=13,sw=216/nv;
+  for(var m=0;m<3;m++){var cxA=b[0]+W/2+(m-1)*92;
+    s+='<path d="M'+pt(cxA,cyA,r1,198)+' A'+r1+','+r1+' 0 1 1 '+pt(cxA,cyA,r1,-18)+' L'+pt(cxA,cyA,r1,-18).split(',')[0]+','+fy+' L'+pt(cxA,cyA,r1,198).split(',')[0]+','+fy+'Z" fill="#8a6a52"/>';
+    for(var v=0;v<nv;v++){var a0=198-v*sw,a1=a0-sw;
+      s+='<polygon points="'+pt(cxA,cyA,r1,a0)+' '+pt(cxA,cyA,r2,a0)+' '+pt(cxA,cyA,r2,a1)+' '+pt(cxA,cyA,r1,a1)+'" fill="'+(v%2?'#f6ecd6':'#b5533c')+'" stroke="#5a3a2a" stroke-width="1"/>';}
+    var colx=[cxA-(r1+r2)/2*Math.cos(18*Math.PI/180),cxA+(r1+r2)/2*Math.cos(18*Math.PI/180)];
+    colx.forEach(function(x){s+='<rect x="'+(x-8)+'" y="'+(cyA+2)+'" width="16" height="'+(fy-cyA-2)+'" fill="#e2d3b6" stroke="#5a3a2a" stroke-width="1.2"/><rect x="'+(x-10)+'" y="'+(cyA+2)+'" width="20" height="6" fill="#cdb995" stroke="#5a3a2a" stroke-width="1"/>';});}
+  /* 3: rosetón gótico con 12 pétalos */
+  var d=P[2],ox=d[0]+W/2,oy=d[1]+H/2;
+  s+='<circle cx="'+ox+'" cy="'+oy+'" r="70" fill="#cfd8dc" stroke="#37474f" stroke-width="4"/><circle cx="'+ox+'" cy="'+oy+'" r="64" fill="#eceff1" stroke="#37474f" stroke-width="1.5"/>';
+  for(var k=0;k<12;k++){var an=k*30;
+    s+='<line x1="'+pt(ox,oy,18,an)+'" y1="0" x2="0" y2="0" stroke="none"/>';
+    s+='<ellipse cx="'+ox+'" cy="'+(oy-40)+'" rx="10.5" ry="20" transform="rotate('+an+' '+ox+' '+oy+')" fill="'+(k%2?'#d84343':'#2a6fc9')+'" stroke="#37474f" stroke-width="1.6"/>';
+    s+='<circle cx="'+(function(){return pt(ox,oy,58,an+15).split(',')[0];})()+'" cy="'+(function(){return pt(ox,oy,58,an+15).split(',')[1];})()+'" r="5" fill="#f0c040" stroke="#37474f" stroke-width="1.2"/>';}
+  var st='';for(var u=0;u<24;u++)st+=pt(ox,oy,u%2?9:19,u*15)+' ';
+  s+='<circle cx="'+ox+'" cy="'+oy+'" r="21" fill="#f0c040" stroke="#37474f" stroke-width="2"/><polygon points="'+st+'" fill="#d84343" stroke="#37474f" stroke-width="1"/>';
   /* 4: azulejo 4x4 (6 azul, 4 blanco, 4 verde, 2 ocre) */
-  var e=P[3],q=30,x0=e[0]+W/2-2*q,y0=e[1]+H/2-2*q+2;
-  var lay=['B','W','G','B','O','B','W','G','G','W','B','O','B','G','W','B'],col={B:'#1565c0',W:'#fafafa',G:'#2e7d32',O:'#c79a2e'};
-  lay.forEach(function(L,k){var x=x0+(k%4)*q,y=y0+Math.floor(k/4)*q;s+='<rect x="'+x+'" y="'+y+'" width="'+q+'" height="'+q+'" fill="'+col[L]+'" stroke="#ddd" stroke-width="2"/>';
-    var cx3=x+q/2,cy3=y+q/2,st='';for(var m=0;m<16;m++){var rr=m%2?4:8,an2=(m*22.5)*Math.PI/180;st+=(cx3+rr*Math.cos(an2)).toFixed(1)+','+(cy3+rr*Math.sin(an2)).toFixed(1)+' ';}
-    s+='<polygon points="'+st+'" fill="#f5e6c8"/>';});
-  P.forEach(function(p,i){s+='<circle cx="'+(p[0]+16)+'" cy="'+(p[1]+16)+'" r="12" fill="#222"/><text x="'+(p[0]+16)+'" y="'+(p[1]+21)+'" font-size="15" text-anchor="middle" fill="#fff" font-weight="700">'+(i+1)+'</text>';});
+  var e=P[3],q=36,x0=e[0]+W/2-2*q,y0=e[1]+H/2-2*q;
+  var lay=['B','W','G','B','O','B','W','G','G','W','B','O','B','G','W','B'],col={B:'#1565c0',W:'#fafafa',G:'#2e7d32',O:'#c79a2e'},ink={B:'#f6e7c8',W:'#c9a24a',G:'#f6e7c8',O:'#fff6dc'};
+  s+='<rect x="'+(x0-4)+'" y="'+(y0-4)+'" width="'+(4*q+8)+'" height="'+(4*q+8)+'" fill="#8d8d8d"/>';
+  lay.forEach(function(Lc,kk){var x=x0+(kk%4)*q,y=y0+Math.floor(kk/4)*q,cx3=x+q/2,cy3=y+q/2;
+    s+='<rect x="'+(x+1)+'" y="'+(y+1)+'" width="'+(q-2)+'" height="'+(q-2)+'" fill="'+col[Lc]+'" stroke="#cfcfcf" stroke-width="1.2"/>';
+    var stp='';for(var mm=0;mm<16;mm++)stp+=pt(cx3,cy3,mm%2?5.5:12.5,mm*22.5)+' ';
+    s+='<polygon points="'+stp+'" fill="'+ink[Lc]+'"/><circle cx="'+cx3+'" cy="'+cy3+'" r="2.2" fill="'+col[Lc]+'"/>';
+    [[x+4,y+4],[x+q-4,y+4],[x+4,y+q-4],[x+q-4,y+q-4]].forEach(function(c4){s+='<circle cx="'+c4[0]+'" cy="'+c4[1]+'" r="1.8" fill="'+ink[Lc]+'" opacity=".85"/>';});});
+  P.forEach(function(p,i){s+='<circle cx="'+(p[0]+17)+'" cy="'+(p[1]+17)+'" r="12.5" fill="#222"/><text x="'+(p[0]+17)+'" y="'+(p[1]+22)+'" font-size="15" text-anchor="middle" fill="#fff" font-weight="700">'+(i+1)+'</text>';});
   return s+'</svg>';
 }
 /* ===== datos de las tarjetas ===== */
@@ -381,14 +399,37 @@ var CONC=[
  ['Geometría','Perspectiva','PEP 8',1,'¿Cómo cambia lo que vemos de un edificio o de un mosaico según desde dónde lo miramos?'],
  ['Geometría','Responsabilidad','',0,'¿Cómo podemos ayudar a conservar el patrimonio de nuestra ciudad?']
 ];
-var CICON={'Forma':'🔷','Función':'⚙️','Causa':'⚡','Cambio':'🔄','Conexión':'🔗','Perspectiva':'👀','Responsabilidad':'🤝'};
+var MAS={
+ 'Números|Forma':['Si el todo no está dividido en partes iguales, ¿se puede hablar de fracciones? ¿Por qué?','¿De cuántas maneras puedes dibujar 3/4? ¿Qué tienen en común todos tus dibujos?'],
+ 'Números|Función':['¿Qué necesitan tener en común dos fracciones para poder sumarlas? ¿Por qué?','Antes de calcular 1/2 + 1/3, ¿entre qué números crees que estará el resultado? ¿Cómo lo sabes?'],
+ 'Números|Causa':['Si el numerador se queda igual y el denominador aumenta, ¿qué le pasa a la fracción? ¿Por qué?','¿Es verdad que una fracción con numerador y denominador mayores siempre es mayor? Busca un ejemplo que lo contradiga.'],
+ 'Números|Cambio':['Cuando amplificamos una fracción, ¿qué hacemos con el numerador y con el denominador? ¿Por qué el valor no cambia?','¿Cómo sabes que 6/8 y 3/4 son la misma cantidad? Explícalo con un dibujo o con la recta.'],
+ 'Números|Conexión':['¿Cómo pasarías 3/4 a decimal y a porcentaje? ¿Qué operación hay detrás?','¿Cuándo es más útil usar una fracción, un decimal o un porcentaje? Pon un ejemplo de cada uno.'],
+ 'Números|Perspectiva':['En una clase de 10 alumnas el 50 % toca un instrumento y en otra de 30 también el 50 %. ¿Tocan lo mismo? ¿Qué cantidad es mayor?','¿Qué preguntarías antes de fiarte de un porcentaje que ves en las noticias?'],
+ 'Números|Responsabilidad':['¿Qué puede pasar si alguien da un porcentaje sin decir el total para convencernos de algo?','Cuando compartes un porcentaje, ¿qué datos deberías dar para que se entienda bien?'],
+ 'Medida|Forma':['¿Cómo pasarías 2 ¾ minutos a segundos? Explica los pasos.','¿Hay una forma de expresar una medida que sea siempre la correcta? ¿De qué depende elegirla?'],
+ 'Medida|Función':['¿Qué medidas de tu vida diaria no se pueden dar solo con números enteros?','¿Cómo medirías ¾ de litro? ¿Cómo tendría que estar dividido el recipiente?'],
+ 'Medida|Causa':['Si dos amigas miden la misma mesa, una en palmos y otra en centímetros, ¿por qué salen números distintos?','¿Qué pasa si comparamos 5 km y 800 m mirando solo los números? ¿Qué hay que hacer antes?'],
+ 'Medida|Cambio':['Si usamos una unidad más pequeña, ¿el número de unidades aumenta o disminuye? ¿Por qué?','¿Cuántas veces cabe una unidad pequeña en la grande? ¿Qué relación tiene con el número por el que multiplicamos?'],
+ 'Medida|Conexión':['Si una negra vale 1/4 de una redonda, ¿cuántas negras caben en dos redondas?','En un compás de 4/4, ¿cómo sumarías una blanca, una negra y dos corcheas para completarlo?'],
+ 'Medida|Perspectiva':['¿Qué unidad usarías para medir la distancia entre dos ciudades? ¿Y el grosor de un cuaderno? ¿Por qué?','¿Qué es menos práctico: medir un campo de fútbol en milímetros o un lápiz en kilómetros? Explica por qué.'],
+ 'Medida|Responsabilidad':['¿Qué problemas puede causar medir mal en una receta, en una obra o al preparar una medicina?','¿Cómo podemos comprobar que una medida es fiable?'],
+ 'Geometría|Forma':['¿Qué hace que algo sea un patrón? ¿Cómo encuentras la parte que se repite?','¿Qué figuras encajan sin dejar huecos y cuáles no? ¿Por qué crees que pasa?'],
+ 'Geometría|Función':['¿Por qué crees que se usan arcos en tantos edificios antiguos?','¿Qué ventajas tiene que los azulejos sean figuras que encajan entre sí al cubrir un suelo o una pared?'],
+ 'Geometría|Causa':['¿Qué materiales, creencias o necesidades pudieron influir en las formas que eligió cada cultura?','¿Por qué crees que culturas distintas usaron formas parecidas? ¿Cómo podríamos comprobarlo?'],
+ 'Geometría|Cambio':['Si giras una figura 90°, ¿qué cambia y qué sigue igual (forma, tamaño, posición)? ¿Cómo lo comprobarías?','¿Cuántas veces tienes que girar un cuadrado hasta que coincide consigo mismo? ¿Y un hexágono regular?'],
+ 'Geometría|Conexión':['¿Dónde ves matemáticas en una obra de arte, en un edificio o en una canción?','¿Qué relación hay entre la simetría de un mosaico y las fracciones de sus colores?'],
+ 'Geometría|Perspectiva':['Si dibujaras el mismo edificio desde arriba, de frente y de lado, ¿qué figuras verías en cada vista? ¿Cambian las medidas reales?','¿Qué miraría en un mosaico una arquitecta, un artista o un turista? ¿En qué se parecen o se diferencian?'],
+ 'Geometría|Responsabilidad':['¿Por qué es importante conocer y proteger lo que construyeron otras personas?','¿Qué habría que medir o fotografiar para restaurar un mosaico roto sin cambiar su diseño?']
+};
+ var CICON={'Forma':'🔷','Función':'⚙️','Causa':'⚡','Cambio':'🔄','Conexión':'🔗','Perspectiva':'👀','Responsabilidad':'🤝'};
 var BCOL={'Números':['#4527a0','#d1c4e9'],'Medida':['#0d47a1','#bbdefb'],'Geometría':['#bf360c','#ffe0b2']};
 function illConc(b,c){return function(){var k=BCOL[b];
   return '<svg viewBox="0 0 600 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid slice"><rect width="600" height="290" fill="'+k[1]+'"/><circle cx="300" cy="125" r="78" fill="#fff" opacity=".7"/>'+
    '<text x="300" y="162" font-size="92" text-anchor="middle">'+CICON[c]+'</text>'+
    '<text x="300" y="44" font-size="26" font-weight="700" text-anchor="middle" fill="'+k[0]+'" opacity=".8">'+b.toUpperCase()+'</text>'+
    '<text x="300" y="258" font-size="44" font-weight="800" text-anchor="middle" fill="'+k[0]+'">'+c+'</text></svg>';};}
-CONC.forEach(function(r,i){CARDS.push({id:'t'+(14+i),k:'c',n:r[1],tag:r[0],pep:r[2],star:!!r[3],ill:illConc(r[0],r[1]),t:r[1],q:[r[4]],
+CONC.forEach(function(r,i){CARDS.push({id:'t'+(14+i),k:'c',n:r[1],tag:r[0],pep:r[2],star:!!r[3],ill:illConc(r[0],r[1]),t:r[1],q:[r[4]],mas:MAS[r[0]+'|'+r[1]]||[],
   rel:'Concepto clave: '+r[1]+' · '+r[0]+(r[3]?' · ★ se trabaja ahora'+(r[2]?' ('+r[2]+')':''):'')});});
 var COLORS=['#fff59d','#a5d6a7','#90caf9','#f8bbd0','#ffcc80'];
 var DOC=/[?&]docente\b/.test(location.search);
@@ -500,6 +541,7 @@ function abre(id){
   $('d-ill').innerHTML=c.ill();
   $('d-kick').textContent=kd(c)==='c'?'Una pregunta para pensar sobre «'+c.t+'» en '+c.tag:'Una indagación sobre '+c.t;
   $('d-qs').innerHTML=c.q.map(function(q){return '<li>'+esc(q)+'</li>';}).join('');
+  $('d-mas').innerHTML=(c.mas&&c.mas.length)?'<details class="mas"><summary>➕ Para seguir pensando</summary><ol>'+c.mas.map(function(q){return '<li>'+esc(q)+'</li>';}).join('')+'</ol></details>':'';
   $('d-rel').innerHTML=modeDoc()?'📚 '+esc(c.rel):'';
   $('sub').textContent=modeDoc()?'Modo docente: proyecta la tarjeta y mira las notas de la clase.':'Lee, piensa y escribe tu idea.';
   $('alu').style.display=modeDoc()?'none':'block';
