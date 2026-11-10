@@ -62,6 +62,11 @@ textarea{width:100%;min-height:90px;resize:vertical}
 .board-wrap.proj .board{min-height:calc(100vh - 90px)}
 .board-wrap.proj .sticky{font-size:1.35em;width:270px}
 .small{font-size:.88em;color:#6a6690}
+.vtabs .chip{font-size:1.02em;padding:7px 16px}
+.tile{display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch}.tw .tile{height:100%}.tile svg{flex:none}
+.tile .qq{display:block;font-size:.9em;color:#3d3868;margin-top:4px}
+.star{color:#b26a00;font-weight:800}
+.chips.c2 .chip{font-size:.92em;padding:4px 10px}
 @media(max-width:600px){.wrap{padding:10px}header.top h1{font-size:1.35em}.sticky{width:160px}}
 </style></head><body>
 <div class="wrap">
@@ -69,9 +74,11 @@ textarea{width:100%;min-height:90px;resize:vertical}
 <p class="sub" id="sub">Elige una tarjeta, piensa y comparte tu idea.</p>
 
 <div id="lista">
+  <div class="chips vtabs" id="vtabs"></div>
   <div id="lib-bar" class="libbar" style="display:none"></div>
   <div class="msg" id="lib-msg"></div>
   <div class="chips" id="chips"></div>
+  <div class="chips c2" id="chips2"></div>
   <div class="grid" id="grid"></div>
 </div>
 
@@ -277,6 +284,36 @@ function ill12(){
   s+='<text x="470" y="200" font-size="18" text-anchor="middle" fill="#4a148c">¿qué patrón ves?</text>';
   return s+'</svg>';
 }
+
+function ill13(){
+  var s=svgOpen()+'<rect width="600" height="340" fill="#f5f1e8"/>';
+  var P=[[14,12],[306,12],[14,176],[306,176]],W=280,H=152;
+  P.forEach(function(p,i){s+='<rect x="'+p[0]+'" y="'+p[1]+'" width="'+W+'" height="'+H+'" fill="#fff" stroke="#222" stroke-width="2"/>';});
+  /* 1: mosaico de octógonos y cuadrados */
+  var a=P[0],cs=34,t=cs/(1+Math.SQRT2),oc=function(cx,cy,r,f){var q='';for(var k=0;k<8;k++){var an=(22.5+45*k)*Math.PI/180;q+=(cx+r*Math.cos(an)).toFixed(1)+','+(cy+r*Math.sin(an)).toFixed(1)+' ';}return '<polygon points="'+q+'" fill="'+f+'" stroke="#6d4c41" stroke-width="1.5"/>';};
+  var R=cs/2/Math.cos(Math.PI/8);
+  for(var r=0;r<4;r++)for(var c=0;c<7;c++){s+=oc(a[0]+46+c*32,a[1]+34+r*32,R*0.88,(r+c)%2?'#ffe0b2':'#ffcc80');}
+  /* 2: arcos con dovelas alternas */
+  var b=P[1];
+  for(var j=0;j<3;j++){var cx2=b[0]+56+j*84,cy2=b[1]+118;
+    s+='<path d="M'+(cx2-30)+','+cy2+' A30,30 0 0 1 '+(cx2+30)+','+cy2+'" fill="none" stroke="#8d6e63" stroke-width="12"/>';
+    s+='<path d="M'+(cx2-30)+','+cy2+' A30,30 0 0 1 '+(cx2+30)+','+cy2+'" fill="none" stroke="#fff3e0" stroke-width="12" stroke-dasharray="7 7"/>';
+    s+='<rect x="'+(cx2-36)+'" y="'+cy2+'" width="12" height="26" fill="#bcaaa4"/><rect x="'+(cx2+24)+'" y="'+cy2+'" width="12" height="26" fill="#bcaaa4"/>';}
+  /* 3: rosetón */
+  var d=P[2],ox=d[0]+W/2,oy=d[1]+H/2+4;
+  s+='<circle cx="'+ox+'" cy="'+oy+'" r="64" fill="#e8eaf6" stroke="#37474f" stroke-width="3"/>';
+  for(var k=0;k<12;k++){var an=k*30*Math.PI/180;s+='<line x1="'+ox+'" y1="'+oy+'" x2="'+(ox+64*Math.cos(an)).toFixed(1)+'" y2="'+(oy+64*Math.sin(an)).toFixed(1)+'" stroke="#37474f" stroke-width="1.5"/>';
+    s+='<circle cx="'+(ox+40*Math.cos(an+0.26)).toFixed(1)+'" cy="'+(oy+40*Math.sin(an+0.26)).toFixed(1)+'" r="10" fill="#c5cae9" stroke="#37474f" stroke-width="1.5"/>';}
+  s+='<circle cx="'+ox+'" cy="'+oy+'" r="14" fill="#9fa8da" stroke="#37474f" stroke-width="2"/>';
+  /* 4: azulejo 4x4 (6 azul, 4 blanco, 4 verde, 2 ocre) */
+  var e=P[3],q=30,x0=e[0]+W/2-2*q,y0=e[1]+H/2-2*q+2;
+  var lay=['B','W','G','B','O','B','W','G','G','W','B','O','B','G','W','B'],col={B:'#1565c0',W:'#fafafa',G:'#2e7d32',O:'#c79a2e'};
+  lay.forEach(function(L,k){var x=x0+(k%4)*q,y=y0+Math.floor(k/4)*q;s+='<rect x="'+x+'" y="'+y+'" width="'+q+'" height="'+q+'" fill="'+col[L]+'" stroke="#ddd" stroke-width="2"/>';
+    var cx3=x+q/2,cy3=y+q/2,st='';for(var m=0;m<16;m++){var rr=m%2?4:8,an2=(m*22.5)*Math.PI/180;st+=(cx3+rr*Math.cos(an2)).toFixed(1)+','+(cy3+rr*Math.sin(an2)).toFixed(1)+' ';}
+    s+='<polygon points="'+st+'" fill="#f5e6c8"/>';});
+  P.forEach(function(p,i){s+='<circle cx="'+(p[0]+16)+'" cy="'+(p[1]+16)+'" r="12" fill="#222"/><text x="'+(p[0]+16)+'" y="'+(p[1]+21)+'" font-size="15" text-anchor="middle" fill="#fff" font-weight="700">'+(i+1)+'</text>';});
+  return s+'</svg>';
+}
 /* ===== datos de las tarjetas ===== */
 var API='https://script.google.com/macros/s/AKfycbzAZRtNV1K_3nQ6ooO3QPVhITur2NkufoKKbd76EWCtmL7rz3aO-1Bx_x6xiU0rVbXk/exec';
 var CARDS=[
@@ -315,8 +352,44 @@ var CARDS=[
   q:['¿Cuántos cuadraditos tiene un cuadrado de lado 4? ¿Cómo lo has contado?','¿Por qué crees que 4² se lee «4 al cuadrado»?','¿Cuántos cubitos hay en un cubo de arista 3? ¿Por qué se lee 3³ «3 al cubo»?','Si el lado de un cuadrado se duplica, ¿qué pasa con su área? ¿Se duplica también?','Y si la arista de un cubo se duplica, ¿qué pasa con su volumen? ¿Cómo podríamos comprobarlo?','¿Por qué no tiene sentido hablar de «4 al cuadrado» para medir una longitud?']},
  {id:'t12',n:'Tantos ceros',tag:'Potencias',ill:ill12,t:'cómo las potencias de 10 nos ayudan a escribir y leer números muy grandes',
   rel:'Números: potencias de 10 · valor posicional · números grandes',
-  q:['¿Qué tienen en común 10, 100, 1 000 y 10 000? ¿Qué cambia de uno a otro?','¿Cómo escribirías cada uno de ellos como potencia de 10? ¿Qué relación hay entre el exponente y el número de ceros?','Si cada número es 10 veces el anterior, ¿qué número iría antes del 10? ¿Y antes de ese?','¿Cómo escribirías 3 000 usando una potencia de 10? ¿Y 3 400?','¿Qué ventajas tiene escribir un número muy grande como una potencia de 10 en lugar de escribir todos los ceros?']}
+  q:['¿Qué tienen en común 10, 100, 1 000 y 10 000? ¿Qué cambia de uno a otro?','¿Cómo escribirías cada uno de ellos como potencia de 10? ¿Qué relación hay entre el exponente y el número de ceros?','Si cada número es 10 veces el anterior, ¿qué número iría antes del 10? ¿Y antes de ese?','¿Cómo escribirías 3 000 usando una potencia de 10? ¿Y 3 400?','¿Qué ventajas tiene escribir un número muy grande como una potencia de 10 en lugar de escribir todos los ceros?']},
+ {id:'t13',n:'El museo misterioso',tag:'Geometría',ill:ill13,t:'cómo las formas y los patrones se repiten en el arte del patrimonio, y qué parte de un azulejo ocupa cada color',
+  rel:'Geometría y fracciones: polígonos · simetría · patrones · fracción de un todo',
+  q:['Mira con calma las cuatro imágenes. Escribe tu «Veo…»: ¿qué ves en cada una?','¿Qué formas geométricas encuentras? ¿Cuáles se repiten una y otra vez?','¿Qué imágenes tienen simetría? ¿Dónde pondrías el eje?','Escribe tu «Pienso que… porque…»: ¿por qué crees que se repiten las mismas formas?','Escribe tu «Me pregunto por qué… / cómo…»: ¿qué te gustaría saber de estas imágenes?','En la imagen 4: ¿qué parte del azulejo es azul? ¿Cómo lo explicarías con números?','¿Podrías diseñar un azulejo con las mismas formas pero otros colores? ¿Qué tendrías que decidir?']}
 ];
+/* ===== Preguntas conceptuales (21): [bloque, concepto, PEP, ★ se trabaja ahora, pregunta] ===== */
+var CONC=[
+ ['Números','Forma','PEP 8',1,'¿Cómo está formada una fracción y qué indica cada una de sus partes?'],
+ ['Números','Función','PEP 9',1,'¿Por qué no podemos sumar directamente los numeradores y los denominadores?'],
+ ['Números','Causa','PEP 8',1,'¿Por qué 1/3 es mayor que 1/5 si 3 es menor que 5?'],
+ ['Números','Cambio','',0,'¿Qué cambia y qué permanece igual cuando amplificamos o simplificamos una fracción?'],
+ ['Números','Conexión','PEP 9',1,'¿Cómo sabemos que 1/2, 0,5 y 50 % expresan la misma cantidad?'],
+ ['Números','Perspectiva','PEP 9',1,'¿Por qué el 89 % y el 59 % pueden ser verdad a la vez?'],
+ ['Números','Responsabilidad','',0,'¿Por qué debemos decir siempre de qué total habla un porcentaje?'],
+ ['Medida','Forma','',0,'¿Por qué podemos expresar una misma medida de formas distintas (2 ¾ min, 165 s, 2,75 min)?'],
+ ['Medida','Función','',0,'¿Para qué necesitamos fracciones y decimales cuando medimos?'],
+ ['Medida','Causa','',0,'¿Por qué hay que usar la misma unidad para comparar dos medidas?'],
+ ['Medida','Cambio','',0,'¿Qué cambia en el número cuando pasamos de minutos a segundos? ¿Cambia la duración?'],
+ ['Medida','Conexión','',0,'¿Qué relación hay entre las figuras musicales (redonda, blanca, negra…) y las fracciones?'],
+ ['Medida','Perspectiva','',0,'¿Por qué un mismo trozo de cinta puede medir «12 cm» o «0,12 m»? ¿Cuál es mejor según para qué?'],
+ ['Medida','Responsabilidad','',0,'¿Por qué es importante medir con precisión cuando repartimos materiales?'],
+ ['Geometría','Forma','PEP 8',1,'¿Qué figuras y patrones geométricos se repiten en el arte y en los edificios de distintas culturas?'],
+ ['Geometría','Función','',0,'¿Para qué sirven las formas geométricas en la arquitectura: sostener, decorar o dejar pasar la luz?'],
+ ['Geometría','Causa','PEP 8',1,'¿Por qué algunas culturas eligieron ciertas formas para expresar su identidad?'],
+ ['Geometría','Cambio','',0,'¿Cómo cambia un patrón si giramos, trasladamos o reflejamos la figura?'],
+ ['Geometría','Conexión','',0,'¿Qué relación hay entre las matemáticas y el arte?'],
+ ['Geometría','Perspectiva','PEP 8',1,'¿Cómo cambia lo que vemos de un edificio o de un mosaico según desde dónde lo miramos?'],
+ ['Geometría','Responsabilidad','',0,'¿Cómo podemos ayudar a conservar el patrimonio de nuestra ciudad?']
+];
+var CICON={'Forma':'🔷','Función':'⚙️','Causa':'⚡','Cambio':'🔄','Conexión':'🔗','Perspectiva':'👀','Responsabilidad':'🤝'};
+var BCOL={'Números':['#4527a0','#d1c4e9'],'Medida':['#0d47a1','#bbdefb'],'Geometría':['#bf360c','#ffe0b2']};
+function illConc(b,c){return function(){var k=BCOL[b];
+  return '<svg viewBox="0 0 600 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true" preserveAspectRatio="xMidYMid slice"><rect width="600" height="290" fill="'+k[1]+'"/><circle cx="300" cy="125" r="78" fill="#fff" opacity=".7"/>'+
+   '<text x="300" y="162" font-size="92" text-anchor="middle">'+CICON[c]+'</text>'+
+   '<text x="300" y="44" font-size="26" font-weight="700" text-anchor="middle" fill="'+k[0]+'" opacity=".8">'+b.toUpperCase()+'</text>'+
+   '<text x="300" y="258" font-size="44" font-weight="800" text-anchor="middle" fill="'+k[0]+'">'+c+'</text></svg>';};}
+CONC.forEach(function(r,i){CARDS.push({id:'t'+(14+i),k:'c',n:r[1],tag:r[0],pep:r[2],star:!!r[3],ill:illConc(r[0],r[1]),t:r[1],q:[r[4]],
+  rel:'Concepto clave: '+r[1]+' · '+r[0]+(r[3]?' · ★ se trabaja ahora'+(r[2]?' ('+r[2]+')':''):'')});});
 var COLORS=['#fff59d','#a5d6a7','#90caf9','#f8bbd0','#ffcc80'];
 var DOC=/[?&]docente\b/.test(location.search);
 var $=function(i){return document.getElementById(i);};
@@ -327,7 +400,8 @@ function ssS(k,v){try{sessionStorage.setItem(k,v);}catch(e){}}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function norm(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/\s+/g,' ').trim();}
 
-var cur=null,color=COLORS[0],tagSel='',viewAs=false,timer=null,NOTAS=[];
+var cur=null,color=COLORS[0],tagSel='',viewAs=false,timer=null,NOTAS=[],vista='a',conSel='',starSel='';
+function kd(c){return c.k||'a';}
 /* tarjetas liberadas por la docente: null = aún sin saber (cargando / sin conexión y sin copia) */
 var LIB=null,LIBERR='';
 function visibles(){return DOC?CARDS:(LIB?CARDS.filter(function(c){return LIB.indexOf(c.id)>=0;}):[]);}
@@ -356,27 +430,58 @@ function modeDoc(){return DOC&&!viewAs;}
 
 /* ---- lista ---- */
 function renderLista(){
-  var VIS=visibles();
+  var ALLV=visibles(),VIS=ALLV.filter(function(c){return kd(c)===vista;});
   var tags=[];VIS.forEach(function(c){if(tags.indexOf(c.tag)<0)tags.push(c.tag);});
   if(tagSel&&tags.indexOf(tagSel)<0)tagSel='';
   var lm=$('lib-msg');
   if(!DOC){
     if(LIB===null&&!LIBERR){lm.textContent='Cargando tarjetas…';lm.className='msg';}
     else if(LIB===null){lm.textContent='⚠️ '+LIBERR;lm.className='msg bad';}
-    else if(!VIS.length){lm.textContent='Aún no hay tarjetas disponibles. Tu profe las irá abriendo en clase.';lm.className='msg';}
+    else if(!VIS.length){lm.textContent='Aún no hay tarjetas disponibles en esta pestaña. Tu profe las irá abriendo en clase.';lm.className='msg';}
     else{lm.textContent=LIBERR?LIBERR:'';lm.className='msg';}
   }
+  $('vtabs').innerHTML=[['a','🃏 Tarjetas de indagación'],['c','💡 Preguntas conceptuales']].map(function(t){return '<button class="chip'+(vista===t[0]?' on':'')+'" data-v="'+t[0]+'">'+t[1]+'</button>';}).join('');
+  Array.prototype.forEach.call($('vtabs').children,function(b){b.onclick=function(){vista=b.getAttribute('data-v');tagSel='';conSel='';starSel='';renderLista();};});
   var lc=$('lib-bar');
   if(DOC){
-    var n=LIB?LIB.length:0;
-    lc.style.display='flex';
-    lc.innerHTML='<span><b>🔓 '+n+' de '+CARDS.length+'</b> tarjetas liberadas para las alumnas</span><button type="button" id="lib-all" class="ghost">Liberar todas</button><button type="button" id="lib-none" class="ghost">Bloquear todas</button>';
-    $('lib-all').onclick=function(){guardaLib(CARDS.map(function(c){return c.id;}));};
-    $('lib-none').onclick=function(){guardaLib([]);};
+    var mine=CARDS.filter(function(c){return kd(c)===vista;}),ids=mine.map(function(c){return c.id;});
+    var n=(LIB||[]).filter(function(x){return ids.indexOf(x)>=0;}).length;
+    var html='<span><b>🔓 '+n+' de '+mine.length+'</b> liberadas para las alumnas en esta pestaña</span><button type="button" id="lib-all" class="ghost">Liberar todas</button><button type="button" id="lib-none" class="ghost">Bloquear todas</button>';
+    if(vista==='c')html+='<button type="button" class="ghost" id="lib-s8">Liberar ★ PEP 8</button><button type="button" class="ghost" id="lib-s9">Liberar ★ PEP 9</button><button type="button" class="ghost" id="lib-s">Liberar todas las ★</button>';
+    lc.style.display='flex';lc.innerHTML=html;
+    var suma=function(add){var s=(LIB||[]).slice();add.forEach(function(x){if(s.indexOf(x)<0)s.push(x);});guardaLib(s);};
+    $('lib-all').onclick=function(){suma(ids);};
+    $('lib-none').onclick=function(){guardaLib((LIB||[]).filter(function(x){return ids.indexOf(x)<0;}));};
+    if(vista==='c'){
+      $('lib-s8').onclick=function(){suma(mine.filter(function(c){return c.star&&c.pep==='PEP 8';}).map(function(c){return c.id;}));};
+      $('lib-s9').onclick=function(){suma(mine.filter(function(c){return c.star&&c.pep==='PEP 9';}).map(function(c){return c.id;}));};
+      $('lib-s').onclick=function(){suma(mine.filter(function(c){return c.star;}).map(function(c){return c.id;}));};
+    }
   }else lc.style.display='none';
   $('chips').innerHTML=['Todas'].concat(tags).map(function(t){return '<button class="chip'+((t==='Todas'&&!tagSel)||t===tagSel?' on':'')+'" data-t="'+(t==='Todas'?'':esc(t))+'">'+esc(t)+'</button>';}).join('');
-  $('grid').innerHTML=VIS.filter(function(c){return !tagSel||c.tag===tagSel;}).map(function(c){
-    var tile='<button class="tile" data-id="'+c.id+'">'+c.ill()+'<div class="tt"><span class="tag">'+esc(c.tag)+'</span><b>'+esc(c.n)+'</b></div></button>';
+  var c2='';
+  if(vista==='c'){
+    var cons=[];VIS.forEach(function(c){if(cons.indexOf(c.t)<0)cons.push(c.t);});
+    c2=[['','Todos los conceptos']].concat(cons.map(function(x){return [x,x];})).map(function(t){return '<button class="chip'+(conSel===t[0]?' on':'')+'" data-con="'+esc(t[0])+'">'+esc(t[1])+'</button>';}).join('')+
+       [['*','★ Los que trabajamos'],['PEP 8','★ PEP 8'],['PEP 9','★ PEP 9']].map(function(t){return '<button class="chip'+(starSel===t[0]?' on':'')+'" data-star="'+t[0]+'">'+t[1]+'</button>';}).join('');
+  }
+  $('chips2').innerHTML=c2;
+  Array.prototype.forEach.call($('chips2').children,function(b){b.onclick=function(){
+    if(b.hasAttribute('data-con')){conSel=b.getAttribute('data-con');}
+    else{var v=b.getAttribute('data-star');starSel=(starSel===v?'':v);}
+    renderLista();};});
+  var shown=VIS.filter(function(c){
+    if(tagSel&&c.tag!==tagSel)return false;
+    if(vista==='c'){
+      if(conSel&&c.t!==conSel)return false;
+      if(starSel==='*'&&!c.star)return false;
+      if((starSel==='PEP 8'||starSel==='PEP 9')&&!(c.star&&c.pep===starSel))return false;
+    }
+    return true;});
+  $('grid').innerHTML=shown.map(function(c){
+    var cc=kd(c)==='c';
+    var tag=esc(c.tag)+(cc&&c.star?' · <span class="star">★'+(c.pep?' '+esc(c.pep):'')+'</span>':'');
+    var tile='<button class="tile" data-id="'+c.id+'">'+c.ill()+'<div class="tt"><span class="tag">'+tag+'</span><b>'+esc(c.n)+'</b>'+(cc?'<span class="qq">'+esc(c.q[0])+'</span>':'')+'</div></button>';
     if(!DOC)return tile;
     var on=LIB&&LIB.indexOf(c.id)>=0;
     return '<div class="tw'+(on?'':' off')+'">'+tile+'<button type="button" class="lib'+(on?' on':'')+'" data-lib="'+c.id+'" aria-pressed="'+(on?'true':'false')+'">'+(on?'🔓 Liberada':'🔒 Bloqueada')+'</button></div>';
@@ -390,10 +495,10 @@ function renderLista(){
 }
 function abre(id){
   var c=CARDS.filter(function(x){return x.id===id;})[0];if(!c){cierra();return;}
-  cur=c;history.replaceState(null,'','#'+id);
+  cur=c;vista=kd(c);history.replaceState(null,'','#'+id);
   $('lista').style.display='none';$('det').style.display='block';
   $('d-ill').innerHTML=c.ill();
-  $('d-kick').textContent='Una indagación sobre '+c.t;
+  $('d-kick').textContent=kd(c)==='c'?'Una pregunta para pensar sobre «'+c.t+'» en '+c.tag:'Una indagación sobre '+c.t;
   $('d-qs').innerHTML=c.q.map(function(q){return '<li>'+esc(q)+'</li>';}).join('');
   $('d-rel').innerHTML=modeDoc()?'📚 '+esc(c.rel):'';
   $('sub').textContent=modeDoc()?'Modo docente: proyecta la tarjeta y mira las notas de la clase.':'Lee, piensa y escribe tu idea.';
