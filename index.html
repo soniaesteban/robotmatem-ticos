@@ -729,8 +729,11 @@ details.ejemplo summary{cursor:pointer;font-weight:700;color:var(--purple);font-
     <optgroup label="🚀 Retos para 5.º y 6.º">
       <option value="33" selected>🚀 Reto mixto (al azar)</option><option value="22">22. Fracción de lo que queda</option><option value="23">23. Descuentos seguidos</option><option value="24">24. Media y valor que falta</option><option value="25">25. Suma y diferencia</option><option value="26">26. Hallar el total con varios gastos</option><option value="27">27. ¿Qué pack es más barato?</option><option value="28">28. Total a partir de un porcentaje</option><option value="29">29. Subidas y rebajas (ida y vuelta)</option><option value="30">30. Velocidad y tiempo</option><option value="31">31. Pensar al revés</option><option value="32">32. Área y perímetro con precio</option>
     </optgroup>
-    <optgroup label="Sumar y restar">
-      <option value="1">1. Sumar hasta 10</option><option value="2">2. Restar: la parte que falta</option><option value="3">3. Juntar y quitar</option><option value="4">4. Sumar y restar hasta 100</option><option value="5">5. Comparar: ¿cuántos más?</option><option value="6">6. Problemas de dos pasos</option><option value="20">★ Partes y total: ¿cuántos faltan?</option>
+    <optgroup label="Sumar y restar con números grandes">
+      <option value="5">5. Comparar: ¿cuántos más? (hasta 100 000)</option><option value="6">6. Problemas de dos pasos (miles)</option><option value="20">★ Partes y total: ¿cuántos faltan? (miles)</option>
+    </optgroup>
+    <optgroup label="Repaso de cursos anteriores (muy fácil)">
+      <option value="1">1. Sumar hasta 10</option><option value="2">2. Restar: la parte que falta</option><option value="3">3. Juntar y quitar</option><option value="4">4. Sumar y restar hasta 100</option>
     </optgroup>
     <optgroup label="Multiplicar y dividir">
       <option value="7">7. Multiplicar: grupos iguales</option><option value="8">8. Dividir: repartir y agrupar</option><option value="9">9. El doble, el triple</option>
@@ -2321,12 +2324,12 @@ const GEN={
   if(r<.34){const a=rnd(11,70),b=rnd(10,100-a);return{t:`${A} tiene ${a} ${c.n} y ${B} tiene ${b}. ¿${Cu(c)} ${c.n} tienen entre los dos?`,spec:{rows:[{segs:[sg(a,'a'),sg(b,'b')],over:Q}]},ans:a+b,ex:`${a} + ${b} = ${a+b}.`};}
   if(r<.67){const a=rnd(30,99),b=rnd(10,a-5);return{t:`En una caja hay ${a} ${c.n}. ${A} se lleva ${b}. ¿${Cu(c)} ${c.n} quedan en la caja?`,spec:{rows:[{segs:[sg(b,'a'),sq(a-b)],over:{t:a,v:a}}]},ans:a-b,ex:`${a} − ${b} = ${a-b}.`};}
   const a=rnd(12,60),T=rnd(a+10,99);return{t:`${A} y ${B} tienen ${T} ${c.n} entre los dos. ${A} tiene ${a}. ¿${Cu(c)} ${c.n} tiene ${B}?`,spec:{rows:[{segs:[sg(a,'a'),sq(T-a)],over:{t:T,v:T}}]},ans:T-a,ex:`Al total le quitamos la parte de ${A}: ${T} − ${a} = ${T-a}.`};},
- 5(n){const c=pick(COSAS),[A,B]=two(),M=n==='f'?30:n==='m'?99:300,a=rnd(12,M),b=rnd(5,a-3),menos=Math.random()<.4;
+ 5(n){const c=pick(COSAS),[A,B]=two(),M=n==='f'?1000:n==='m'?9999:99999,a=rnd(Math.round(M/5),M),b=rnd(Math.round(a/5),a-Math.round(a/10)),menos=Math.random()<.4;
   return{t:menos?`${A} tiene ${a} ${c.n} y ${B} tiene ${b}. ¿${Cu(c)} ${c.n} menos tiene ${B} que ${A}?`:`${A} tiene ${a} ${c.n} y ${B} tiene ${b}. ¿${Cu(c)} ${c.n} más tiene ${A} que ${B}?`,spec:{rows:[{name:A,segs:[sg(a,'a')]},{name:B,segs:[sg(b,'b'),sq(a-b)]}]},ans:a-b,ex:`La diferencia entre las dos barras es lo que falta: ${a} − ${b} = ${a-b}.`};},
- 6(n){const c=pick(COSAS),[A,B]=two(),r=Math.random(),M=n==='f'?20:n==='m'?50:90;
-  if(r<.34){const a=rnd(5,M),b=rnd(2,M/2|0||3);return{t:`${A} tiene ${a} ${c.n}. ${B} tiene ${b} más que ${A}. ¿${Cu(c)} ${c.n} tienen entre los dos?`,spec:{rows:[{name:A,segs:[sg(a,'a')]},{name:B,segs:[sg(a,'a'),sg(b,'b')]}],totalRow:true},ans:2*a+b,ex:`${B} tiene ${a} + ${b} = ${a+b}. Entre los dos: ${a} + ${a+b} = ${2*a+b}.`};}
-  if(r<.67){const T=rnd(40,n==='d'?500:150),a=rnd(5,T/3|0),b=rnd(5,T/3|0);return{t:`${A} tenía ${T} € y se gasta ${a} € en un libro y ${b} € en una revista. ¿Cuánto dinero le queda?`,spec:{rows:[{segs:[sg(a,'a'),sg(b,'b'),sq(T-a-b)],over:{t:T,v:T}}]},ans:T-a-b,unit:'€',ex:`Gasta ${a} + ${b} = ${a+b}. Le quedan ${T} − ${a+b} = ${T-a-b}.`};}
-  const a=rnd(5,M),b=rnd(5,M),d=rnd(5,M);return{t:`En una caja hay ${a} ${c.n}, en otra hay ${b} y en otra ${d}. ¿${Cu(c)} ${c.n} hay en total?`,spec:{rows:[{segs:[sg(a,'a'),sg(b,'b'),sg(d,'c')],over:Q}]},ans:a+b+d,ex:`${a} + ${b} + ${d} = ${a+b+d}.`};},
+ 6(n){const c=pick(COSAS),[A,B]=two(),r=Math.random(),M=n==='f'?300:n==='m'?2000:20000;
+  if(r<.34){const a=rnd(Math.round(M/5),M),b=rnd(Math.round(M/10),Math.round(M/2));return{t:`${A} tiene ${a} ${c.n}. ${B} tiene ${b} más que ${A}. ¿${Cu(c)} ${c.n} tienen entre los dos?`,spec:{rows:[{name:A,segs:[sg(a,'a')]},{name:B,segs:[sg(a,'a'),sg(b,'b')]}],totalRow:true},ans:2*a+b,ex:`${B} tiene ${a} + ${b} = ${a+b}. Entre los dos: ${a} + ${a+b} = ${2*a+b}.`};}
+  if(r<.67){const T=n==='f'?rnd(200,900):n==='m'?rnd(1000,5000):rnd(4000,20000),a=rnd(Math.round(T/10),T/3|0),b=rnd(Math.round(T/10),T/3|0);return{t:`${A} tenía ${T} € y se gasta ${a} € en un libro y ${b} € en una revista. ¿Cuánto dinero le queda?`,spec:{rows:[{segs:[sg(a,'a'),sg(b,'b'),sq(T-a-b)],over:{t:T,v:T}}]},ans:T-a-b,unit:'€',ex:`Gasta ${a} + ${b} = ${a+b}. Le quedan ${T} − ${a+b} = ${T-a-b}.`};}
+  const a=rnd(Math.round(M/5),M),b=rnd(Math.round(M/5),M),d=rnd(Math.round(M/5),M);return{t:`En una caja hay ${a} ${c.n}, en otra hay ${b} y en otra ${d}. ¿${Cu(c)} ${c.n} hay en total?`,spec:{rows:[{segs:[sg(a,'a'),sg(b,'b'),sg(d,'c')],over:Q}]},ans:a+b+d,ex:`${a} + ${b} + ${d} = ${a+b+d}.`};},
  7(n){const c=pick(COSAS),k=pick(CONT),m=n==='f'?[2,5,2,5]:n==='m'?[3,8,6,15]:[4,9,12,40],g=rnd(m[0],m[1]),v=rnd(m[2],m[3]);
   return{t:`Hay ${g} ${k} con ${v} ${c.n} cada una. ¿${Cu(c)} ${c.n} hay en total?`,spec:{rows:[{segs:rep(g,i=>sg(1,'a',{v,rep:i>0})),over:Q}]},ans:g*v,ex:`${g} grupos iguales de ${v}: ${g} × ${v} = ${g*v}.`};},
  8(n){const c=pick(COSAS),[A]=two(),m=n==='f'?[2,6,2,6]:n==='m'?[2,8,5,15]:[3,9,12,40],r=Math.random();
@@ -2360,10 +2363,10 @@ const GEN={
   const finq=Math.random()<.5,seg=rep(parts,i=>({w:1,c:i<sh?'a':'b',t:G+' %'}));
   if(!Number.isInteger(sh)){return GEN[10](n);}
   return{t:finq?`Una bici cuesta ${eur(N)} y tiene un descuento del ${p} %. ¿Cuánto cuesta ahora?`:`Una bici cuesta ${eur(N)} y tiene un descuento del ${p} %. ¿Cuánto dinero se descuenta?`,spec:{rows:[{segs:seg,over:{t:N+' € (100 %)'},under:finq?{from:sh,to:parts-1,t:'?'}:{from:0,to:sh-1,t:'?'}}]},ans:finq?fin:desc,unit:'€',ex:`El ${p} % de ${N} es ${N} × ${p} ÷ 100 = ${fmt(desc)} €.${finq?` El precio final es ${fmt(N)} − ${fmt(desc)} = ${fmt(fin)} €.`:''}`};},
- 20(n){const k=n==='f'?3:n==='m'?pick([3,4]):pick([4,5]),T=n==='f'?rnd(15,30):n==='m'?rnd(40,100):rnd(120,500),[A]=two();
+ 20(n){const k=n==='f'?3:n==='m'?pick([3,4]):pick([4,5]),T=n==='f'?rnd(150,600):n==='m'?rnd(800,3000):rnd(3000,12000),[A]=two();
   const split=()=>{for(let g=0;g<500;g++){const cuts=Array.from({length:k-1},()=>rnd(1,T-1)),s=[...new Set(cuts)].sort((x,y)=>x-y);if(s.length<k-1)continue;const a=[s[0],...s.slice(1).map((x,i)=>x-s[i]),T-s[k-2]];if(a.every(v=>v>=Math.max(1,Math.round(T*.1))))return a;}return Array.from({length:k},(_,i)=>i<k-1?Math.floor(T/k):T-(k-1)*Math.floor(T/k));};
   const a=split(),CL=['a','b','c','a','b'];
-  if(Math.random()<.3){const days=['el lunes','el martes','el miércoles','el jueves','el viernes'],u=Math.floor(Math.random()*k),kn=a.map((v,i)=>({v,i})).filter(o=>o.i!==u),lst=kn.map((o,j)=>`${o.v}${j===0?' páginas':''} ${days[o.i]}`);
+  if(T<=900&&Math.random()<.5){const days=['el lunes','el martes','el miércoles','el jueves','el viernes'],u=Math.floor(Math.random()*k),kn=a.map((v,i)=>({v,i})).filter(o=>o.i!==u),lst=kn.map((o,j)=>`${o.v}${j===0?' páginas':''} ${days[o.i]}`);
    const tx=lst.length>1?lst.slice(0,-1).join(', ')+' y '+lst[lst.length-1]:lst[0];
    return{t:`Un libro tiene ${T} páginas. ${A} lee ${tx}. ¿Cuántas páginas lee ${days[u]}?`,spec:{rows:[{segs:a.map((v,i)=>i===u?sq(v):sg(v,CL[i])),over:{t:T,v:T}}]},ans:a[u],ex:`Las páginas de los ${k} días suman ${T}. Al total le quitamos las que ya conocemos: ${T} − ${kn.map(o=>o.v).join(' − ')} = ${a[u]}.`};}
   const c=pick(COSAS),COL=c.g==='f'?['rojas','azules','verdes','amarillas','blancas']:['rojos','azules','verdes','amarillos','blancos'],u=Math.floor(Math.random()*k),kn=a.map((v,i)=>({v,i})).filter(o=>o.i!==u),
