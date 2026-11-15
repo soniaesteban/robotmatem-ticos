@@ -726,6 +726,9 @@ details.ejemplo summary{cursor:pointer;font-weight:700;color:var(--purple);font-
 </details>
 <div class="ctrl">
   <select id="pb-tipo" aria-label="Tipo de problema">
+    <optgroup label="🚀 Retos para 5.º y 6.º">
+      <option value="33" selected>🚀 Reto mixto (al azar)</option><option value="22">22. Fracción de lo que queda</option><option value="23">23. Descuentos seguidos</option><option value="24">24. Media y valor que falta</option><option value="25">25. Suma y diferencia</option><option value="26">26. Hallar el total con varios gastos</option><option value="27">27. ¿Qué pack es más barato?</option><option value="28">28. Total a partir de un porcentaje</option><option value="29">29. Subidas y rebajas (ida y vuelta)</option><option value="30">30. Velocidad y tiempo</option><option value="31">31. Pensar al revés</option><option value="32">32. Área y perímetro con precio</option>
+    </optgroup>
     <optgroup label="Sumar y restar">
       <option value="1">1. Sumar hasta 10</option><option value="2">2. Restar: la parte que falta</option><option value="3">3. Juntar y quitar</option><option value="4">4. Sumar y restar hasta 100</option><option value="5">5. Comparar: ¿cuántos más?</option><option value="6">6. Problemas de dos pasos</option><option value="20">★ Partes y total: ¿cuántos faltan?</option>
     </optgroup>
@@ -740,7 +743,7 @@ details.ejemplo summary{cursor:pointer;font-weight:700;color:var(--purple);font-
     </optgroup>
     <option value="19">19. Repaso de todo</option>
   </select>
-  <select id="pb-niv" aria-label="Nivel"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select>
+  <select id="pb-niv" aria-label="Nivel"><option value="f">⭐ Fácil</option><option value="m" selected>⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select>
   <select id="pb-modo" aria-label="Qué ves"><option value="mod">Enunciado y barra con el ?</option><option value="vac">Enunciado y barra vacía (coloca tú los números)</option><option value="sol">Solo el enunciado (dibuja tú la barra)</option></select>
   <label style="display:flex;gap:6px;align-items:center;font-weight:700"><input type="checkbox" id="pb-sobra"> Añadir un dato que sobra</label>
   <button class="act" id="pb-nuevo">🎲 Nuevo</button>
@@ -2307,7 +2310,7 @@ const sg=(v,c,o)=>Object.assign({w:v,v,c:c||'a'},o||{});
 const sq=(w,o)=>Object.assign({w,q:true,c:'q'},o||{});
 const rep=(n,f)=>Array.from({length:n},(_,i)=>f(i));
 const eur=n=>fmt(n)+' €';
-const TIPOS={1:'Sumar hasta 10',2:'Restar: la parte que falta',3:'Juntar y quitar',4:'Sumar y restar hasta 100',5:'Comparar',6:'Dos pasos',7:'Multiplicar: grupos iguales',8:'Dividir: repartir y agrupar',9:'El doble, el triple',10:'Fracción de una cantidad',11:'¿Cuánto queda?',12:'Hallar el todo',13:'Razones',14:'Regla de tres: escala',15:'Regla de tres: unidad',16:'¿Cuántos puedo comprar?',17:'Regla de tres inversa',18:'Porcentajes',20:'Partes y total: ¿cuántos faltan?',21:'¿De qué total?'};
+const TIPOS={1:'Sumar hasta 10',2:'Restar: la parte que falta',3:'Juntar y quitar',4:'Sumar y restar hasta 100',5:'Comparar',6:'Dos pasos',7:'Multiplicar: grupos iguales',8:'Dividir: repartir y agrupar',9:'El doble, el triple',10:'Fracción de una cantidad',11:'¿Cuánto queda?',12:'Hallar el todo',13:'Razones',14:'Regla de tres: escala',15:'Regla de tres: unidad',16:'¿Cuántos puedo comprar?',17:'Regla de tres inversa',18:'Porcentajes',20:'Partes y total: ¿cuántos faltan?',21:'¿De qué total?',22:'Fracción de lo que queda',23:'Descuentos seguidos',24:'Media y valor que falta',25:'Suma y diferencia',26:'Hallar el total con varios gastos',27:'¿Qué pack es más barato?',28:'Total a partir de un porcentaje',29:'Subidas y rebajas (ida y vuelta)',30:'Velocidad y tiempo',31:'Pensar al revés',32:'Área y perímetro con precio'};
 const GEN={
  1(){const c=pick(COSAS),[A,B]=two(),a=rnd(1,8),b=rnd(1,10-a);return{t:`${A} tiene ${a} ${c.n} y ${B} tiene ${b}. ¿${Cu(c)} ${c.n} tienen entre los dos?`,spec:{rows:[{segs:[sg(a,'a'),sg(b,'b')],over:Q}]},ans:a+b,ex:`Se juntan las dos partes: ${a} + ${b} = ${a+b}.`};},
  2(){const c=pick(COSAS),[A]=two(),t=rnd(6,20),p=rnd(1,t-2);return{t:`${A} necesita ${t} ${c.n} para un juego y ya tiene ${p}. ¿${Cu(c)} le faltan?`,spec:{rows:[{segs:[sg(p,'a'),sq(t-p)],over:{t:t,v:t}}]},ans:t-p,ex:`Falta la parte que no tiene: ${t} − ${p} = ${t-p}.`};},
@@ -2390,6 +2393,239 @@ GEN[21]=function(n){
     note:'La segunda barra es solo la parte de la primera que vota (o contesta). La parte marcada es la misma persona en las dos.'},
     ans:pct,unit:'%',ex:`Imagina ${T} personas en total. ${vot?'Votan':'Contestan'} ${p} de cada ${q}: son ${V}. De esas ${V}, ${a} de cada ${b} ${vot?'dicen sí':'prefieren chocolate'}: son ${Y}. ${Y} de ${T} es ${Y} ÷ ${T} × 100 = ${fmt(pct)} %. No es ${fmt(100*a/b)} %, porque ese porcentaje es solo de ${vot?'los votantes':'las que contestan'}, no del total de personas.`};
 };
+/* ===== Retos de 5.º y 6.º (tipos 22–33): varios pasos, fracciones, porcentajes, proporcionalidad ===== */
+const gcdp=(a,b)=>b?gcdp(b,a%b):a, lcmp=(a,b)=>a/gcdp(a,b)*b;
+const m2f=x=>(Math.round(x*100)/100).toFixed(2).replace('.',',');
+const lista=a=>a.length>1?a.slice(0,-1).join(a.some(x=>/,/.test(x))?'; ':', ')+' y '+a[a.length-1]:a[0];
+const fq=(n,d)=>n+'/'+d;
+const R2=x=>Math.round(x*100)/100;
+
+/* 22 · Fracción de lo que queda (dos etapas) */
+GEN[22]=function(n){
+  const Ds=n==='f'?[2,3,4,5]:n==='m'?[3,4,5,6,8]:[4,5,6,7,8,9,10],MX=n==='f'?150:n==='m'?420:900;
+  for(let g=0;g<800;g++){
+    const d1=pick(Ds),a=rnd(1,d1-1),d2=pick(Ds),c=rnd(1,d2-1),k0=d2/gcdp(d2,d1-a),mm=rnd(1,12),k=k0*mm,N=d1*k;
+    if(N<24||N>MX)continue;
+    const V1=a*k,Rm=N-V1,V2=c*Rm/d2,fin=Rm-V2;
+    if(!Number.isInteger(V2))continue;
+    const it=pick(ITEMS),ask=n==='f'?'q':pick(n==='m'?['q','t']:['q','t','m']);
+    const [d1n,d2n]=pick([['el lunes','el martes'],['el sábado','el domingo'],['la primera semana','la segunda']]);
+    const qtxt=ask==='q'?`¿${Cu(it)} ${it.n} quedan al final?`:ask==='t'?`¿${Cu(it)} ${it.n} ha vendido en total?`:`¿${Cu(it)} ${it.n} vende ${d2n}?`;
+    const ans=ask==='q'?fin:ask==='t'?V1+V2:V2;
+    return{t:`Una tienda tiene ${N} ${it.n}. ${d1n[0].toUpperCase()+d1n.slice(1)} vende ${fq(a,d1)} del total y ${d2n} vende ${fq(c,d2)} de lo que quedaba. ${qtxt}`,
+      spec:{rows:[
+        {name:'Todas',segs:rep(d1,i=>({w:1,c:i<a?'a':'b',t:'1/'+d1})),over:{t:N,v:N},under:{from:0,to:a-1,t:d1n}},
+        {name:'Quedan',wd:Rm/N,segs:rep(d2,i=>({w:1,c:i<c?'a':'c',t:'1/'+d2})),over:{t:'lo que queda'},under:ask==='q'?{from:c,to:d2-1,t:'?'}:{from:0,to:c-1,t:d2n}}],
+        note:'La segunda barra es solo lo que quedó después del primer día.'},
+      ans,ex:`${fq(1,d1)} de ${N} son ${N} ÷ ${d1} = ${k}. ${d1n[0].toUpperCase()+d1n.slice(1)} vende ${a} × ${k} = ${V1}; quedan ${N} − ${V1} = ${Rm}. ${d2n[0].toUpperCase()+d2n.slice(1)} vende ${fq(c,d2)} de ${Rm}: ${Rm} ÷ ${d2} × ${c} = ${V2}. ${ask==='q'?`Al final quedan ${Rm} − ${V2} = ${fin}.`:ask==='t'?`En total vende ${V1} + ${V2} = ${V1+V2}.`:`Ese día vende ${V2}.`}`,
+      chk:(ans)=>{const r=N-N*a/d1;return Math.abs((ask==='q'?r-r*c/d2:ask==='t'?N*a/d1+r*c/d2:r*c/d2)-ans)<1e-9;}};
+  }
+  return GEN[10](n);
+};
+
+/* 23 · Descuentos seguidos */
+GEN[23]=function(n){
+  const P=n==='f'?[10,20,25,50]:n==='m'?[10,20,25,30,40,50]:[15,20,25,30,35,40,45,60];
+  for(let g=0;g<800;g++){
+    const p1=pick(P),p2=pick(P),N=pick([40,60,80,100,120,160,200,240,300,400,500]);
+    if(p1===p2&&n!=='f')continue;
+    if((N*(100-p1)*(100-p2))%100!==0)continue;
+    const F=R2(N*(100-p1)*(100-p2)/10000),M=R2(N*(100-p1)/100),pct=R2((100-p1)*(100-p2)/100),ahorro=R2(N-F);
+    const ask=n==='f'?'f':n==='m'?pick(['f','a']):pick(['f','a','p']);
+    const obj=pick(['Una bici cuesta','Una mochila cuesta','Un patinete cuesta','Unas zapatillas cuestan','Un balón cuesta','Una tablet cuesta']);
+    const q=ask==='f'?'¿Cuánto hay que pagar al final?':ask==='a'?'¿Cuántos euros se ahorran en total?':'¿Qué porcentaje del precio inicial hay que pagar al final?';
+    const ans=ask==='f'?F:ask==='a'?ahorro:pct;
+    return{t:`${obj} ${N} €. En las rebajas bajan un ${p1} % y, después, bajan otro ${p2} % sobre el precio ya rebajado. ${q}`,
+      spec:{rows:[
+        {name:'Precio inicial',segs:[sg(100-p1,'b',{t:(100-p1)+' %'}),sg(p1,'a',{t:'-'+p1+' %'})],over:{t:ask==='p'?'100 %':N,v:ask==='p'?undefined:N}},
+        {name:'Nuevo precio',wd:(100-p1)/100,segs:[sg(100-p2,'b',{t:(100-p2)+' %'}),sg(p2,'a',{t:'-'+p2+' %'})],over:ask==='p'?{t:'? %'}:ask==='f'?Q:{t:'precio rebajado'}}],
+        note:'El segundo descuento se calcula sobre el nuevo precio, no sobre el inicial.'},
+      ans,unit:ask==='p'?'%':ask==='a'||ask==='f'?'€':'',
+      ex:`Primer descuento: ${N} × ${p1} ÷ 100 = ${fmt(R2(N*p1/100))} €; ahora cuesta ${fmt(M)} €. Segundo descuento sobre ${fmt(M)} €: ${fmt(M)} × ${p2} ÷ 100 = ${fmt(R2(M*p2/100))} €; queda en ${fmt(F)} €. ${ask==='a'?`Ahorro: ${N} − ${fmt(F)} = ${fmt(ahorro)} €.`:ask==='p'?`Se paga ${fmt(F)} de ${N}: ${fmt(pct)} %. No es ${100-p1-p2} %, porque los dos descuentos no se suman.`:'Los dos descuentos no se suman.'}`,
+      chk:(ans)=>{const f=N*(1-p1/100)*(1-p2/100);return Math.abs((ask==='f'?f:ask==='a'?N-f:100*f/N)-ans)<1e-6;}};
+  }
+  return GEN[18](n);
+};
+
+/* 24 · Media y valor que falta */
+GEN[24]=function(n){
+  const cnt=n==='f'?4:n==='m'?5:6,exam=Math.random()<.6,[A]=two();
+  for(let g=0;g<800;g++){
+    let vals,sum,target,ans;
+    if(exam){const half=n==='d';vals=rep(cnt-1,()=>half?rnd(8,20)/2:rnd(4,10));sum=vals.reduce((x,y)=>x+y,0);target=rnd(6,9);ans=target*cnt-sum;if(ans<1||ans>10)continue;if(!half&&!Number.isInteger(ans))continue;}
+    else{vals=rep(cnt-1,()=>rnd(6,n==='f'?20:32));sum=vals.reduce((x,y)=>x+y,0);target=rnd(10,n==='f'?18:26);ans=target*cnt-sum;if(ans<2||ans>45)continue;}
+    const vs=vals.map(fmt);
+    return{t:exam?`${A} ha sacado ${lista(vs)} en sus ${cnt-1} primeros exámenes de mates. ¿Qué nota necesita sacar en el examen ${cnt} para que su media sea ${target}?`
+      :`${A} ha metido ${lista(vs)} puntos en sus ${cnt-1} primeros partidos de baloncesto. ¿Cuántos puntos tiene que meter en el partido ${cnt} para que su media sea de ${target} puntos por partido?`,
+      spec:{rows:[{segs:[...vals.map(v=>sg(v,'a',{t:fmt(v)})),sq(ans)],over:{t:`${target} × ${cnt}`}}],note:'Para que la media sea '+target+', las '+cnt+' cantidades juntas tienen que sumar lo mismo que '+cnt+' veces '+target+'.'},
+      ans,unit:exam?'':'puntos',ex:`Para tener media ${target} con ${cnt} ${exam?'exámenes':'partidos'}, hace falta sumar ${target} × ${cnt} = ${target*cnt}. Ya tiene ${vals.map(fmt).join(' + ')} = ${fmt(sum)}. Le falta ${target*cnt} − ${fmt(sum)} = ${fmt(ans)}.`,
+      chk:(ans)=>Math.abs((sum+ans)/cnt-target)<1e-9};
+  }
+  return GEN[6](n);
+};
+
+/* 25 · Suma y diferencia (y tres cantidades en cadena) */
+GEN[25]=function(n){
+  const [A,B]=two(),ctx=pick(['eur','cuerda','pag']);
+  if(n!=='f'&&Math.random()<(n==='d'?.6:.35)){
+    const a=rnd(8,40),d1=rnd(3,14),d2=rnd(3,14),b=a+d1,c=b+d2,T=a+b+c,C=pick(NOMBRES.filter(x=>x!==A&&x!==B)),big=Math.random()<.5;
+    return{t:`${A}, ${B} y ${C} reúnen ${T} € entre los tres. ${B} tiene ${d1} € más que ${A} y ${C} tiene ${d2} € más que ${B}. ¿Cuántos euros tiene ${big?C:A}?`,
+      spec:{rows:[{name:A,segs:[big?sg(a,'a',{t:'igual'}):sq(a,{t:'?'})]},{name:B,segs:[sg(a,'a',{t:'igual'}),sg(d1,'b')]},{name:C,segs:[sg(a,'a',{t:'igual'}),sg(d1,'b'),sg(d2,'c')],over:big?Q:undefined}],note:`Entre las tres barras suman ${T} €. Si quitas los trozos de más, las tres barras quedan iguales a la de ${A}.`},
+      ans:big?c:a,unit:'€',ex:`Quita los trozos de más: ${T} − ${d1} − (${d1} + ${d2}) = ${T-2*d1-d2}. Eso son 3 barras iguales a la de ${A}: ${T-2*d1-d2} ÷ 3 = ${a}. ${B} tiene ${a} + ${d1} = ${b} y ${C} tiene ${b} + ${d2} = ${c}.`,
+      chk:(ans)=>{const x=(T-2*d1-d2)/3;return Math.abs((big?x+d1+d2:x)-(big?c:a))<1e-9&&x*3+2*d1+d2===T;}};
+  }
+  const sm=n==='f'?rnd(6,30):rnd(25,160),D=rnd(2,n==='f'?14:40),T=2*sm+D,big=Math.random()<.5;
+  const t=ctx==='eur'?`${A} y ${B} tienen ${T} € entre los dos. ${B} tiene ${D} € más que ${A}. ¿Cuántos euros tiene ${big?B:A}?`
+    :ctx==='cuerda'?`Una cuerda de ${T} m se corta en dos trozos. El trozo largo mide ${D} m más que el corto. ¿Cuántos metros mide el trozo ${big?'largo':'corto'}?`
+    :`${A} tiene dos libros que suman ${T} páginas. El segundo tiene ${D} páginas más que el primero. ¿Cuántas páginas tiene el ${big?'segundo':'primero'}?`;
+  const n1=ctx==='eur'?A:ctx==='cuerda'?'Trozo corto':'Libro 1',n2=ctx==='eur'?B:ctx==='cuerda'?'Trozo largo':'Libro 2';
+  return{t,spec:{rows:[{name:n1,segs:[big?sg(sm,'a',{t:'igual'}):sq(sm,{t:'?'})]},{name:n2,segs:[sg(sm,'a',{t:'igual'}),sg(D,'b')],over:big?Q:undefined}],note:`Entre las dos barras suman ${T}. Si quitas el trozo de más (${D}), las dos barras quedan iguales.`},
+    ans:big?sm+D:sm,unit:ctx==='eur'?'€':ctx==='cuerda'?'m':'páginas',ex:`Quitamos el trozo de más: ${T} − ${D} = ${T-D}. Quedan dos barras iguales: ${T-D} ÷ 2 = ${sm}.${big?` La barra larga es ${sm} + ${D} = ${sm+D}.`:''}`,
+    chk:(ans)=>sm*2+D===T};
+};
+
+/* 26 · Hallar el todo cuando se gasta en varias partes */
+GEN[26]=function(n){
+  const FS=n==='f'?[[[1,2],[1,4]],[[1,2],[1,3]],[[1,3],[1,6]],[[1,4],[1,2]]]:n==='m'?[[[1,3],[1,4]],[[1,2],[1,5]],[[1,3],[1,5]],[[2,5],[1,4]],[[1,4],[1,6]]]:[[[1,2],[1,4],[1,8]],[[1,3],[1,4],[1,6]],[[1,2],[1,5],[1,10]],[[1,2],[1,3],[1,12]],[[2,3],[1,6]],[[3,8],[1,4]],[[1,4],[1,3],[1,6]]];
+  for(let g=0;g<400;g++){
+    const fr=pick(FS),D=fr.reduce((x,f)=>lcmp(x,f[1]),1),parts=fr.map(f=>f[0]*D/f[1]),sp=parts.reduce((x,y)=>x+y,0),rem=D-sp;
+    if(D>12||rem<1)continue;
+    const u=n==='f'?rnd(2,9):n==='m'?rnd(3,15):rnd(4,25),T=D*u,V=rem*u,[A]=two();
+    const cx=pick(['eur','pag','km']),ft=fr.map(f=>fq(f[0],f[1]));
+    let t,unit;
+    if(cx==='eur'){const o=['un libro','una entrada','un helado'];t=`${A} gasta ${lista(ft.map((f,i)=>`${f} de sus ahorros en ${o[i]}`))}. Le quedan ${V} €. ¿Cuántos euros tenía al principio?`;unit='€';}
+    else if(cx==='pag'){const o=['el lunes','el martes','el miércoles'];t=`${A} lee ${lista(ft.map((f,i)=>`${f} de un libro ${o[i]}`))}. Le quedan ${V} páginas por leer. ¿Cuántas páginas tiene el libro?`;unit='páginas';}
+    else{const o=['por la mañana','antes de comer','por la tarde'];t=`Un ciclista recorre ${lista(ft.map((f,i)=>`${f} de la ruta ${o[i]}`))}. Le faltan ${V} km. ¿Cuántos km tiene la ruta?`;unit='km';}
+    const cl=['a','b','c'];let idx=0;const segs=[];parts.forEach((p,i)=>{for(let j=0;j<p;j++)segs.push({w:1,c:cl[i],t:'1/'+D});});for(let j=0;j<rem;j++)segs.push({w:1,c:'q',q:true,t:j===0?'':''});
+    const segs2=segs.map(s=>s.q?sq(1,{t:'1/'+D}):s);
+    return{t,spec:{rows:[{segs:segs2,over:Q,under:{from:sp,to:D-1,t:V,v:V}}],note:'Cada trozo es '+(D===1?'':'1/'+D)+' del total. Los trozos de colores son lo que ya se ha usado.'},
+      ans:T,unit,ex:`Se divide el total en ${D} trozos iguales (cada uno es 1/${D}). Las partes ya usadas suman ${parts.join(' + ')} = ${sp} trozos. Quedan ${D} − ${sp} = ${rem} ${rem===1?'trozo':'trozos'}, que ${rem===1?'vale':'valen'} ${V}. Un trozo vale ${V} ÷ ${rem} = ${u}. El total son ${D} trozos: ${D} × ${u} = ${T}.`,
+      chk:(ans)=>{let s=0;fr.forEach(f=>s+=f[0]/f[1]);return Math.abs(V/(1-s)-T)<1e-6;}};
+  }
+  return GEN[12](n);
+};
+
+/* 27 · ¿Qué pack sale más barato? */
+GEN[27]=function(n){
+  const OB=[['yogures','yogur'],['zumos','zumo'],['bolígrafos','bolígrafo'],['rotuladores','rotulador'],['cuadernos','cuaderno']];
+  for(let g=0;g<800;g++){
+    const k1=pick(n==='f'?[2,4,5,6]:[4,5,6,8,10,12]),k2=pick(n==='f'?[8,10,12]:[6,8,10,12,15,20]),u1=5*rnd(5,n==='f'?14:18),u2=u1-5*rnd(1,3);
+    if(k1>=k2||u2<=10||(n==='d'&&lcmp(k1,k2)>60))continue;
+    const P1=k1*u1/100,P2=k2*u2/100,[pl,sing]=pick(OB);
+    if(P2<=P1)continue;
+    const L=lcmp(k1,k2),ask=n==='d'?'ahorro':'cent',ans=ask==='cent'?u1-u2:R2(L*(u1-u2)/100);
+    const t=ask==='cent'?`Un pack de ${k1} ${pl} cuesta ${m2f(P1)} € y otro pack de ${k2} cuesta ${m2f(P2)} €. ¿Cuántos céntimos más barato sale cada ${sing} en el pack que mejor precio tiene por unidad?`
+      :`Un pack de ${k1} ${pl} cuesta ${m2f(P1)} € y otro pack de ${k2} cuesta ${m2f(P2)} €. Para tener ${L} ${pl}, ¿cuántos euros se ahorran comprando solo el pack que sale más barato por unidad?`;
+    return{t,spec:{rows:[{name:'Pack de '+k1,wd:k1/k2,segs:rep(k1,i=>sg(1,'a',{t:''})),over:{t:P1,v:P1}},{name:'Pack de '+k2,segs:rep(k2,i=>sg(1,'b',{t:''})),over:{t:P2,v:P2}}],note:'Cada trozo es lo que cuesta una unidad.'},
+      ans,unit:ask==='cent'?'céntimos':'€',ex:`Pack de ${k1}: ${m2f(P1)} € ÷ ${k1} = ${m2f(P1/k1)} € cada uno (${u1} céntimos). Pack de ${k2}: ${m2f(P2)} € ÷ ${k2} = ${m2f(P2/k2)} € cada uno (${u2} céntimos). ${ask==='cent'?`Diferencia: ${u1} − ${u2} = ${u1-u2} céntimos.`:`${L} ${pl} en el pack de ${k1} cuestan ${L/k1} × ${m2f(P1)} = ${m2f(L/k1*P1)} € y en el pack de ${k2} cuestan ${L/k2} × ${m2f(P2)} = ${m2f(L/k2*P2)} €. Se ahorran ${fmt(ans)} €.`} Ojo: el pack de ${k2} cuesta más en total, pero sale más barato por unidad.`,
+      chk:(ans)=>ask==='cent'?Math.abs(P1*100/k1-P2*100/k2-ans)<1e-6:Math.abs(L/k1*P1-L/k2*P2-ans)<1e-6};
+  }
+  return GEN[15](n);
+};
+
+/* 28 · Hallar el total a partir de un porcentaje */
+GEN[28]=function(n){
+  const PS=n==='f'?[50,25,10,20]:n==='m'?[30,40,60,75,20,80]:[35,45,15,65,85,70];
+  for(let g=0;g<400;g++){
+    const p=pick(PS),G=gcdp(p,100),parts=100/G,sh=p/G;if(G<5||parts>20)continue;
+    const u=n==='f'?rnd(2,12):n==='m'?rnd(3,20):rnd(4,30),T=parts*u,V=sh*u,[A]=two();
+    const cx=pick([[`En un colegio, el ${p} % de los alumnos va en autobús, y son ${V} alumnos. ¿Cuántos alumnos tiene el colegio?`,'alumnos'],[`${A} ha ahorrado el ${p} % del precio de una bici, y son ${V} €. ¿Cuánto cuesta la bici?`,'€'],[`Una biblioteca presta el ${p} % de sus libros, y son ${V} libros. ¿Cuántos libros tiene la biblioteca?`,'libros'],[`En un pueblo, el ${p} % de los vecinos tiene perro, y son ${V} personas. ¿Cuántas personas viven en el pueblo?`,'personas']]);
+    return{t:cx[0],spec:{rows:[{segs:rep(parts,i=>({w:1,c:i<sh?'a':'b',t:G+' %'})),over:{t:'100 %'},under:{from:0,to:sh-1,t:V,v:V}}],note:`Cada trozo es el ${G} % del total. La barra entera es el 100 %.`},
+      ans:T,unit:cx[1],ex:`El ${p} % son ${sh} ${sh===1?'trozo':'trozos'} del ${G} %, y ${sh===1?'vale':'valen'} ${V}. Un trozo (el ${G} %) vale ${V} ÷ ${sh} = ${u}. El 100 % son ${parts} trozos: ${parts} × ${u} = ${T}.`,
+      chk:(ans)=>Math.abs(T*p/100-V)<1e-9};
+  }
+  return GEN[12](n);
+};
+
+/* 29 · Aumentos y rebajas: calcular y volver al precio de partida */
+GEN[29]=function(n){
+  for(let g=0;g<800;g++){
+    const sube=Math.random()<.55,p=pick(n==='f'?[10,20,25,50]:n==='m'?[10,20,25,30,40,50,5]:[15,20,25,30,35,40,45,60,12]);
+    const inv=n==='f'?Math.random()<.35:Math.random()<.6,pcts=sube?100+p:100-p;
+    const O=pick([40,60,80,100,120,150,160,200,240,250,300,400,500,600]);
+    if((O*pcts)%100!==0)continue;
+    const Fv=R2(O*pcts/100);
+    if(inv&&!Number.isInteger(Fv)&&n!=='d')continue;
+    const obj=pick(['una bici','una mochila','un patinete','un abrigo','unas zapatillas']);
+    const t=inv?`Después de ${sube?'subir':'bajar'} un ${p} %, ${obj} cuesta ${fmt(Fv)} €. ¿Cuánto costaba antes?`:`${obj[0].toUpperCase()+obj.slice(1)} cuesta ${O} € y su precio ${sube?'sube':'baja'} un ${p} %. ¿Cuánto cuesta ahora?`;
+    const segs=sube?[sg(100,'a',{t:'100 %'}),sg(p,'b',{t:'+'+p+' %'})]:[sg(100-p,'a',{t:(100-p)+' %'}),sg(p,'b',{t:'-'+p+' %'})];
+    const spec=inv?{rows:[{segs,over:sube?{t:fmt(Fv),v:Fv}:Q,under:sube?{from:0,to:0,t:'? (antes)'}:{from:0,to:0,t:fmt(Fv),v:Fv}}],note:sube?'El precio de antes es el 100 %. Después de subir, el nuevo precio es el '+pcts+' %.':'El precio de antes es el 100 % (la barra entera). Lo que se paga ahora es el '+pcts+' %.'}
+      :{rows:[{segs,over:sube?Q:{t:'precio de antes',v:undefined},under:sube?{from:0,to:0,t:O,v:O}:{from:0,to:0,t:'? (ahora)'}}],note:sube?'Antes es el 100 %; ahora será el '+pcts+' %.':'Antes es el 100 %; ahora se paga el '+pcts+' %.'};
+    if(!inv&&!sube){spec.rows[0].over={t:O,v:O};spec.rows[0].under={from:0,to:0,t:'? (ahora)'};}
+    return{t,spec,ans:inv?O:Fv,unit:inv&&false?'':'€',ex:inv?`${fmt(Fv)} € es el ${pcts} % del precio de antes. El 1 % vale ${fmt(Fv)} ÷ ${pcts} = ${fmt(R2(Fv/pcts))} €. El 100 % es ${fmt(R2(Fv/pcts))} × 100 = ${O} €.${!sube?` No se puede sumar el ${p} % a ${fmt(Fv)}: ese ${p} % era del precio de antes, no del actual.`:''}`:`El ${p} % de ${O} es ${O} × ${p} ÷ 100 = ${fmt(R2(O*p/100))} €. ${sube?`Ahora cuesta ${O} + ${fmt(R2(O*p/100))} = ${fmt(Fv)} €.`:`Ahora cuesta ${O} − ${fmt(R2(O*p/100))} = ${fmt(Fv)} €.`}`,
+      chk:(ans)=>Math.abs(O*pcts/100-Fv)<1e-9};
+  }
+  return GEN[18](n);
+};
+
+/* 30 · Velocidad constante y unidades de tiempo */
+GEN[30]=function(n){
+  const V=[['Un ciclista','km',[12,15,18,20,24,30]],['Un coche','km',[60,72,80,90,96,120]],['Un tren','km',[90,120,150,180]],['Una corredora','km',[9,12,15]]];
+  for(let g=0;g<800;g++){
+    const c=pick(V),s=pick(c[2]),m1=pick(n==='f'?[15,20,30,60]:[10,15,20,30,40,45,50]),m2=pick(n==='f'?[30,45,60,90,120]:[45,60,75,90,120,150,180,210]);
+    if(m2===m1||(s*m1)%60!==0||(s*m2)%60!==0)continue;
+    const b=gcdp(m1,m2),k1=m1/b,k2=m2/b;if(k1>12||k2>12||b<5)continue;
+    const T1=s*m1/60,T2=s*m2/60,hm=m=>m%60===0?`${m/60} ${m/60===1?'hora':'horas'}`:m>60?`${Math.floor(m/60)} h ${m%60} min`:`${m} minutos`;
+    const ask=Math.random()<.65?'km':'min';
+    if(ask==='min'&&T2===T1)continue;
+    const t=ask==='km'?`${c[0]} recorre ${T1} ${c[1]} en ${hm(m1)} a velocidad constante. ¿Cuántos ${c[1]} recorre en ${hm(m2)}?`:`${c[0]} recorre ${T1} ${c[1]} en ${hm(m1)} a velocidad constante. ¿Cuántos minutos tarda en recorrer ${T2} ${c[1]}?`;
+    const per=s*b/60;
+    return{t,spec:{rows:[{name:hm(m1),wd:k1/Math.max(k1,k2),segs:rep(k1,i=>sg(1,'a',{t:b+' min'})),over:{t:T1,v:T1}},{name:ask==='km'?hm(m2):T2+' '+c[1],segs:rep(k2,i=>sg(1,'b',{t:b+' min'})),over:ask==='km'?Q:{t:T2,v:T2},under:ask==='min'?{from:0,to:k2-1,t:'? minutos'}:undefined}],note:`Cada trozo son ${b} minutos. Todos los trozos recorren lo mismo.`},
+      ans:ask==='km'?T2:m2,unit:ask==='km'?c[1]:'minutos',ex:`${m1>=60?hm(m1)+' son '+m1+' minutos. ':''}En ${m1} minutos caben ${k1} ${k1===1?'trozo':'trozos'} de ${b} minutos. Cada trozo recorre ${T1} ÷ ${k1} = ${fmt(per)} ${c[1]}. ${ask==='km'?`${m2>=60?hm(m2)+' son '+m2+' minutos. ':''}En ${m2} minutos caben ${k2} ${k2===1?'trozo':'trozos'}: ${k2} × ${fmt(per)} = ${T2} ${c[1]}.`:`${T2} ${c[1]} son ${T2} ÷ ${fmt(per)} = ${k2} ${k2===1?'trozo':'trozos'} de ${b} minutos: ${k2} × ${b} = ${m2} minutos.`}`,
+      chk:(ans)=>ask==='km'?Math.abs(T1/m1*m2-ans)<1e-9:Math.abs(T1/m1*ans-T2)<1e-9};
+  }
+  return GEN[14](n);
+};
+
+/* 31 · Pensar al revés */
+GEN[31]=function(n){
+  const nops=n==='f'?2:n==='m'?3:4,[A]=two();
+  for(let g=0;g<1500;g++){
+    const x0=rnd(2,n==='f'?20:n==='m'?40:60);let x=x0;const ops=[];let ok=true;
+    for(let i=0;i<nops;i++){
+      const kinds=n==='f'&&i===0?['x']:['x','+','-','/'],k=pick(kinds);
+      if(k==='x'){const m=rnd(2,n==='d'?9:6);ops.push(['x',m]);x*=m;}
+      else if(k==='+'){const m=rnd(3,n==='f'?20:40);ops.push(['+',m]);x+=m;}
+      else if(k==='-'){const m=rnd(2,Math.min(30,x-1));if(m<2||x-m<1){ok=false;break;}ops.push(['-',m]);x-=m;}
+      else{const ds=[2,3,4,5].filter(d=>x%d===0);if(!ds.length){ok=false;break;}const m=pick(ds);ops.push(['/',m]);x/=m;}
+    }
+    if(!ok||x>800)continue;
+    if(ops.some((o,i)=>i&&o[0]===ops[i-1][0]))continue;
+    const frase=ops.map((o,i)=>{const pre=i===0?'Lo':'';return o[0]==='x'?(i===0?'lo multiplico por '+o[1]:'lo multiplico por '+o[1]):o[0]==='+'?'le sumo '+o[1]:o[0]==='-'?'le resto '+o[1]:'lo divido entre '+o[1];});
+    const t=`Pienso un número. ${frase[0][0].toUpperCase()+frase[0].slice(1)}${frase.length>2?', '+frase.slice(1,-1).join(', '):''} y ${frase[frase.length-1]}${frase.length===1?'':''}. Al final me sale ${x}. ¿Qué número he pensado?`.replace(/, y /g,' y ');
+    const steps=[];let y=x;for(let i=ops.length-1;i>=0;i--){const o=ops[i];const prev=o[0]==='x'?y/o[1]:o[0]==='+'?y-o[1]:o[0]==='-'?y+o[1]:y*o[1];steps.push(`${fmt(y)} ${o[0]==='x'?'÷':o[0]==='+'?'−':o[0]==='-'?'+':'×'} ${o[1]} = ${fmt(prev)}`);y=prev;}
+    let spec={rows:[],note:'Pista: empieza por el resultado y deshaz las operaciones en orden inverso (la suma con la resta, la multiplicación con la división).'};
+    if(n==='f'&&ops[1][0]==='+'){const k=ops[0][1],c=ops[1][1];spec={rows:[{segs:[...rep(k,i=>sq(1,{t:'?'})),sg(c,'b')],over:{t:x,v:x}}],note:'Hay '+k+' veces el número pensado y, además, '+c+'.'};}
+    return{t,spec,ans:x0,ex:`Se deshace al revés, empezando por el resultado: ${steps.join('; ')}. El número era ${x0}.`,
+      chk:(ans)=>{let z=x0;ops.forEach(o=>{z=o[0]==='x'?z*o[1]:o[0]==='+'?z+o[1]:o[0]==='-'?z-o[1]:z/o[1];});return z===x;}};
+  }
+  return GEN[6](n);
+};
+
+/* 32 · Área y perímetro con precio */
+GEN[32]=function(n){
+  for(let g=0;g<800;g++){
+    const a=rnd(n==='f'?8:10,n==='f'?20:n==='m'?30:40),b=rnd(6,a-1),x=rnd(2,Math.min(8,b-3));
+    const mode=n==='f'?pick(['area','per']):pick(['area','per','precioA','precioP']),pr=n==='d'?rnd(6,18):rnd(3,9);
+    if(mode==='area'||mode==='precioA'){
+      const A=a*b-x*x,ans=mode==='area'?A:A*pr,[who]=two();
+      return{t:`Un patio rectangular mide ${a} m de largo y ${b} m de ancho. En medio hay una fuente cuadrada de ${x} m de lado. ${mode==='area'?'¿Cuántos metros cuadrados hay que pavimentar?':`Pavimentar cada metro cuadrado cuesta ${pr} €. ¿Cuánto cuesta pavimentar todo el patio, sin contar la fuente?`}`,
+        spec:{rows:[{segs:[sg(x*x,'a',{t:'fuente'}),sq(A,{t:mode==='area'?'?':'lo que se pavimenta'})],over:{t:`${a} × ${b}`}}],note:mode==='area'?'El rectángulo entero tiene área '+a+' × '+b+'. Quita la fuente.':'Primero halla los m² que se pavimentan; después multiplica por el precio de cada m².'},
+        ans,unit:mode==='area'?'m²':'€',ex:`Área del patio: ${a} × ${b} = ${a*b} m². Área de la fuente: ${x} × ${x} = ${x*x} m². Se pavimentan ${a*b} − ${x*x} = ${A} m².${mode==='precioA'?` Coste: ${A} × ${pr} = ${A*pr} €.`:''}`,
+        chk:(ans)=>(a*b-x*x)*(mode==='area'?1:pr)===ans};
+    }
+    const P=2*(a+b),ans=mode==='per'?P:P*pr;
+    return{t:`Un huerto rectangular mide ${a} m de largo y ${b} m de ancho. Se quiere poner una valla alrededor. ${mode==='per'?'¿Cuántos metros de valla hacen falta?':`Cada metro de valla cuesta ${pr} €. ¿Cuánto cuesta vallar todo el huerto?`}`,
+      spec:{rows:[{segs:[sg(a,'a',{t:a+' m'}),sg(b,'b',{t:b+' m'}),sg(a,'a',{t:a+' m'}),sg(b,'b',{t:b+' m'})],over:{t:'perímetro'}}],note:mode==='per'?'Recorre los cuatro lados del huerto.':'Primero el perímetro y luego el precio.'},
+      ans,unit:mode==='per'?'m':'€',ex:`Perímetro: ${a} + ${b} + ${a} + ${b} = ${P} m.${mode==='precioP'?` Coste: ${P} × ${pr} = ${P*pr} €.`:''}`,
+      chk:(ans)=>2*(a+b)*(mode==='per'?1:pr)===ans};
+  }
+  return GEN[7](n);
+};
+
+/* 33 · Reto mixto: elige al azar uno de los retos 22–32 */
+GEN[33]=function(n){return GEN[rnd(22,32)](n);};
+
 const SOBRA=()=>pick([`Ese día hacía ${rnd(15,30)} grados.`,`En la clase hay ${rnd(20,30)} alumnos.`,`La tienda abre a las ${rnd(8,10)} de la mañana.`,`El colegio tiene ${rnd(2,4)} patios.`]);
 function barHTML(spec,mode){
   const rows=spec.rows.slice();if(spec.totalRow)rows.push({name:'Entre los dos',segs:[].concat(...spec.rows.map(r=>r.segs)),over:Q});
@@ -2417,7 +2653,7 @@ function msg(t,c){const m=$b('pb-msg');m.textContent=t||'';m.className='sd-msg'+
 function nuevo(){
   if(S.cur&&!S.cur.logged&&(S.cur.errs.length||S.cur.visto))cierra('x');
   S.tipo=$b('pb-tipo').value;S.niv=$b('pb-niv').value;S.modo=$b('pb-modo').value;
-  const key=S.tipo==='19'?String((v=>v===19?20:v)(rnd(1,19))):S.tipo;let p=GEN[key](S.niv);
+  const key=S.tipo==='19'?String((v=>v===19?20:v)(rnd(1,19))):S.tipo==='33'?String(rnd(22,32)):S.tipo;let p=GEN[key](S.niv);
   if($b('pb-sobra').checked){const i=p.t.lastIndexOf('¿');p.t=p.t.slice(0,i)+SOBRA()+' '+p.t.slice(i);}
   p.key=key;p.errs=[];p.logged=false;p.visto=false;p.hecho=false;S.cur=p;S.n++;
   $b('pb-num').textContent=`Problema ${S.n} · ${TIPOS[key]}`;$b('pb-enun').textContent=p.t;
