@@ -616,6 +616,16 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
 .mv-opt:hover{background:#f6f0ff;transform:none}.mv-opt.sel{border-color:#6a3fc4;background:#efe6ff}
 .mv-big{font-size:1.2em;padding:14px 20px;margin:4px}
 .mv-inst{font-size:1.15em;margin:8px 0}
+.ln-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:12px 0}
+.ln-card{background:#fff;border:2px solid #d1c4e9;border-radius:12px;padding:10px}
+.ln-card h4{margin:6px 0 4px;color:#4527a0}.ln-card p{margin:4px 0;font-size:.95em;line-height:1.45}
+.ln-th{width:100%;height:auto;display:block;border:1px solid #ddd;border-radius:8px}
+.ln-nota{color:#12337A}
+.ln-ctrl{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.ln-ctrl input[type=range]{width:200px}
+.el-form{background:#fffde7;border:2px solid #f9a825;border-radius:12px;padding:10px 14px;margin:10px 0}
+.el-form .big{font-size:1.3em;font-weight:900;color:#12337A;margin:4px 0}
+
 .mv-pad{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}
 .mv-pad button{font-size:1.5em;min-width:64px;padding:10px 14px}
 .mv-num{font-size:1.4em;min-width:58px;padding:12px 0;margin:4px}
@@ -3969,6 +3979,7 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
   <button type="button" data-t="gp-prob">🧩 Problemas <span class="badge-sc gsc-prob">Puntos: 0</span></button>
   <button type="button" data-t="gp-fra">🔺 Fracciones y figuras <span class="badge-sc gsc-fra">Puntos: 0</span></button>
   <button type="button" data-t="gp-mov">🔁 Movimientos <span class="badge-sc gsc-mov">Puntos: 0</span></button>
+  <button type="button" data-t="gp-lin">📏 Líneas <span class="badge-sc gsc-lin">Puntos: 0</span></button>
   <button type="button" data-t="gp-prog">📊 Mi progreso</button>
 </div>
 
@@ -4027,6 +4038,20 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
       <label><input type="checkbox" id="el-t-esp"> <span id="el-t-esp-l">Base y altura</span></label>
     </div>
     <div class="geo-row"><canvas id="cv-el" class="gcv"></canvas><div class="geo-info" id="el-info"></div></div>
+    <div class="el-form" id="el-form">
+      <h4 style="margin:0 0 4px;color:#e65100">📐 La fórmula de las diagonales</h4>
+      <div class="big">D = n × (n − 3) ÷ 2</div>
+      <p style="margin:4px 0"><b>n</b> es el número de lados (y de vértices). <b>¿Por qué funciona?</b></p>
+      <ol style="margin:4px 0 6px 20px;line-height:1.5">
+        <li>Desde un vértice no se puede trazar diagonal a sí mismo ni a sus 2 vecinos (esos son lados). Salen <b>n − 3</b> diagonales.</li>
+        <li>Como hay <b>n</b> vértices, tendríamos <b>n × (n − 3)</b>.</li>
+        <li>Pero así cada diagonal se cuenta <b>2 veces</b> (una desde cada extremo). Por eso se <b>divide entre 2</b>.</li>
+      </ol>
+      <p id="el-f-ej" style="margin:6px 0"></p>
+      <div id="el-f-tab" style="overflow-x:auto"></div>
+      <div class="geo-bar" style="margin-top:8px"><label>🧮 Prueba con otro polígono: nº de lados <input type="text" id="el-f-n" class="geo-in" inputmode="numeric" style="width:70px"></label> <button type="button" id="el-f-go" class="bok">Calcular</button></div>
+      <p id="el-f-out" style="margin:4px 0"></p>
+    </div>
     <div class="geo-bar"><button type="button" id="el-reto" class="bok">🎯 Reto</button></div>
     <div id="el-qbox" style="display:none"><div class="geo-pre" id="el-q"></div>
       <div class="geo-bar"><input type="text" class="geo-in" id="el-in" inputmode="numeric" style="width:90px"> <button type="button" id="el-ver" class="bok">✅ Verificar</button></div></div>
@@ -4270,6 +4295,10 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
 
   <div class="gpane" id="fs-a">
     <div class="ibox">Completa la tabla de <b>triángulos y cuadrados</b>, <b>rojos y azules</b>. Algunas casillas ya están rellenas; escribe las que faltan.</div>
+    <details class="geo-det"><summary>❓ ¿Para qué sirve esta tabla?</summary>
+      <p>Es una <b>tabla de doble entrada</b>: clasifica las figuras por <b>forma</b> (triángulos o cuadrados) y por <b>color</b> (rojas o azules) a la vez. Cada total de fila o de columna es la <b>suma</b> de las casillas de dentro, y el total de abajo a la derecha es el número de figuras que hay en total.</p>
+      <p>Sirve para <b>organizar datos</b>, razonar con sumas y restas hasta encontrar la casilla que falta, y preparar lo que viene después: en «Descubre con pistas» y «Cuenta y fracciones» se usa la misma tabla para responder preguntas como <i>«¿qué fracción de las figuras son rojas?»</i>.</p>
+    </details>
     <div class="geo-bar"><select id="fa-niv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil</option></select>
       <button type="button" id="fa-nuevo" class="bok">🎲 Otra tabla</button></div>
     <div id="fa-box"></div>
@@ -4317,11 +4346,33 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
 <!-- ============ MOVIMIENTOS ============ -->
 <div class="gpane" id="gp-mov">
   <div class="geo-subt" id="geo-sub-mov">
+    <button type="button" data-t="mv-a">📘 Aprende</button>
     <button type="button" data-t="mv-q">🔍 ¿Qué movimiento es?</button>
     <button type="button" data-t="mv-t">➡️ Traslada</button>
     <button type="button" data-t="mv-g">🔄 Gira</button>
     <button type="button" data-t="mv-s">🪞 Simetría</button>
     <button type="button" data-t="mv-e">📐 Ejes de simetría</button>
+    <button type="button" data-t="mv-v">🔤 Vocabulario</button>
+  </div>
+
+  <div class="gpane" id="mv-a">
+    <div class="ibox">Un <b>movimiento</b> cambia de sitio una figura <b>sin deformarla</b>: la figura y su imagen son iguales. Hay tres: la <b>traslación</b>, el <b>giro</b> (o rotación) y la <b>simetría</b> (reflexión). Elige uno y juega con los controles. La figura <b style="color:#78909c">gris</b> es la original y la <b style="color:#fb8c00">naranja</b> es su imagen.</div>
+    <div class="geo-bar" id="mva-sel"><button type="button" id="mva-t" class="on">➡️ Traslación</button><button type="button" id="mva-g">🔄 Giro (rotación)</button><button type="button" id="mva-s">🪞 Simetría</button></div>
+    <div id="mva-pt" class="ln-ctrl"><label>↔️ Derecha (+) / izquierda (−): <input type="range" id="mva-dx" min="-4" max="4" value="3"> <b id="mva-dxv"></b></label>
+      <label>↕️ Abajo (+) / arriba (−): <input type="range" id="mva-dy" min="-3" max="2" value="1"> <b id="mva-dyv"></b></label></div>
+    <div id="mva-pg" class="ln-ctrl" style="display:none"><label>Giro: <select id="mva-gk"><option value="1">90° en el sentido del reloj ↻</option><option value="2">180° (media vuelta)</option><option value="3">90° en sentido contrario ↺</option></select></label> <span class="small">El punto rojo es el centro de giro.</span></div>
+    <div id="mva-ps" class="ln-ctrl" style="display:none"><label>Eje: <select id="mva-so"><option value="v">vertical |</option><option value="h">horizontal —</option></select></label>
+      <label>Posición del eje: <input type="range" id="mva-sx" min="9" max="13" value="11"></label></div>
+    <div id="mva-box"></div>
+    <div class="geo-info" id="mva-desc"></div>
+  </div>
+
+  <div class="gpane" id="mv-v">
+    <div class="ibox">Preguntas para repasar el vocabulario y las ideas de los movimientos: <b>traslación</b>, <b>giro</b> y <b>simetría</b>.</div>
+    <div class="geo-bar"><button type="button" id="mvv-nuevo" class="bok">🎲 Otra pregunta</button></div>
+    <p class="mv-inst" id="mvv-q"></p>
+    <div class="mv-pad" id="mvv-opts"></div>
+    <div class="geo-res" id="mvv-res"></div><div class="geo-exp" id="mvv-exp"></div>
   </div>
 
   <div class="gpane" id="mv-q">
@@ -4375,6 +4426,56 @@ header.hub-header{background:linear-gradient(120deg,#E6F0FF 0%,#CFE2FF 55%,#B9D4
     <div id="me-box"></div>
     <div class="mv-pad" id="me-nums"></div>
     <div class="geo-res" id="me-res"></div><div class="geo-exp" id="me-exp"></div>
+  </div>
+</div>
+
+<div class="gpane" id="gp-lin">
+  <div class="geo-subt" id="geo-sub-lin">
+    <button type="button" data-t="li-a">📘 Aprende</button>
+    <button type="button" data-t="li-c">🎯 Clasifica</button>
+    <button type="button" data-t="li-v">🔤 Vocabulario</button>
+    <button type="button" data-t="li-d">✏️ Dibuja</button>
+  </div>
+
+  <div class="gpane" id="li-a">
+    <div class="ibox">Las <b>líneas</b> se clasifican según tengan principio y fin (<b>recta, semirrecta, segmento</b>) y según su posición cuando hay dos (<b>paralelas, secantes, perpendiculares</b>). Prueba el explorador y lee las tarjetas.</div>
+    <h4 style="color:#4527a0;margin:8px 0 2px">🔍 Explorador: dos rectas</h4>
+    <p class="small" style="margin:0">La recta <b style="color:#fb8c00">naranja</b> gira alrededor de un punto. Mueve los deslizadores y mira cómo cambia el nombre.</p>
+    <div class="ln-ctrl"><label>Ángulo de giro: <input type="range" id="la-ang" min="0" max="180" step="5" value="90"> <b id="la-angv"></b></label>
+      <label>Separación: <input type="range" id="la-sep" min="0" max="100" step="10" value="50"> <b id="la-sepv"></b></label></div>
+    <div id="la-box"></div>
+    <div class="geo-info" id="la-txt"></div>
+    <h4 style="color:#4527a0;margin:14px 0 2px">📇 Tarjetas</h4>
+    <div class="ln-cards" id="la-cards"></div>
+  </div>
+
+  <div class="gpane" id="li-c">
+    <div class="ibox">Mira el dibujo y decide qué es. Fíjate en los <b>extremos</b> (puntos y flechas) y en cómo se <b>cortan</b> las rectas.</div>
+    <div class="geo-bar"><select id="lc-niv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil (con ángulos)</option></select>
+      <button type="button" id="lc-nuevo" class="bok">🎲 Otro dibujo</button></div>
+    <p class="mv-inst" id="lc-q"></p>
+    <div id="lc-box"></div>
+    <div class="mv-pad" id="lc-opts"></div>
+    <div class="geo-res" id="lc-res"></div><div class="geo-exp" id="lc-exp"></div>
+  </div>
+
+  <div class="gpane" id="li-v">
+    <div class="ibox">Preguntas de <b>vocabulario</b>: definiciones, ejemplos de la vida real (son modelos: ningún objeto real es una recta perfecta) y cómo se escriben.</div>
+    <div class="geo-bar"><select id="lv-modo"><option value="mix">🎲 Mezcla</option><option value="def">📖 Definiciones</option><option value="vida">🏙️ En la vida real</option><option value="not">✏️ Cómo se escriben</option></select>
+      <button type="button" id="lv-nuevo" class="bok">🎲 Otra pregunta</button></div>
+    <p class="mv-inst" id="lv-q"></p>
+    <div class="mv-pad" id="lv-opts"></div>
+    <div class="geo-res" id="lv-res"></div><div class="geo-exp" id="lv-exp"></div>
+  </div>
+
+  <div class="gpane" id="li-d">
+    <div class="ibox">Dibuja sobre la cuadrícula. Las rectas pasan por los puntos que marques y se alargan solas (¡las rectas no tienen fin!).</div>
+    <div class="geo-bar"><select id="ld-niv"><option value="f">⭐ Fácil</option><option value="m">⭐⭐ Medio</option><option value="d">⭐⭐⭐ Difícil (inclinadas)</option></select>
+      <button type="button" id="ld-nuevo" class="bok">🎲 Otro reto</button><button type="button" id="ld-borrar">🧽 Borrar puntos</button></div>
+    <p class="mv-inst" id="ld-q"></p>
+    <div id="ld-box"></div>
+    <div class="geo-bar"><button type="button" id="ld-ver" class="bok">✅ Comprobar</button></div>
+    <div class="geo-res" id="ld-res"></div><div class="geo-exp" id="ld-exp"></div>
   </div>
 </div>
 
@@ -10266,9 +10367,9 @@ function parseNum(s){s=String(s==null?'':s).trim().replace(/\s/g,'').replace(','
 function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%b;a=t;}return a;}
 
 /* ---------- puntuación y progreso (se guarda por nombre) ---------- */
-var SC={poli:{ok:0,n:0},peri:{ok:0,n:0},area:{ok:0,n:0},pit:{ok:0,n:0},prob:{ok:0,n:0},fra:{ok:0,n:0},mov:{ok:0,n:0}};
-var SUBN={poli:{Clasifica:'Clasifica',Tablas:'Tablas',Elementos:'Elementos',Angulos:'Suma de ángulos',Construye:'Construye',Real:'En la vida real'},peri:{Recorre:'Recorre el contorno',Calcula:'Calcula',Mismo:'Mismo perímetro'},area:{Formula:'Mi fórmula',Calcula:'Calcula'},pit:{Calcula:'Calcula',Terna:'¿Es rectángulo?',Problemas:'Problemas de Pitágoras'},prob:{Problemas:'Problemas'},fra:{Completa:'Completa la tabla',Pistas:'Descubre con pistas',Tabla:'¿Qué tabla es?',Cuenta:'Cuenta y fracciones'},mov:{Cual:'¿Qué movimiento es?',Traslada:'Traslada',Gira:'Gira',Simetria:'Simetría',Ejes:'Ejes de simetría'}};
-var SECN={poli:'Polígonos',peri:'Perímetro',area:'Área',pit:'Pitágoras',prob:'Problemas',fra:'Fracciones y figuras',mov:'Movimientos'};
+var SC={poli:{ok:0,n:0},peri:{ok:0,n:0},area:{ok:0,n:0},pit:{ok:0,n:0},prob:{ok:0,n:0},fra:{ok:0,n:0},mov:{ok:0,n:0},lin:{ok:0,n:0}};
+var SUBN={poli:{Clasifica:'Clasifica',Tablas:'Tablas',Elementos:'Elementos',Angulos:'Suma de ángulos',Construye:'Construye',Real:'En la vida real'},peri:{Recorre:'Recorre el contorno',Calcula:'Calcula',Mismo:'Mismo perímetro'},area:{Formula:'Mi fórmula',Calcula:'Calcula'},pit:{Calcula:'Calcula',Terna:'¿Es rectángulo?',Problemas:'Problemas de Pitágoras'},prob:{Problemas:'Problemas'},fra:{Completa:'Completa la tabla',Pistas:'Descubre con pistas',Tabla:'¿Qué tabla es?',Cuenta:'Cuenta y fracciones'},mov:{Cual:'¿Qué movimiento es?',Traslada:'Traslada',Gira:'Gira',Simetria:'Simetría',Ejes:'Ejes de simetría',Vocab:'Vocabulario'},lin:{Clasifica:'Clasifica',Vocab:'Vocabulario',Dibuja:'Dibuja'}};
+var SECN={poli:'Polígonos',peri:'Perímetro',area:'Área',pit:'Pitágoras',prob:'Problemas',fra:'Fracciones y figuras',mov:'Movimientos',lin:'Líneas'};
 var LOG=[],perfilKey='';
 function lsGet(k){try{return window.localStorage.getItem(k);}catch(_e){return null;}}
 function lsSet(k,v){try{window.localStorage.setItem(k,v);}catch(_e){}}
@@ -11812,7 +11913,7 @@ function drawEL(){
 }
 function elDist(p,a,b){var dx=b.x-a.x,dy=b.y-a.y,t=Math.max(0,Math.min(1,((p.x-a.x)*dx+(p.y-a.y)*dy)/(dx*dx+dy*dy||1)));return Math.hypot(p.x-(a.x+dx*t),p.y-(a.y+dy*t));}
 function elSetN(n){
-  EL.n=n;EL.pts=elPts(n);EL.quiz=null;EL.done=false;
+  EL.n=n;EL.pts=elPts(n);EL.quiz=null;EL.done=false;if(typeof elFormula==='function'&&$('el-f-ej'))elFormula();
   var bs=document.querySelectorAll('#el-sel button');for(var i=0;i<bs.length;i++)bs[i].classList.toggle('on',+bs[i].getAttribute('data-n')===n);
   $('el-t-esp-l').textContent=n===3?'Base y altura':(n>=5?'Centro, radio y apotema':'(sin elementos extra)');
   $('el-t-esp').disabled=(n===4);if(n===4)$('el-t-esp').checked=false;
@@ -11820,9 +11921,15 @@ function elSetN(n){
 }
 function elReto(){
   var n=pick([3,4,5,6,7,8]);
-  var tipo=pick(['cuenta','cuenta','salen','vtap','ltap','dtap']);
+  var tipo=pick(['cuenta','salen','vtap','ltap','dtap','formula','formula','inversa']);
   if((tipo==='dtap')&&n===3)tipo='ltap';
   if(tipo==='cuenta'&&n===3)n=pick([5,6,7]);
+  if(tipo==='formula'||tipo==='inversa'){
+    var nn,D;
+    if(tipo==='formula'){nn=pick([9,10,11,12,15,20]);D=elDiag(nn);EL.quiz={t:'formula',ans:D,n:nn};$('el-q').innerHTML='📐 Sin dibujar: ¿cuántas diagonales tiene un polígono de <b>'+nn+' lados</b>? (Usa la fórmula.)';}
+    else{nn=pick([5,6,7,8]);D=elDiag(nn);EL.quiz={t:'inversa',ans:nn,n:nn,D:D};$('el-q').innerHTML='🔄 Un polígono tiene <b>'+D+' diagonales</b>. ¿Cuántos lados tiene? (Prueba la fórmula con distintos valores de n.)';}
+    EL.done=false;EL.quiz.tries=0;$('el-qbox').style.display='block';$('el-in').value='';$('el-in').style.display='';$('el-ver').style.display='';say('el-res','');$('el-exp').style.display='none';return;
+  }
   elSetN(n);EL.done=false;
   var nd=n*(n-3)/2;
   if(tipo==='cuenta'){EL.quiz={t:'cuenta',ans:nd,n:n};$('el-q').textContent='¿Cuántas diagonales tiene un '+ELN[n]+'?';$('el-qbox').style.display='block';$('el-in').value='';$('el-in').style.display='';$('el-ver').style.display='';}
@@ -11833,6 +11940,16 @@ function elReto(){
 function elVer(){
   var q=EL.quiz;if(!q||EL.done)return;
   var n=parseNum($('el-in').value);if(isNaN(n)){say('el-res','Escribe un número.','bad');return;}
+  if(q.t==='formula'||q.t==='inversa'){
+    if(n===q.ans){EL.done=true;anota('poli',true,'Elementos');say('el-res','✅ ¡Correcto! '+q.ans+(q.t==='formula'?' diagonales.':' lados.'),'ok');$('el-exp').style.display='none';return;}
+    anota('poli',false,'Elementos');q.tries=(q.tries||0)+1;
+    var calc=q.t==='formula'?q.n+' × ('+q.n+' − 3) ÷ 2 = '+q.n+' × '+(q.n-3)+' ÷ 2 = '+(q.n*(q.n-3))+' ÷ 2 = '+q.ans:'Con n = '+q.n+': '+q.n+' × ('+q.n+' − 3) ÷ 2 = '+q.D+' diagonales, así que tiene '+q.n+' lados';
+    if(q.tries===1){
+      var pista=q.t==='formula'?(n===q.n*(q.n-3)?'Te has olvidado de dividir entre 2: cada diagonal se cuenta dos veces.':'Escribe la fórmula D = n × (n − 3) ÷ 2. ¿Cuánto vale n − 3? ¿Y n × (n − 3)? ¿Has dividido entre 2 al final?'):'Prueba la fórmula D = n × (n − 3) ÷ 2 con n = 5, 6, 7… hasta que te salgan '+q.D+' diagonales.';
+      say('el-res','❌ No es '+fmt(n)+'. Piensa un momento:','bad');$('el-exp').innerHTML='<p class="geo-q">🤔 '+pista+'</p>';$('el-exp').style.display='block';$('el-in').value='';
+    }else{EL.done=true;say('el-res','❌ Todavía no. La respuesta es <b>'+q.ans+'</b>.','bad');$('el-exp').innerHTML='<p>'+calc+'.</p>';$('el-exp').style.display='block';}
+    return;
+  }
   if(n===q.ans){EL.done=true;anota('poli',true,'Elementos');say('el-res','✅ ¡Correcto! '+q.ans+'.','ok');}
   else{anota('poli',false,'Elementos');q.tries=(q.tries||0)+1;
     if(q.tries===1){say('el-res','❌ No es '+fmt(n)+'. Piensa: ¿a cuántos vértices NO puede unirse un vértice con una diagonal? (A él mismo y a sus 2 vecinos).','bad');$('el-in').value='';}
@@ -11840,7 +11957,7 @@ function elVer(){
       EL.quiz=null;$('el-t-diag').checked=true;drawEL();}}
 }
 function elTap(e){
-  var q=EL.quiz;if(!q||EL.done||q.t==='cuenta'||q.t==='salen')return;
+  var q=EL.quiz;if(!q||EL.done||q.t==='cuenta'||q.t==='salen'||q.t==='formula'||q.t==='inversa')return;
   var cv=EL.v.cv,r=cv.getBoundingClientRect(),v=EL.v;
   var p={x:((e.clientX-r.left)*cv.width/r.width-v.M)/v.C,y:((e.clientY-r.top)*cv.height/r.height-v.M)/v.C},pts=EL.pts,n=pts.length,tol=12/v.C;
   var what=null,i;
@@ -12105,7 +12222,7 @@ function geoPuntosDe(nombre){
   if(!L.length)return null;
   var S={};Object.keys(SC).forEach(function(k){S[k]={ok:0,n:0};});
   var ok=0,n=0;L.forEach(function(e){if(S[e.s]){S[e.s].n++;n++;if(e.ok){S[e.s].ok++;ok++;}}});
-  return {"Geometría · Polígonos":S.poli.ok,"Geometría · Perímetro":S.peri.ok,"Geometría · Área":S.area.ok,"Geometría · Pitágoras":S.pit.ok,"Geometría · Problemas":S.prob.ok,"Geometría · Fracciones y figuras":S.fra.ok,"Geometría · Movimientos":S.mov.ok,"Geometría · Total de retos":ok,"Geometría · Acierto (%)":n?Math.round(100*ok/n):0};
+  return {"Geometría · Polígonos":S.poli.ok,"Geometría · Perímetro":S.peri.ok,"Geometría · Área":S.area.ok,"Geometría · Pitágoras":S.pit.ok,"Geometría · Problemas":S.prob.ok,"Geometría · Fracciones y figuras":S.fra.ok,"Geometría · Movimientos":S.mov.ok,"Geometría · Líneas":S.lin.ok,"Geometría · Total de retos":ok,"Geometría · Acierto (%)":n?Math.round(100*ok/n):0};
 }
 window.GEO_PUNTOS=geoPuntosDe;
 function enviarGeo(){
@@ -12113,7 +12230,7 @@ function enviarGeo(){
   if(!nombre){est.textContent='⚠️ Escribe tu nombre primero.';return;}
   store('set','pizarraNombreAlumna',nombre);if(grupo)store('set','pizarraGrupoAlumna',grupo);
   var T=totales(),ok=T.ok,n=T.n;
-  var puntos={Grupo:grupo||'(sin grupo)',"Geometría · Polígonos":SC.poli.ok,"Geometría · Perímetro":SC.peri.ok,"Geometría · Área":SC.area.ok,"Geometría · Pitágoras":SC.pit.ok,"Geometría · Problemas":SC.prob.ok,"Geometría · Fracciones y figuras":SC.fra.ok,"Geometría · Movimientos":SC.mov.ok,"Geometría · Total de retos":ok,"Geometría · Acierto (%)":n?Math.round(100*ok/n):0};
+  var puntos={Grupo:grupo||'(sin grupo)',"Geometría · Polígonos":SC.poli.ok,"Geometría · Perímetro":SC.peri.ok,"Geometría · Área":SC.area.ok,"Geometría · Pitágoras":SC.pit.ok,"Geometría · Problemas":SC.prob.ok,"Geometría · Fracciones y figuras":SC.fra.ok,"Geometría · Movimientos":SC.mov.ok,"Geometría · Líneas":SC.lin.ok,"Geometría · Total de retos":ok,"Geometría · Acierto (%)":n?Math.round(100*ok/n):0};
   est.textContent='Enviando...';
   fetch(URL_GEO,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({nombre:nombre,puntos:puntos})})
     .then(function(){est.textContent='✅ ¡Progreso enviado, '+nombre+'!';})
@@ -12689,16 +12806,348 @@ function initMov(){
   $('mt-ver').addEventListener('click',mvVerT);$('mg-ver').addEventListener('click',mvVerG);$('ms-ver').addEventListener('click',mvVerS);
 }
 
+/* ===== REFUERZO: fórmula de diagonales, Movimientos (aprende + vocabulario) y LÍNEAS ===== */
+function elDiag(n){return n*(n-3)/2;}
+function elFormula(){
+  var n=EL.n,nm=ELN[n]?ELN[n][0].toUpperCase()+ELN[n].slice(1):'Polígono de '+n+' lados';
+  var e=$('el-f-ej');if(!e)return;
+  e.innerHTML='<b>'+nm+'</b> ('+n+' lados): D = '+n+' × ('+n+' − 3) ÷ 2 = '+n+' × '+(n-3)+' ÷ 2 = '+(n*(n-3))+' ÷ 2 = <b>'+elDiag(n)+' diagonales</b>';
+  var t='<table class="geo-tab"><tr><th>Lados (n)</th>',r='<tr><th>Diagonales</th>',i;
+  [3,4,5,6,7,8,9,10,12].forEach(function(k){t+='<th'+(k===n?' style="background:#fff59d"':'')+'>'+k+'</th>';r+='<td'+(k===n?' style="background:#fff59d"':'')+'>'+elDiag(k)+'</td>';});
+  $('el-f-tab').innerHTML=t+'</tr>'+r+'</tr></table>';
+}
+function elCalc(){
+  var n=parseNum($('el-f-n').value),o=$('el-f-out');
+  if(isNaN(n)||n<3||n!==Math.floor(n)||n>100){o.innerHTML='Escribe un número entero de lados entre 3 y 100.';return;}
+  o.innerHTML='D = '+n+' × ('+n+' − 3) ÷ 2 = '+n+' × '+(n-3)+' ÷ 2 = '+(n*(n-3))+' ÷ 2 = <b>'+elDiag(n)+' diagonales</b>';
+}
+
+/* ---------- juez genérico con reflexión (para Movimientos y Líneas) ---------- */
+function lnJuzga(p,S,sec,sub,ok,o){
+  if(S.done)return;
+  if(ok){S.done=true;anota(sec,true,sub);say(p+'-res','✅ '+o.okMsg+(S.tries?' (¡lo has conseguido al razonarlo!)':''),'ok');$(p+'-exp').style.display='none';return;}
+  S.tries++;anota(sec,false,sub);
+  if(S.tries===1){say(p+'-res','❌ '+o.bad+' Piensa un momento:','bad');frReflex(p,o.refl);}
+  else{S.done=true;if(o.reveal)o.reveal();say(p+'-res','❌ Todavía no. '+o.revMsg,'bad');$(p+'-exp').style.display='none';}
+}
+function lnOpts(boxId,opts,fn){
+  var b=$(boxId);b.innerHTML='';
+  opts.forEach(function(o){var x=document.createElement('button');x.type='button';x.className='mv-big';x.innerHTML=o.t;x.addEventListener('click',function(){fn(o.k,x);});b.appendChild(x);});
+}
+
+/* ---------- Movimientos: Aprende (explorador) ---------- */
+var MA={k:'t'};
+function mvaDraw(){
+  var W=12,H=8,c=MVC,P=mvTr(MVSH[0],4,3),I,desc;
+  var k=MA.k;
+  ['t','g','s'].forEach(function(x){var b=$('mva-'+x);if(b)b.classList.toggle('on',x===k);});
+  $('mva-pt').style.display=k==='t'?'':'none';$('mva-pg').style.display=k==='g'?'':'none';$('mva-ps').style.display=k==='s'?'':'none';
+  var inner='';
+  if(k==='t'){
+    var dx=+$('mva-dx').value,dy=+$('mva-dy').value;I=mvTr(P,dx,dy);
+    $('mva-dxv').textContent=dx;$('mva-dyv').textContent=dy;
+    var t=[];if(dx)t.push('<b>'+Math.abs(dx)+'</b> '+(Math.abs(dx)===1?'cuadro':'cuadros')+' a la '+(dx>0?'derecha':'izquierda'));
+    if(dy)t.push('<b>'+Math.abs(dy)+'</b> '+(Math.abs(dy)===1?'cuadro':'cuadros')+' '+(dy>0?'hacia abajo':'hacia arriba'));
+    desc=t.length?'<b>Traslación</b>: cada punto de la figura se mueve '+t.join(' y ')+'. La figura se desliza: <b>no gira</b> y <b>no se da la vuelta</b>, así que mantiene el mismo tamaño, la misma forma y la misma orientación.':'Con 0 cuadros en las dos direcciones la figura no se mueve. Prueba a mover los deslizadores.';
+    inner=mvPoly(P,'#cfd8dc','#78909c',0.7,c)+mvPoly(I,'#fb8c00','#e65100',0.8,c);
+    if(dx||dy)inner+='<line x1="'+P[0][0]*c+'" y1="'+P[0][1]*c+'" x2="'+I[0][0]*c+'" y2="'+I[0][1]*c+'" stroke="#d32f2f" stroke-width="3" stroke-dasharray="6 5"/>';
+  }else if(k==='g'){
+    var q=+$('mva-gk').value,pv=P[0];I=mvRot(P,pv,q);
+    var nom={1:'90° en el sentido de las agujas del reloj ↻',2:'180° (media vuelta)',3:'90° en sentido contrario a las agujas del reloj ↺'}[q];
+    desc='<b>Giro</b> (o rotación): la figura gira <b>'+nom+'</b> alrededor de un punto fijo, el <b>centro de giro</b> (el punto rojo, que no se mueve). Un giro necesita tres datos: <b>centro</b>, <b>ángulo</b> y <b>sentido</b>. La forma y el tamaño no cambian.';
+    inner=mvPoly(P,'#cfd8dc','#78909c',0.7,c)+mvPoly(I,'#fb8c00','#e65100',0.8,c);
+  }else{
+    var ori=$('mva-so').value,sl=$('mva-sx'),mn=ori==='v'?9:7,mx=ori==='v'?13:9;
+    sl.min=mn;sl.max=mx;if(+sl.value<mn)sl.value=mn;if(+sl.value>mx)sl.value=mx;
+    var ej=+sl.value;P=ori==='v'?mvTr(MVSH[0],1,3):mvTr(MVSH[0],4,1);
+    I=ori==='v'?mvRefV(P,ej/2):mvRefH(P,ej/2);
+    desc='<b>Simetría</b> (reflexión): la figura naranja es el <b>reflejo</b> de la gris en el <b>eje de simetría</b> (la línea roja), como en un espejo. Cada punto y su imagen están <b>a la misma distancia del eje</b>, uno a cada lado. La figura queda «dada la vuelta»: derecha e izquierda (o arriba y abajo) se intercambian.';
+    inner=mvPoly(P,'#cfd8dc','#78909c',0.7,c);
+    if(mvIn(I,W,H))inner+=mvPoly(I,'#fb8c00','#e65100',0.8,c);
+    inner+=ori==='v'?'<line x1="'+(ej/2*c)+'" y1="0" x2="'+(ej/2*c)+'" y2="'+H*c+'" stroke="#d32f2f" stroke-width="4"/>':'<line x1="0" y1="'+(ej/2*c)+'" x2="'+W*c+'" y2="'+(ej/2*c)+'" stroke="#d32f2f" stroke-width="4"/>';
+    if(!mvIn(I,W,H))desc+=' <i>(El reflejo se sale del cuadro: mueve el eje.)</i>';
+  }
+  $('mva-box').innerHTML=mvSvg(W,H,c,inner);$('mva-desc').innerHTML=desc;
+}
+function mvaInit(){
+  ['t','g','s'].forEach(function(x){$('mva-'+x).addEventListener('click',function(){MA.k=x;mvaDraw();});});
+  ['mva-dx','mva-dy','mva-gk','mva-sx','mva-so'].forEach(function(id){$(id).addEventListener('input',mvaDraw);$(id).addEventListener('change',mvaDraw);});
+  mvaDraw();
+}
+
+/* ---------- Banco de preguntas de vocabulario (opción múltiple) ---------- */
+function lnBank(sec,sub,p,bank,boxQ,boxO){
+  /* p: prefijo de ids (p-q, p-res, p-exp) */
+  var it=pick(bank),opts=shuffle(it.o.map(function(t,i){return {k:i,t:t};}));
+  var S={tries:0,done:false};
+  $(p+'-q').innerHTML=it.q;frReset(p);
+  var ans=it.o.indexOf(it.a);
+  lnOpts(p+'-opts',opts,function(k){
+    lnJuzga(p,S,sec,sub,k===ans,{okMsg:it.ok||('Es <b>'+it.a+'</b>.'),bad:'No es «'+it.o[k]+'».',refl:it.h,revMsg:'La respuesta es <b>'+it.a+'</b>. '+(it.e||'')});
+  });
+}
+var MVBANK=[
+ {q:'Una figura se desliza sin girar ni darse la vuelta. ¿Qué movimiento es?',o:['Traslación','Giro','Simetría'],a:'Traslación',h:'Piensa en una figura que se desplaza como un tren sobre las vías: sigue «mirando» hacia el mismo lado.',e:'La traslación solo cambia la posición.'},
+ {q:'Una figura gira alrededor de un punto fijo. ¿Qué movimiento es?',o:['Traslación','Giro','Simetría'],a:'Giro',h:'Imagina una chincheta clavada en un punto y una figura que gira como las agujas de un reloj.',e:'Al giro también se le llama rotación.'},
+ {q:'Una figura se refleja como en un espejo. ¿Qué movimiento es?',o:['Traslación','Giro','Simetría'],a:'Simetría',h:'En un espejo, la derecha y la izquierda se intercambian.',e:'La simetría necesita un eje, que es el «espejo».'},
+ {q:'Para describir una <b>traslación</b> hace falta indicar…',o:['la dirección, el sentido y la distancia','el centro y el ángulo','el eje de simetría'],a:'la dirección, el sentido y la distancia',h:'Una traslación es «cuántos cuadros y hacia dónde» se mueve la figura.',e:'Por ejemplo: 4 cuadros a la derecha y 1 hacia arriba.'},
+ {q:'Para describir un <b>giro</b> hace falta indicar…',o:['el centro, el ángulo y el sentido','la dirección y la distancia','el eje de simetría'],a:'el centro, el ángulo y el sentido',h:'Un giro necesita un punto fijo, cuánto gira y hacia qué lado.',e:'Por ejemplo: giro de 90° en el sentido de las agujas del reloj alrededor del punto A.'},
+ {q:'Para describir una <b>simetría</b> hace falta indicar…',o:['el eje de simetría','el centro y el ángulo','la distancia recorrida'],a:'el eje de simetría',h:'La simetría es un reflejo: ¿en qué línea está el «espejo»?',e:'La imagen queda a la misma distancia del eje que la figura original, pero al otro lado.'},
+ {q:'En una <b>traslación</b>, la figura que se obtiene…',o:['es igual y tiene la misma orientación','está dada la vuelta, como en un espejo','está girada respecto a la original'],a:'es igual y tiene la misma orientación',h:'Una traslación solo cambia el lugar, no la forma ni hacia dónde «mira» la figura.'},
+ {q:'En una <b>simetría</b>, ¿a qué distancia del eje está cada punto y su imagen?',o:['A la misma distancia, uno a cada lado','A distinta distancia, pero en el mismo lado','No importa la distancia'],a:'A la misma distancia, uno a cada lado',h:'Si doblas el papel por el eje, el punto y su imagen coinciden: eso solo pasa si están a la misma distancia.'},
+ {q:'Un giro de 360° deja la figura…',o:['en la misma posición que al principio','al otro lado del eje','desplazada'],a:'en la misma posición que al principio',h:'360° es una vuelta completa.',e:'Una vuelta completa vuelve a la posición inicial.'},
+ {q:'Un giro de 180° se llama también…',o:['media vuelta','cuarto de vuelta','vuelta completa'],a:'media vuelta',h:'180° es la mitad de 360°.'},
+ {q:'Un giro de 90° se llama también…',o:['cuarto de vuelta','media vuelta','vuelta completa'],a:'cuarto de vuelta',h:'90° es la cuarta parte de 360°.'},
+ {q:'¿Qué es un <b>eje de simetría</b>?',o:['Una línea que divide la figura en dos mitades que coinciden al doblar','El punto alrededor del que gira una figura','La distancia que se mueve una figura'],a:'Una línea que divide la figura en dos mitades que coinciden al doblar',h:'Piensa en doblar un papel por la mitad: las dos partes tienen que encajar.'},
+ {q:'Las letras que se ven iguales en el espejo, como la A o la M, tienen…',o:['un eje de simetría vertical','ningún eje de simetría','un giro de 90°'],a:'un eje de simetría vertical',h:'Imagina una línea vertical por el centro de la letra A: ¿las dos mitades coinciden?'},
+ {q:'El movimiento de un ascensor que sube sin girar es una…',o:['traslación','simetría','giro'],a:'traslación',h:'¿La cabina cambia de posición, de orientación, o las dos?',e:'Sube en línea recta y sin girar: es un modelo de traslación.'},
+ {q:'La rueda de una noria al dar vueltas realiza un…',o:['giro','traslación','eje de simetría'],a:'giro',h:'¿Alrededor de qué punto fijo se mueve cada cabina de la rueda?',e:'La rueda gira alrededor de su centro.'}
+];
+function mvvNuevo(){lnBank('mov','Vocab','mvv',MVBANK);}
+
+/* =====================================================================
+   LÍNEAS: recta, semirrecta, segmento, paralelas, secantes, perpendiculares
+   ===================================================================== */
+var LNW=560,LNH=300,LN={C:null,V:null,D:null};
+function lnRad(a){return a*Math.PI/180;}
+function lnDir(a){return {x:Math.cos(lnRad(a)),y:-Math.sin(lnRad(a))};}   /* ángulo en grados, sentido contrario al reloj */
+function lnClip(x,y,dx,dy,W,H){
+  var m=8,t=1e9,tt;W=W||LNW;H=H||LNH;
+  if(dx>1e-9){tt=(W-m-x)/dx;if(tt<t)t=tt;}else if(dx<-1e-9){tt=(m-x)/dx;if(tt<t)t=tt;}
+  if(dy>1e-9){tt=(H-m-y)/dy;if(tt<t)t=tt;}else if(dy<-1e-9){tt=(m-y)/dy;if(tt<t)t=tt;}
+  return {x:x+dx*t,y:y+dy*t};
+}
+function lnHead(x,y,dx,dy,col){
+  var l=Math.hypot(dx,dy);dx/=l;dy/=l;var s=11,nx=-dy,ny=dx;
+  return '<polygon points="'+x.toFixed(1)+','+y.toFixed(1)+' '+(x-dx*s*1.7+nx*s*.7).toFixed(1)+','+(y-dy*s*1.7+ny*s*.7).toFixed(1)+' '+(x-dx*s*1.7-nx*s*.7).toFixed(1)+','+(y-dy*s*1.7-ny*s*.7).toFixed(1)+'" fill="'+col+'"/>';
+}
+function lnPt(x,y,lab,col,d){
+  var o=18,nx=-d.y,ny=d.x,s='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="6" fill="'+col+'" stroke="#fff" stroke-width="2"/>';
+  if(lab)s+='<text x="'+(x+nx*o).toFixed(1)+'" y="'+(y+ny*o+5).toFixed(1)+'" font-size="17" font-weight="800" fill="#12337A" text-anchor="middle">'+lab+'</text>';
+  return s;
+}
+function lnFull(x,y,ang,col,w,W,H){   /* recta completa a través de (x,y) */
+  var d=lnDir(ang),a=lnClip(x,y,d.x,d.y,W,H),b=lnClip(x,y,-d.x,-d.y,W,H);
+  return '<line x1="'+b.x.toFixed(1)+'" y1="'+b.y.toFixed(1)+'" x2="'+a.x.toFixed(1)+'" y2="'+a.y.toFixed(1)+'" stroke="'+col+'" stroke-width="'+(w||4)+'" stroke-linecap="round"/>'+lnHead(a.x,a.y,d.x,d.y,col)+lnHead(b.x,b.y,-d.x,-d.y,col);
+}
+function lnObjSvg(kind,ang,cx,cy,labs){
+  var d=lnDir(ang),col='#1e88e5',s='',A,B,O,E;labs=labs||['A','B'];
+  if(kind==='seg'){A={x:cx-d.x*95,y:cy-d.y*95};B={x:cx+d.x*95,y:cy+d.y*95};
+    s='<line x1="'+A.x.toFixed(1)+'" y1="'+A.y.toFixed(1)+'" x2="'+B.x.toFixed(1)+'" y2="'+B.y.toFixed(1)+'" stroke="'+col+'" stroke-width="5" stroke-linecap="round"/>'+lnPt(A.x,A.y,labs[0],'#d32f2f',d)+lnPt(B.x,B.y,labs[1],'#d32f2f',d);}
+  else if(kind==='sem'){O={x:cx-d.x*100,y:cy-d.y*100};A={x:cx+d.x*30,y:cy+d.y*30};E=lnClip(O.x,O.y,d.x,d.y);
+    s='<line x1="'+O.x.toFixed(1)+'" y1="'+O.y.toFixed(1)+'" x2="'+E.x.toFixed(1)+'" y2="'+E.y.toFixed(1)+'" stroke="'+col+'" stroke-width="5" stroke-linecap="round"/>'+lnHead(E.x,E.y,d.x,d.y,col)+lnPt(O.x,O.y,labs[0],'#d32f2f',d)+lnPt(A.x,A.y,labs[1],'#d32f2f',d);}
+  else{A={x:cx-d.x*70,y:cy-d.y*70};B={x:cx+d.x*70,y:cy+d.y*70};
+    s=lnFull(cx,cy,ang,col,5)+lnPt(A.x,A.y,labs[0],'#d32f2f',d)+lnPt(B.x,B.y,labs[1],'#d32f2f',d);}
+  return s;
+}
+function lnSvg(inner){return '<svg viewBox="0 0 '+LNW+' '+LNH+'" class="mv-svg" role="img" aria-label="Dibujo de líneas"><rect width="'+LNW+'" height="'+LNH+'" fill="#fff"/>'+inner+'</svg>';}
+function lnRight(x,y,a1,a2,col){
+  var u=lnDir(a1),v=lnDir(a2),r=18;
+  return '<polyline points="'+(x+u.x*r)+','+(y+u.y*r)+' '+(x+(u.x+v.x)*r)+','+(y+(u.y+v.y)*r)+' '+(x+v.x*r)+','+(y+v.y*r)+'" fill="none" stroke="'+col+'" stroke-width="3"/>';
+}
+function lnTxt(x,y,t,col){return '<text x="'+x.toFixed(1)+'" y="'+(y+5).toFixed(1)+'" font-size="16" font-weight="800" fill="'+col+'" text-anchor="middle" stroke="#fff" stroke-width="4" paint-order="stroke">'+t+'</text>';}
+/* tipo de pareja de rectas a partir de sus ángulos y posiciones (cálculo real, no «de fábrica») */
+function lnTipo(a1,p1,a2,p2){
+  var d1=lnDir(a1),d2=lnDir(a2),cr=d1.x*d2.y-d1.y*d2.x,dt=d1.x*d2.x+d1.y*d2.y;
+  if(Math.abs(cr)<1e-9){var w={x:p2.x-p1.x,y:p2.y-p1.y};return Math.abs(w.x*d1.y-w.y*d1.x)<1e-6?'coin':'par';}
+  return Math.abs(dt)<1e-9?'per':'obl';
+}
+/* ---- Clasifica ---- */
+function lnNuevoC(){
+  var niv=$('lc-niv').value,S={tries:0,done:false},obj=Math.random()<.45,inner='',ans,opts,labsL;
+  if(obj){
+    var kind=pick(['rec','sem','seg']),ang=niv==='f'?pick([0,0,20,-20]):pick([0,15,30,45,60,75,90,105,120,135,150,165]);
+    var ls=niv==='d'?pick([['M','N'],['P','Q'],['X','Y'],['R','S']]):pick([['A','B'],['C','D']]);
+    if(kind==='sem'&&niv!=='f')ls=[ls[0],ls[1]];
+    var k2={rec:'rec',sem:'sem',seg:'seg'}[kind];
+    inner=lnObjSvg(k2==='rec'?'rec':k2,ang,280+pick([-40,0,40]),150+pick([-20,0,20]),ls);
+    ans=kind;opts=[{k:'rec',t:'Recta'},{k:'sem',t:'Semirrecta'},{k:'seg',t:'Segmento'}];
+    LN.C={tipo:'obj',ans:ans,S:S};
+    $('lc-q').innerHTML='¿Qué has dibujado: una <b>recta</b>, una <b>semirrecta</b> o un <b>segmento</b>?';
+  }else{
+    var tipo=pick(['par','obl','per']),a1,a2,X={x:280+pick([-50,-20,0,20,50]),y:150+pick([-25,0,25])},P1,P2,sep,n1;
+    a1=niv==='f'?pick([0,90,45]):pick([0,15,30,45,60,75,105,120,135,150]);
+    if(tipo==='par'){
+      a2=a1;sep=pick([70,90,105]);n1=lnDir(a1+90);
+      P1={x:280-n1.x*sep/2,y:150-n1.y*sep/2};P2={x:280+n1.x*sep/2,y:150+n1.y*sep/2};
+    }else if(tipo==='per'){a2=a1+90;P1=X;P2=X;}
+    else{var dl=niv==='f'?pick([45,60,120,135]):niv==='m'?pick([30,60,120,150]):pick([70,80,100,110]);a2=a1+dl;P1=X;P2=X;}
+    var real=lnTipo(a1,P1,a2,P2);
+    inner=lnFull(P1.x,P1.y,a1,'#1e88e5',4)+lnFull(P2.x,P2.y,a2,'#fb8c00',4);
+    if(real==='per'||real==='obl'){
+      inner+='<circle cx="'+X.x+'" cy="'+X.y+'" r="5" fill="#d32f2f" stroke="#fff" stroke-width="2"/>';
+      var dd=((a2-a1)%180+180)%180,bis=lnDir(a1+dd/2);
+      if(niv==='d')inner+=lnTxt(X.x+bis.x*40,X.y+bis.y*40,dd+'°','#c62828');
+      else if(real==='per'&&niv==='f')inner+=lnRight(X.x,X.y,a1,a1+90,'#c62828');
+    }
+    ans=real;opts=[{k:'par',t:'Paralelas'},{k:'obl',t:'Secantes oblicuas'},{k:'per',t:'Perpendiculares'}];
+    LN.C={tipo:'par',ans:ans,S:S};
+    $('lc-q').innerHTML='Mira las dos rectas. ¿Son <b>paralelas</b>, <b>secantes oblicuas</b> o <b>perpendiculares</b>?'+(niv==='d'?' <span class="small">(Se indica el ángulo que forman al cortarse.)</span>':'');
+  }
+  $('lc-box').innerHTML=lnSvg(inner);frReset('lc');
+  var N={rec:'una <b>recta</b>',sem:'una <b>semirrecta</b>',seg:'un <b>segmento</b>',par:'<b>paralelas</b>',obl:'<b>secantes oblicuas</b>',per:'<b>perpendiculares</b>'};
+  var R={rec:'Mira los dos extremos: una recta tiene flechas en los dos lados porque no empieza ni termina nunca.',
+    sem:'Mira los extremos: una semirrecta tiene un punto donde empieza (el origen) y una flecha en el otro lado, porque sigue sin fin.',
+    seg:'Mira los extremos: un segmento tiene un punto en cada extremo y no tiene flechas, porque termina en los dos lados.',
+    par:'Imagina que alargas las dos rectas todo lo que quieras. ¿Llegarían a cortarse alguna vez? Fíjate en si siempre están a la misma distancia.',
+    obl:'Las rectas se cortan en un punto, pero fíjate en el ángulo: ¿es una esquina perfecta de 90° o es más abierto o más cerrado?',
+    per:'Las rectas se cortan. Fíjate en el ángulo que forman: ¿es una esquina perfecta como la de una hoja (90°)? Recuerda que las perpendiculares también son secantes, pero con ángulo recto.'};
+  LN.C.txt=N;LN.C.R=R;
+  lnOpts('lc-opts',opts,function(k){
+    var C=LN.C;
+    lnJuzga('lc',C.S,'lin','Clasifica',k===C.ans,{okMsg:(C.tipo==='obj'?'Es ':'Son ')+N[C.ans]+'.',bad:'No es esa opción.',refl:R[C.ans],revMsg:'Era '+N[C.ans]+'.'});
+  });
+}
+/* ---- Aprende: tarjetas + explorador ---- */
+var LNCARDS=[
+ {t:'Punto',d:'Marca una posición. No tiene longitud ni anchura. Se nombra con una letra mayúscula: A.',n:'A',s:function(){return '<circle cx="140" cy="70" r="8" fill="#d32f2f"/><text x="160" y="62" font-size="20" font-weight="800" fill="#12337A">A</text>';}},
+ {t:'Recta',d:'Línea recta que no tiene principio ni fin: se prolonga sin límite en los dos sentidos. Por eso no se puede medir. Se nombra con una letra minúscula (r) o con dos de sus puntos (recta AB).',n:'recta r',s:function(){return lnFull(140,70,12,'#1e88e5',4,280,140)+'<text x="40" y="50" font-size="20" font-weight="800" fill="#12337A">r</text>';}},
+ {t:'Semirrecta',d:'Parte de una recta que tiene un punto de origen y se prolonga sin fin en un solo sentido. Tiene un solo extremo. Se nombra con el origen primero: semirrecta OA.',n:'semirrecta OA',s:function(){return '<line x1="50" y1="85" x2="272" y2="45" stroke="#1e88e5" stroke-width="4" stroke-linecap="round"/>'+lnHead(272,45,222,-40,'#1e88e5')+'<circle cx="50" cy="85" r="7" fill="#d32f2f"/><text x="38" y="112" font-size="19" font-weight="800" fill="#12337A">O</text><circle cx="150" cy="67" r="6" fill="#d32f2f"/><text x="144" y="94" font-size="19" font-weight="800" fill="#12337A">A</text>';}},
+ {t:'Segmento',d:'Parte de una recta limitada por dos puntos, llamados extremos. Sí se puede medir. Se nombra con las dos letras de sus extremos: segmento AB.',n:'segmento AB',s:function(){return '<line x1="60" y1="80" x2="220" y2="55" stroke="#1e88e5" stroke-width="5" stroke-linecap="round"/><circle cx="60" cy="80" r="7" fill="#d32f2f"/><circle cx="220" cy="55" r="7" fill="#d32f2f"/><text x="48" y="108" font-size="19" font-weight="800" fill="#12337A">A</text><text x="214" y="86" font-size="19" font-weight="800" fill="#12337A">B</text>';}},
+ {t:'Rectas paralelas',d:'Dos rectas del mismo plano que nunca se cortan, por mucho que las prolonguemos. Están siempre a la misma distancia. Se escribe r ∥ s.',n:'r ∥ s',s:function(){return lnFull(140,48,8,'#1e88e5',4,280,140)+lnFull(140,98,8,'#fb8c00',4,280,140)+'<text x="24" y="38" font-size="19" font-weight="800" fill="#12337A">r</text><text x="24" y="96" font-size="19" font-weight="800" fill="#12337A">s</text>';}},
+ {t:'Rectas secantes',d:'Dos rectas que se cortan en un solo punto. Si no forman ángulos rectos se llaman secantes oblicuas. Las perpendiculares son un caso especial de secantes.',n:'r y s se cortan en P',s:function(){return lnFull(140,70,35,'#1e88e5',4,280,140)+lnFull(140,70,-30,'#fb8c00',4,280,140)+'<circle cx="140" cy="70" r="5" fill="#d32f2f"/><text x="150" y="62" font-size="19" font-weight="800" fill="#12337A">P</text>';}},
+ {t:'Rectas perpendiculares',d:'Rectas secantes que forman cuatro ángulos rectos (de 90°). Se marca el ángulo recto con un cuadradito. Se escribe r ⊥ s.',n:'r ⊥ s',s:function(){return lnFull(140,70,0,'#1e88e5',4,280,140)+lnFull(140,70,90,'#fb8c00',4,280,140)+lnRight(140,70,0,90,'#c62828');}},
+ {t:'Rectas coincidentes',d:'Dos rectas que tienen todos sus puntos en común: en realidad son la misma recta dibujada dos veces.',n:'r = s',s:function(){return lnFull(140,70,15,'#1e88e5',8,280,140)+lnFull(140,70,15,'#fb8c00',3,280,140)+'<text x="24" y="40" font-size="19" font-weight="800" fill="#12337A">r = s</text>';}}
+];
+function lnAprende(){
+  var h='';
+  LNCARDS.forEach(function(c){
+    h+='<div class="ln-card"><svg viewBox="0 0 280 140" class="ln-th"><rect width="280" height="140" fill="#fff"/>'+c.s()+'</svg><h4>'+c.t+'</h4><p>'+c.d+'</p><p class="ln-nota">✏️ Se escribe: <b>'+c.n+'</b></p></div>';
+  });
+  $('la-cards').innerHTML=h;
+  lnExplora();
+}
+function lnExplora(){
+  var th=+$('la-ang').value,sep=+$('la-sep').value,y1=150-sep,s='',txt;
+  $('la-angv').textContent=th+'°';$('la-sepv').textContent=sep;
+  s+=lnFull(280,y1,0,'#1e88e5',4)+lnFull(280,150,th,'#fb8c00',4);
+  var par=(th%180===0);
+  if(par&&sep>0){txt='<b>Rectas paralelas</b>: están siempre a la misma distancia y nunca se cortan.';}
+  else if(par){txt='<b>Rectas coincidentes</b>: la una está encima de la otra; son la misma recta.';}
+  else{
+    var xI=280+(sep*Math.cos(lnRad(th))/Math.sin(lnRad(th))),yI=y1;
+    if(xI>10&&xI<550)s+='<circle cx="'+xI.toFixed(1)+'" cy="'+yI+'" r="6" fill="#d32f2f" stroke="#fff" stroke-width="2"/>';
+    if(th===90){txt='<b>Rectas perpendiculares</b>: se cortan formando cuatro ángulos rectos (90°).';if(xI>10&&xI<550)s+=lnRight(xI,yI,0,90,'#c62828');}
+    else txt='<b>Rectas secantes oblicuas</b>: se cortan en un punto y forman ángulos de '+th+'° y '+(180-th)+'° (no son rectos).'+((xI>10&&xI<550)?'':' <i>(El punto de corte queda fuera del dibujo, pero las rectas se prolongan sin fin y acaban cortándose.)</i>');
+    if(sep===0){s+='<circle cx="280" cy="150" r="6" fill="#d32f2f" stroke="#fff" stroke-width="2"/>';}
+  }
+  $('la-box').innerHTML=lnSvg(s);$('la-txt').innerHTML=txt;
+}
+/* ---- Vocabulario / vida real / notación ---- */
+var LNBANK={
+ def:[
+  {q:'No tiene principio ni fin: se prolonga sin límite en los dos sentidos.',o:['Recta','Semirrecta','Segmento'],a:'Recta',h:'Piensa cuántos extremos tiene: ninguno.',e:'Una recta no se puede medir.'},
+  {q:'Tiene un punto de origen y se prolonga sin fin en un solo sentido.',o:['Recta','Semirrecta','Segmento'],a:'Semirrecta',h:'Tiene un extremo (el origen) y por el otro lado sigue para siempre.'},
+  {q:'Está limitada por dos puntos, llamados extremos, y se puede medir.',o:['Recta','Semirrecta','Segmento'],a:'Segmento',h:'Si tiene dos extremos, tiene principio y fin: se puede medir.'},
+  {q:'Dos rectas que nunca se cortan, aunque las alarguemos todo lo que queramos.',o:['Paralelas','Secantes','Perpendiculares'],a:'Paralelas',h:'Piensa en las vías del tren.'},
+  {q:'Dos rectas que se cortan en un solo punto.',o:['Secantes','Paralelas','Coincidentes'],a:'Secantes',h:'Si se cortan, se «secan» el camino: se cruzan en un punto.'},
+  {q:'Dos rectas secantes que forman cuatro ángulos rectos.',o:['Perpendiculares','Paralelas','Secantes oblicuas'],a:'Perpendiculares',h:'Piensa en la esquina de una hoja: 90°.'},
+  {q:'Rectas que se cortan pero NO forman ángulos rectos.',o:['Secantes oblicuas','Perpendiculares','Paralelas'],a:'Secantes oblicuas',h:'Se cortan, pero el ángulo no es de 90°.'},
+  {q:'Dos rectas que tienen todos sus puntos en común.',o:['Coincidentes','Paralelas','Secantes'],a:'Coincidentes',h:'Una está encima de la otra: son la misma recta.'},
+  {q:'Marca una posición. No tiene longitud ni anchura.',o:['Punto','Segmento','Recta'],a:'Punto',h:'Es lo más pequeño: solo indica un lugar.'}
+ ],
+ vida:[
+  {q:'Las dos barras de una vía de tren recta se parecen a rectas…',o:['paralelas','perpendiculares','secantes oblicuas'],a:'paralelas',h:'Los carriles siempre están a la misma distancia y nunca se cruzan.'},
+  {q:'Dos bordes de una hoja de papel que se juntan en una esquina son…',o:['perpendiculares','paralelas','coincidentes'],a:'perpendiculares',h:'La esquina de una hoja es un ángulo recto.'},
+  {q:'El borde de una mesa, entre sus dos esquinas, se parece a un…',o:['segmento','semirrecta','recta'],a:'segmento',h:'Empieza en una esquina y termina en la otra: tiene dos extremos.'},
+  {q:'El rayo de luz de una linterna (sale de la linterna y sigue sin parar) se parece a una…',o:['semirrecta','segmento','recta'],a:'semirrecta',h:'Tiene un punto donde empieza y sigue hacia un solo lado.',e:'Es solo un modelo: en la realidad la luz no es infinita.'},
+  {q:'Las líneas de un cuaderno de rayas son…',o:['paralelas','perpendiculares','secantes oblicuas'],a:'paralelas',h:'Mira si alguna vez se cruzan.'},
+  {q:'Dos calles que se cruzan formando una esquina «de cuadrado» son…',o:['perpendiculares','paralelas','coincidentes'],a:'perpendiculares',h:'¿Qué ángulo forman al cruzarse?'},
+  {q:'Las dos varillas de unas tijeras abiertas se cortan en el tornillo. Son…',o:['secantes','paralelas','coincidentes'],a:'secantes',h:'Se cruzan en un punto: el tornillo.',e:'Como no forman un ángulo recto, son secantes oblicuas.'},
+  {q:'Las líneas que separan los carriles de una pista de atletismo recta son…',o:['paralelas','secantes','perpendiculares'],a:'paralelas',h:'Los corredores van por carriles que no se cruzan y mantienen la misma anchura.'},
+  {q:'La línea de salida y las líneas de los carriles en una pista recta son…',o:['perpendiculares','paralelas','coincidentes'],a:'perpendiculares',h:'La línea de salida cruza los carriles formando esquina recta.'}
+ ],
+ not:[
+  {q:'¿Cómo se nombra una recta?',o:['Con una letra minúscula (r) o con dos de sus puntos','Solo con una letra mayúscula','Con su medida en centímetros'],a:'Con una letra minúscula (r) o con dos de sus puntos',h:'Recuerda: los puntos llevan mayúscula (A) y las rectas minúscula (r).'},
+  {q:'En la semirrecta OA, ¿qué representa la letra O?',o:['El origen','El otro extremo','La medida'],a:'El origen',h:'Una semirrecta solo tiene un extremo, que se escribe primero.'},
+  {q:'En el segmento AB, los puntos A y B se llaman…',o:['extremos','origen','vértices de la recta'],a:'extremos',h:'Son los puntos donde empieza y termina el segmento.'},
+  {q:'¿Qué significa r ∥ s?',o:['r y s son paralelas','r y s son perpendiculares','r y s son coincidentes'],a:'r y s son paralelas',h:'Las dos barritas ∥ se parecen a dos rectas que no se cruzan.'},
+  {q:'¿Qué significa r ⊥ s?',o:['r y s son perpendiculares','r y s son paralelas','r y s son iguales'],a:'r y s son perpendiculares',h:'El símbolo ⊥ parece una línea sobre otra formando una esquina recta.'},
+  {q:'¿Cuál de estas líneas se puede medir?',o:['El segmento','La recta','La semirrecta'],a:'El segmento',h:'Para medir hace falta un principio y un final.',e:'La recta y la semirrecta no se pueden medir porque son infinitas, al menos en un sentido.'},
+  {q:'¿Cuántos puntos extremos tiene una semirrecta?',o:['1','2','Ninguno'],a:'1',h:'Empieza en un punto (el origen) pero no termina.'},
+  {q:'¿Cuántos puntos extremos tiene una recta?',o:['Ninguno','1','2'],a:'Ninguno',h:'No empieza ni termina.'}
+ ]
+};
+function lnNuevoV(){
+  var m=$('lv-modo').value,b=m==='mix'?LNBANK.def.concat(LNBANK.vida,LNBANK.not):LNBANK[m];
+  lnBank('lin','Vocab','lv',b);
+}
+/* ---- Dibuja ---- */
+var LD={W:14,H:9,C:40,pts:[],task:null,S:null};
+function ldTask(){
+  var niv=$('ld-niv').value,T;
+  if(niv==='f')T=pick(['par','per']);else if(niv==='m')T=pick(['par','per','sec']);else T=pick(['par','per']);
+  LD.task={t:T,obl:niv==='d'};LD.pts=[];LD.S={tries:0,done:false};
+  var nm={par:'dos rectas <b>paralelas</b>',per:'dos rectas <b>perpendiculares</b>',sec:'dos rectas <b>secantes oblicuas</b> (se cortan pero <b>no</b> son perpendiculares)'};
+  $('ld-q').innerHTML='Dibuja '+nm[T]+'. Pulsa 2 puntos para la primera recta y otros 2 para la segunda.'+(niv==='d'?' <b>Ninguna puede ser horizontal ni vertical.</b>':'');
+  ldDraw();frReset('ld');
+}
+function ldSvg(inner){
+  var W=LD.W,H=LD.H,c=LD.C,s='<rect width="'+W*c+'" height="'+H*c+'" fill="#fff"/>',i;
+  for(i=0;i<=W;i++)s+='<line x1="'+i*c+'" y1="0" x2="'+i*c+'" y2="'+H*c+'" stroke="#e0e0ea"/>';
+  for(i=0;i<=H;i++)s+='<line x1="0" y1="'+i*c+'" x2="'+W*c+'" y2="'+i*c+'" stroke="#e0e0ea"/>';
+  return '<svg id="ld-svg" viewBox="0 0 '+W*c+' '+H*c+'" class="mv-svg" role="img" aria-label="Cuadrícula para dibujar rectas" style="cursor:crosshair">'+s+inner+'</svg>';
+}
+function ldLine(p,q,col){
+  var c=LD.C,W=LD.W*c,H=LD.H*c,dx=q[0]-p[0],dy=q[1]-p[1],x=p[0]*c,y=p[1]*c;
+  var ex=function(sg){var t=1e9,dd=[dx*sg,dy*sg],pos=[x,y],mx=[W,H];for(var k=0;k<2;k++){if(dd[k]>0)t=Math.min(t,(mx[k]-pos[k])/dd[k]);else if(dd[k]<0)t=Math.min(t,(0-pos[k])/dd[k]);}return {x:x+dx*sg*t,y:y+dy*sg*t};};
+  var a=ex(1),b=ex(-1);
+  return '<line x1="'+b.x.toFixed(1)+'" y1="'+b.y.toFixed(1)+'" x2="'+a.x.toFixed(1)+'" y2="'+a.y.toFixed(1)+'" stroke="'+col+'" stroke-width="4" stroke-linecap="round"/>'+lnHead(a.x,a.y,dx,dy,col)+lnHead(b.x,b.y,-dx,-dy,col);
+}
+function ldDraw(){
+  var c=LD.C,s='',P=LD.pts,cols=['#1e88e5','#fb8c00'];
+  if(P.length>=2)s+=ldLine(P[0],P[1],cols[0]);
+  if(P.length>=4)s+=ldLine(P[2],P[3],cols[1]);
+  P.forEach(function(p,i){s+='<circle cx="'+p[0]*c+'" cy="'+p[1]*c+'" r="7" fill="'+cols[i<2?0:1]+'" stroke="#fff" stroke-width="2"/>';});
+  $('ld-box').innerHTML=ldSvg(s);
+  var svg=$('ld-svg');
+  svg.addEventListener('click',function(e){
+    if(LD.S.done||LD.pts.length>=4)return;
+    var r=svg.getBoundingClientRect(),x=(e.clientX-r.left)*(LD.W*c)/r.width,y=(e.clientY-r.top)*(LD.H*c)/r.height,gx=Math.round(x/c),gy=Math.round(y/c);
+    gx=Math.max(0,Math.min(LD.W,gx));gy=Math.max(0,Math.min(LD.H,gy));
+    if(LD.pts.length%2===1){var l=LD.pts[LD.pts.length-1];if(l[0]===gx&&l[1]===gy){say('ld-res','Elige un punto distinto del anterior para que se vea la recta.','');return;}}
+    LD.pts.push([gx,gy]);ldDraw();
+  });
+}
+function ldVer(){
+  var P=LD.pts,T=LD.task,S=LD.S;if(S.done)return;
+  if(P.length<4){say('ld-res','Marca los 4 puntos (2 para cada recta).','bad');return;}
+  var d1=[P[1][0]-P[0][0],P[1][1]-P[0][1]],d2=[P[3][0]-P[2][0],P[3][1]-P[2][1]];
+  var cr=d1[0]*d2[1]-d1[1]*d2[0],dt=d1[0]*d2[0]+d1[1]*d2[1];
+  var w=[P[2][0]-P[0][0],P[2][1]-P[0][1]],coin=(cr===0&&(w[0]*d1[1]-w[1]*d1[0])===0);
+  var obl=!(d1[0]===0||d1[1]===0||d2[0]===0||d2[1]===0);
+  var ok,bad,refl;
+  if(T.t==='par'){ok=cr===0&&!coin;bad='Tus rectas no son paralelas.';refl=coin?'Tus dos rectas son la misma. Las paralelas están en sitios distintos pero con la misma inclinación.':'Las paralelas llevan la misma inclinación. Si la primera recta avanza, por ejemplo, 2 cuadros a la derecha y 1 hacia arriba, la segunda tiene que hacer lo mismo.';}
+  else if(T.t==='per'){ok=dt===0&&cr!==0;bad='Tus rectas no forman un ángulo recto.';refl='Para hacer una perpendicular, cambia los números de la inclinación y uno de ellos de signo: si la primera sube 1 cuadro por cada 2 a la derecha, la perpendicular baja 2 cuadros por cada 1 a la derecha.';}
+  else{ok=cr!==0&&dt!==0;bad=cr===0?'Tus rectas son paralelas y no se cortan.':'Tus rectas son perpendiculares, no oblicuas.';refl='Las secantes oblicuas se cortan pero no forman una esquina recta. Cambia la inclinación de una de ellas.';}
+  if(ok&&T.obl&&!obl){ok=false;bad='Hay una recta horizontal o vertical.';refl='En este reto no puedes usar rectas horizontales ni verticales: busca líneas inclinadas (que suban o bajen).';}
+  var ex={par:'Misma inclinación (por ejemplo, 2 a la derecha y 1 arriba en las dos).',per:'Si una tiene inclinación (a, b), la perpendicular tiene (−b, a). Así el ángulo es de 90°.',sec:'Basta con que no tengan la misma inclinación ni sean perpendiculares.'};
+  lnJuzga('ld',S,'lin','Dibuja',ok,{okMsg:'¡Muy bien dibujado!',bad:bad,refl:refl,revMsg:ex[T.t]});
+}
+function lnInit(){
+  lnAprende();
+  ['la-ang','la-sep'].forEach(function(id){$(id).addEventListener('input',lnExplora);});
+  $('lc-nuevo').addEventListener('click',lnNuevoC);$('lc-niv').addEventListener('change',lnNuevoC);lnNuevoC();
+  $('lv-nuevo').addEventListener('click',lnNuevoV);$('lv-modo').addEventListener('change',lnNuevoV);lnNuevoV();
+  $('ld-nuevo').addEventListener('click',ldTask);$('ld-niv').addEventListener('change',ldTask);$('ld-ver').addEventListener('click',ldVer);
+  $('ld-borrar').addEventListener('click',function(){if(LD.S&&LD.S.done)return;LD.pts=[];ldDraw();frReset('ld');});ldTask();
+}
+function initRefuerzo(){
+  elFormula();$('el-f-go').addEventListener('click',elCalc);$('el-f-n').addEventListener('keydown',function(e){if(e.key==='Enter')elCalc();});
+  mvaInit();$('mvv-nuevo').addEventListener('click',mvvNuevo);mvvNuevo();
+  lnInit();
+}
+
 function initGeo(){
   var n=store('get','pizarraNombreAlumna'),g=store('get','pizarraGrupoAlumna');
   if(n)$('geo-nombre').value=n;if(g)$('geo-grupo').value=g;
   $('geo-enviar').addEventListener('click',enviarGeo);
   ['input','change','blur'].forEach(function(ev){$('geo-nombre').addEventListener(ev,function(){cambiaNombre();if($('gp-prog').style.display==='block')renderProg();});});
   cambiaNombre();
-  wireTabs('geo-top',function(id){if(id==='gp-prog')renderProg();});wireTabs('geo-sub-poli');wireTabs('geo-sub-peri');wireTabs('geo-sub-area');wireTabs('geo-sub-pit');wireTabs('geo-sub-fra');wireTabs('geo-sub-mov');
+  wireTabs('geo-top',function(id){if(id==='gp-prog')renderProg();});wireTabs('geo-sub-poli');wireTabs('geo-sub-peri');wireTabs('geo-sub-area');wireTabs('geo-sub-pit');wireTabs('geo-sub-fra');wireTabs('geo-sub-mov');wireTabs('geo-sub-lin');
   initExplora();initClasifica();initConstruye();initVR();initFichas();initProb();initTablas();initElementos();initAngulos();initPit();
   initRecorre();initCalculaPer();initMismo();
-  initAE();initAI();initAF();initAC();initFra();initMov();
+  initAE();initAI();initAF();initAC();initFra();initMov();initRefuerzo();
 }
 initGeo();
 window.GEO={VRC:VRC,SC:SC,LOG:function(){return LOG;},genProb:genProb,nuevoPB:nuevoPB,PB:PB,VR:VR,nuevoVR:nuevoVR,renderProg:renderProg,verifica:verifica,genTriLat:genTriLat,genPolyCL:genPolyCL,genQuadNiv:genQuadNiv,clasTri:clasTri,clasQuad:clasQuad,genQuad:function(t){return genQuad(t);},genTriSides:genTriSides,genTriAng:genTriAng,genPer:genPer,genArea:genArea,genPoly:genPoly,evalExpr:evalExpr,chequea:chequea,FIG:FIG,PX:PX,PR:PR,AI:AI,CL:CL,CO:CO,AC:AC,PC:PC,PM:PM,AE:AE,
